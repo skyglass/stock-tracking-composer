@@ -1,0 +1,79 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="skyglass" id="create-order-domain">
+    
+        <createTable tableName="item">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="itemPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>   
+        
+       <addUniqueConstraint columnNames="name" constraintName="unique_item_name" tableName="item"/> 
+        
+        <createTable tableName="location">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="locationPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+       <addUniqueConstraint columnNames="name" constraintName="unique_location_name" tableName="location"/>         
+        
+         <createTable tableName="stock">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="stockPK"/>
+            </column>
+            <column name="item_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column> 
+            <column name="location_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>                       
+            <column name="amount" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>                      
+        </createTable>
+        
+ 		<createIndex indexName="unique_stock_item_location" tableName="stock" unique="true">
+			<column name="item_uuid"/>
+			<column name="location_uuid"/>
+		</createIndex>       
+        
+ 	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stock" constraintName="stock_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>  
+  	    <addForeignKeyConstraint baseColumnNames="location_uuid" baseTableName="stock" constraintName="stock_location_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="location" validate="true"/>  	          
+                
+ 
+        <createTable tableName="stock_update">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="ordersPK"/>
+            </column>
+            <column name="createdat" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>  
+            <column name="from_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>  
+            <column name="to_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>    
+            <column name="item_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>  
+            <column name="amount" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>                                                   
+
+        </createTable>
+        
+ 	    <addForeignKeyConstraint baseColumnNames="from_uuid" baseTableName="stock_update" constraintName="stock_update_from_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="location" validate="true"/>  
+  	    <addForeignKeyConstraint baseColumnNames="to_uuid" baseTableName="stock_update" constraintName="stock_update_to_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="location" validate="true"/>  	    
+  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stock_update" constraintName="stock_update_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>             
+
+	</changeSet>
+	
+</databaseChangeLog>
