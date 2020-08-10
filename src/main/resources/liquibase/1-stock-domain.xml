@@ -13,16 +13,16 @@
         
        <addUniqueConstraint columnNames="name" constraintName="unique_item_name" tableName="item"/> 
         
-        <createTable tableName="location">
+        <createTable tableName="businessunit">
             <column name="uuid" type="VARCHAR(255)">
-                <constraints primaryKey="true" primaryKeyName="locationPK"/>
+                <constraints primaryKey="true" primaryKeyName="businessUnitPK"/>
             </column>
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
         
-       <addUniqueConstraint columnNames="name" constraintName="unique_location_name" tableName="location"/>         
+       <addUniqueConstraint columnNames="name" constraintName="unique_businessunit_name" tableName="businessunit"/>         
         
          <createTable tableName="stock">
             <column name="uuid" type="VARCHAR(255)">
@@ -31,7 +31,7 @@
             <column name="item_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column> 
-            <column name="location_uuid" type="VARCHAR(255)">
+            <column name="businessunit_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>                       
             <column name="amount" type="INTEGER">
@@ -39,16 +39,16 @@
             </column>                      
         </createTable>
         
- 		<createIndex indexName="unique_stock_item_location" tableName="stock" unique="true">
+ 		<createIndex indexName="unique_stock_item_businessunit" tableName="stock" unique="true">
 			<column name="item_uuid"/>
-			<column name="location_uuid"/>
+			<column name="businessunit_uuid"/>
 		</createIndex>       
         
  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stock" constraintName="stock_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>  
-  	    <addForeignKeyConstraint baseColumnNames="location_uuid" baseTableName="stock" constraintName="stock_location_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="location" validate="true"/>  	          
+  	    <addForeignKeyConstraint baseColumnNames="businessunit_uuid" baseTableName="stock" constraintName="stock_businessunit_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  	          
                 
  
-        <createTable tableName="stock_update">
+        <createTable tableName="stockmovement">
             <column name="uuid" type="VARCHAR(255)">
                 <constraints primaryKey="true" primaryKeyName="ordersPK"/>
             </column>
@@ -70,9 +70,9 @@
 
         </createTable>
         
- 	    <addForeignKeyConstraint baseColumnNames="from_uuid" baseTableName="stock_update" constraintName="stock_update_from_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="location" validate="true"/>  
-  	    <addForeignKeyConstraint baseColumnNames="to_uuid" baseTableName="stock_update" constraintName="stock_update_to_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="location" validate="true"/>  	    
-  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stock_update" constraintName="stock_update_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>             
+ 	    <addForeignKeyConstraint baseColumnNames="from_uuid" baseTableName="stockmovement" constraintName="stockmovement_from_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  
+  	    <addForeignKeyConstraint baseColumnNames="to_uuid" baseTableName="stockmovement" constraintName="stockmovement_to_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  	    
+  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stockmovement" constraintName="stockmovement_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>             
 
 	</changeSet>
 	

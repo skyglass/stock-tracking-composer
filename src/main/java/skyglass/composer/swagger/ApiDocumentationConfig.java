@@ -24,7 +24,7 @@ import io.swagger.annotations.SwaggerDefinition;
         consumes = {"application/json", "application/xml"},
         produces = {"application/json", "application/xml"},
         schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
-        externalDocs = @ExternalDocs(value = "Read This For Sure", url = "https://github.com/skyglass/delivery-composer")
+        externalDocs = @ExternalDocs(value = "Read This For Sure", url = "https://github.com/skyglass/stock-tracking-composer")
 )
 public interface ApiDocumentationConfig {
 

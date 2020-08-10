@@ -2,8 +2,6 @@ package skyglass.composer.entity;
 
 import java.util.Objects;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import skyglass.composer.domain.IdObject;
@@ -17,26 +15,9 @@ public abstract class AEntity implements IdObject {
 
 	private static final long serialVersionUID = -4895128247398446344L;
 
-	@Id
-	@GeneratedValue
-	/**
-	 * UUID of the JPA Entity
-	 */
-	protected String uuid;
-
-	@Override
-	public String getUuid() {
-		return uuid;
-	}
-
-	@Override
-	public void setUuid(String id) {
-		this.uuid = id;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(this.uuid);
+		return Objects.hashCode(this.getUuid());
 	}
 
 	@Override
@@ -48,12 +29,12 @@ public abstract class AEntity implements IdObject {
 		if (getClass() != obj.getClass())
 			return false;
 		AEntity other = (AEntity) obj;
-		return Objects.equals(this.uuid, other.uuid);
+		return Objects.equals(this.getUuid(), other.getUuid());
 	}
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " " + uuid;
+		return this.getClass().getSimpleName() + " " + this.getUuid();
 	}
 
 }

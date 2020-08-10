@@ -38,7 +38,7 @@ public class SwaggerConfig {
 				.consumes(DEFAULT_PRODUCES_AND_CONSUMES)
 				.protocols(new HashSet<>(Arrays.asList("HTTP")))
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("skyglass.composer.location")).paths(PathSelectors.any())
+				.apis(RequestHandlerSelectors.basePackage("skyglass.composer.stock")).paths(PathSelectors.any())
 				.build();
 	}
 }
