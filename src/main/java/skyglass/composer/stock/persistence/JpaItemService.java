@@ -8,8 +8,8 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Component;
 
-import skyglass.composer.stock.Item;
-import skyglass.composer.stock.ItemService;
+import skyglass.composer.stock.domain.Item;
+import skyglass.composer.stock.domain.ItemService;
 
 @Component
 class JpaItemService implements ItemService {

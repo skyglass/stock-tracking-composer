@@ -8,8 +8,8 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Component;
 
-import skyglass.composer.stock.StockMovement;
-import skyglass.composer.stock.StockMovementService;
+import skyglass.composer.stock.domain.StockMovement;
+import skyglass.composer.stock.domain.StockMovementService;
 
 @Component
 class JpaStocMovementService implements StockMovementService {

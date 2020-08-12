@@ -7,15 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import skyglass.composer.entity.AEntity;
-import skyglass.composer.stock.BusinessUnit;
-import skyglass.composer.stock.Item;
+import skyglass.composer.stock.domain.BusinessUnit;
+import skyglass.composer.stock.domain.Item;
 
 @Entity
+@Table(name = "stockhistory")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

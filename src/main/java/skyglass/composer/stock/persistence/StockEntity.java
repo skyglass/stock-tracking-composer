@@ -5,15 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import skyglass.composer.entity.AEntity;
-import skyglass.composer.stock.BusinessUnit;
-import skyglass.composer.stock.Item;
 
 @Entity
+@Table(name = "stock")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,10 +25,10 @@ public class StockEntity extends AEntity {
 	private String uuid;
 
 	@ManyToOne(optional = false)
-	private Item item;
+	private ItemEntity item;
 
 	@ManyToOne(optional = false)
-	private BusinessUnit businessUnit;
+	private BusinessUnitEntity businessUnit;
 
 	@Column(nullable = false)
 	private Double amount;

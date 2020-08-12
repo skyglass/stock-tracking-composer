@@ -8,8 +8,8 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Component;
 
-import skyglass.composer.stock.BusinessUnit;
-import skyglass.composer.stock.BusinessUnitService;
+import skyglass.composer.stock.domain.BusinessUnit;
+import skyglass.composer.stock.domain.BusinessUnitService;
 
 @Component
 class JpaBusinessUnitService implements BusinessUnitService {

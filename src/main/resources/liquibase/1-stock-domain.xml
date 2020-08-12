@@ -1,6 +1,26 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
     <changeSet author="skyglass" id="create-order-domain">
+  
+         <createTable tableName="user">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="userPK"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>   
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>  
+             <column name="password" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>                                    
+        </createTable>   
+        
+       <addUniqueConstraint columnNames="username" constraintName="unique_user_username" tableName="user"/>  
     
         <createTable tableName="item">
             <column name="uuid" type="VARCHAR(255)">
@@ -34,7 +54,7 @@
             <column name="businessunit_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>                       
-            <column name="amount" type="INTEGER">
+            <column name="amount" type="DOUBLE">
                 <constraints nullable="false"/>
             </column>                      
         </createTable>
@@ -50,7 +70,7 @@
  
         <createTable tableName="stockmovement">
             <column name="uuid" type="VARCHAR(255)">
-                <constraints primaryKey="true" primaryKeyName="ordersPK"/>
+                <constraints primaryKey="true" primaryKeyName="stockMovementPK"/>
             </column>
             <column name="createdat" type="TIMESTAMP">
                 <constraints nullable="false"/>
@@ -64,7 +84,7 @@
             <column name="item_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>  
-            <column name="amount" type="INTEGER">
+            <column name="amount" type="DOUBLE">
                 <constraints nullable="false"/>
             </column>                                                   
 
@@ -72,7 +92,32 @@
         
  	    <addForeignKeyConstraint baseColumnNames="from_uuid" baseTableName="stockmovement" constraintName="stockmovement_from_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  
   	    <addForeignKeyConstraint baseColumnNames="to_uuid" baseTableName="stockmovement" constraintName="stockmovement_to_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  	    
-  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stockmovement" constraintName="stockmovement_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>             
+  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stockmovement" constraintName="stockmovement_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/> 
+  	    
+        <createTable tableName="stockparameter">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="stockParameterPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>                                                            
+
+        </createTable>  	       
+  	    
+  	   <createTable tableName="STOCKMOVEMENT_STOCKPARAMETER">
+            <column name="STOCKMOVEMENT_UUID" type="NVARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="PARAMETERS_UUID" type="NVARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+        </createTable>  
+        
+        <addForeignKeyConstraint baseColumnNames="stockmovement_uuid" baseTableName="stockmovement_stockparameter" constraintName="stockmovement_stockparameter_stockmovement_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmovement" validate="true"/>  
+  	    <addForeignKeyConstraint baseColumnNames="parameters_uuid" baseTableName="stockmovement_stockparameter" constraintName="stockmovement_stockparameter_parameters_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockparameter" validate="true"/>  	        
 
 	</changeSet>
 	
