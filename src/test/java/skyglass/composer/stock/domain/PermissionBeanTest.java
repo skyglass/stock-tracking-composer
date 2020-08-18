@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import skyglass.composer.stock.persistence.PermissionBean;
-import skyglass.composer.stock.persistence.UserEntity;
+import skyglass.composer.stock.domain.api.PermissionApi;
+import skyglass.composer.stock.persistence.entity.UserEntity;
 import skyglass.composer.stock.test.bean.MockHelper;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
 
@@ -16,12 +16,12 @@ public class PermissionBeanTest extends AbstractBaseTest {
 	private MockHelper mockHelper;
 
 	@Autowired
-	private PermissionBean permissionBean;
+	private PermissionApi permissionService;
 
 	@Test
 	public void getCurrentUser() throws Exception {
 		mockHelper.logout();
-		UserEntity user = permissionBean.getUserFromContext();
+		UserEntity user = permissionService.getUserFromContext();
 		Assert.assertTrue(user == null);
 	}
 

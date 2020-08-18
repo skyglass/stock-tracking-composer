@@ -18,14 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
 import skyglass.composer.stock.domain.CrudAction;
-import skyglass.composer.stock.domain.ExtUserDTO;
 import skyglass.composer.stock.domain.UserHelper;
+import skyglass.composer.stock.domain.api.PermissionBean;
+import skyglass.composer.stock.dto.ExtUserDTO;
 import skyglass.composer.stock.dto.UserDTO;
 import skyglass.composer.stock.dto.UserDTOFactory;
 import skyglass.composer.stock.exceptions.BusinessRuleValidationException;
 import skyglass.composer.stock.exceptions.ClientException;
 import skyglass.composer.stock.exceptions.NotAllowedException;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
+import skyglass.composer.stock.persistence.entity.EntityUtil;
+import skyglass.composer.stock.persistence.entity.UserEntity;
 import skyglass.composer.stock.utils.PlatformUtil;
 
 /**
@@ -36,7 +39,7 @@ import skyglass.composer.stock.utils.PlatformUtil;
 public class UserRepository extends AEntityBean<UserEntity> {
 
 	@Autowired
-	protected PermissionApi permissionApi;
+	protected PermissionBean permissionBean;
 
 	/**
 	 * Convenience method to get the user from the session context.
@@ -49,7 +52,7 @@ public class UserRepository extends AEntityBean<UserEntity> {
 
 	@NotNull
 	public UserDTO getUserInfo() {
-		UserEntity user = permissionApi.getUserFromContext();
+		UserEntity user = permissionBean.getUserFromContext();
 		if (user != null) {
 			ExtUserDTO extUser = getUserFromExt(user.getName());
 			if (extUser == null) {
@@ -81,7 +84,7 @@ public class UserRepository extends AEntityBean<UserEntity> {
 			return null;
 		}
 
-		String queryStr = "SELECT e FROM User e WHERE e.uuid = :uuid";
+		String queryStr = "SELECT e FROM UserEntity e WHERE e.uuid = :uuid";
 		TypedQuery<UserEntity> typedQuery = entityBeanUtil.createQuery(queryStr, UserEntity.class)
 				.setParameter("uuid", uuid);
 
@@ -93,9 +96,9 @@ public class UserRepository extends AEntityBean<UserEntity> {
 			return null;
 		}
 
-		String queryStr = "SELECT e FROM User e %s WHERE LOWER(e.name) = LOWER(:name)";
+		String queryStr = "SELECT e FROM UserEntity e WHERE LOWER(e.username) = LOWER(:username)";
 		TypedQuery<UserEntity> typedQuery = entityBeanUtil.createQuery(queryStr, UserEntity.class)
-				.setParameter("name", name);
+				.setParameter("username", name);
 
 		return EntityUtil.getSingleResultSafely(typedQuery);
 	}
@@ -106,10 +109,10 @@ public class UserRepository extends AEntityBean<UserEntity> {
 			return null;
 		}
 
-		String queryStr = "SELECT u FROM User u %s WHERE u.name IN :names";
+		String queryStr = "SELECT u FROM UserEntity u WHERE u.username IN :names";
 		TypedQuery<UserEntity> typedQuery = entityBeanUtil.createQuery(queryStr, UserEntity.class);
 		typedQuery.setParameter("names", names);
-		typedQuery.setParameter("userUuid", permissionApi.getUserFromContext().getUuid());
+		typedQuery.setParameter("userUuid", permissionBean.getUserFromContext().getUuid());
 
 		return EntityUtil.getListResultSafely(typedQuery);
 	}
@@ -131,7 +134,7 @@ public class UserRepository extends AEntityBean<UserEntity> {
 	}
 
 	public boolean isCurrentUserAdmin() {
-		permissionApi.checkAdmin();
+		permissionBean.checkAdmin();
 		return true;
 	}
 
@@ -193,7 +196,7 @@ public class UserRepository extends AEntityBean<UserEntity> {
 			throw new IllegalArgumentException("Ext user ID cannot be null or empty.");
 		}
 
-		UserEntity dbUser = permissionApi.findByName(extUserId);
+		UserEntity dbUser = permissionBean.findByName(extUserId);
 		UserHelper.checkExists(dbUser);
 		userDTO.setUsername(extUserId);
 		UserEntity user = UserDTOFactory.createUser(dbUser, userDTO);
@@ -251,7 +254,7 @@ public class UserRepository extends AEntityBean<UserEntity> {
 			throw new NotAllowedException(UserEntity.class, CrudAction.CREATE);
 		}
 
-		UserEntity dbUser = permissionApi.findByName(user.getName());
+		UserEntity dbUser = permissionBean.findByName(user.getName());
 		if (dbUser != null) {
 			throw new BusinessRuleValidationException(
 					String.format("User with such name (%s) already exists", user.getName()));
@@ -331,7 +334,7 @@ public class UserRepository extends AEntityBean<UserEntity> {
 	@NotNull
 	public List<UserEntity> findByUuids(@NotNull List<String> assigneeUuidList) {
 		if (!assigneeUuidList.isEmpty()) {
-			TypedQuery<UserEntity> usersQuery = entityBeanUtil.createQuery("SELECT u FROM User u WHERE u.uuid in :uuidList",
+			TypedQuery<UserEntity> usersQuery = entityBeanUtil.createQuery("SELECT u FROM UserEntity u WHERE u.uuid in :uuidList",
 					UserEntity.class);
 			usersQuery.setParameter("uuidList", assigneeUuidList);
 

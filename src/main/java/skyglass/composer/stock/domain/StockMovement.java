@@ -27,6 +27,8 @@ public class StockMovement extends AObject {
 
 	private Double amount;
 
+	private Long offset;
+
 	private Date createdAt;
 
 	private List<StockParameter> parameters = new ArrayList<>();

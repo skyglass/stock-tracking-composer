@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
 import skyglass.composer.stock.domain.IdObject;
-import skyglass.composer.stock.persistence.AEntity;
+import skyglass.composer.stock.persistence.entity.AEntity;
 
 public class AEntityDTOFactory {
 

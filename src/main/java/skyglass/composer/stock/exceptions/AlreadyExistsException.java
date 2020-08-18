@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
-import skyglass.composer.stock.persistence.AEntity;
+import skyglass.composer.stock.persistence.entity.AEntity;
 
 public class AlreadyExistsException extends ClientException {
 	private static final long serialVersionUID = 1L;

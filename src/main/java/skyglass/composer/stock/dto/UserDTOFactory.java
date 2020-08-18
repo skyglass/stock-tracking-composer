@@ -8,8 +8,7 @@ import java.util.function.Function;
 
 import javax.validation.constraints.NotNull;
 
-import skyglass.composer.stock.domain.ExtUserDTO;
-import skyglass.composer.stock.persistence.UserEntity;
+import skyglass.composer.stock.persistence.entity.UserEntity;
 
 public class UserDTOFactory extends AEntityDTOFactory {
 	public static UserDTO createUserDTO(UserEntity user) {

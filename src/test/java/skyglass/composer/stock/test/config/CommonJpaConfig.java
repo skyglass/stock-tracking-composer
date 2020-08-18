@@ -27,7 +27,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import skyglass.composer.stock.ComposerBeanConfiguration;
-import skyglass.composer.stock.test.bean.ComposerLocalBeanConfiguration;
+import skyglass.composer.stock.test.bean.ComposerTestBeanConfiguration;
 
 @Configuration
 @EnableTransactionManagement
@@ -35,7 +35,7 @@ import skyglass.composer.stock.test.bean.ComposerLocalBeanConfiguration;
 //		"skyglass.composer.security.service", "skyglass.composer.security.repository", "skyglass.composer.component" })
 //@EnableJpaRepositories(basePackages = { "skyglass.composer.local.repository", "skyglass.composer.repository.jpa" })
 @Import({ ComposerBeanConfiguration.class,
-		ComposerLocalBeanConfiguration.class })
+		ComposerTestBeanConfiguration.class })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableAsync
 @EnableScheduling
@@ -83,7 +83,6 @@ public class CommonJpaConfig {
 		em.setPersistenceUnitName("platform");
 		em.setPersistenceProviderClass(HibernatePersistenceProvider.class);
 		em.setSharedCacheMode(SharedCacheMode.NONE);
-		em.setJtaDataSource(dataSource());
 		em.afterPropertiesSet();
 		em.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
 

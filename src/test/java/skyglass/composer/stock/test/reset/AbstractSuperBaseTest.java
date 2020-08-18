@@ -12,8 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import skyglass.composer.stock.exceptions.ClientException;
-import skyglass.composer.stock.persistence.UserEntity;
-import skyglass.composer.stock.test.bean.LocalDatabaseResetBean;
+import skyglass.composer.stock.persistence.entity.UserEntity;
+import skyglass.composer.stock.test.bean.DatabaseResetBean;
 import skyglass.composer.stock.test.bean.MockHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -26,7 +26,7 @@ public abstract class AbstractSuperBaseTest {
 	public static final String PROFILE_PSQL = "psql-liquibase";
 
 	@Autowired
-	private LocalDatabaseResetBean localDatabaseResetBean;
+	private DatabaseResetBean localDatabaseResetBean;
 
 	@Autowired
 	private MockHelper mockHelper;

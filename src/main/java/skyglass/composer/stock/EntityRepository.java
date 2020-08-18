@@ -1,7 +1,7 @@
 package skyglass.composer.stock;
 
 import skyglass.composer.stock.exceptions.NotAccessibleException;
-import skyglass.composer.stock.persistence.AEntity;
+import skyglass.composer.stock.persistence.entity.AEntity;
 
 public interface EntityRepository<E extends AEntity> {
 

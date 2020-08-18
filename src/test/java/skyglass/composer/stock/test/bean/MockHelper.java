@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import skyglass.composer.stock.domain.UserInfo;
-import skyglass.composer.stock.persistence.PermissionBean;
-import skyglass.composer.stock.persistence.UserEntity;
+import skyglass.composer.stock.domain.api.PermissionBean;
+import skyglass.composer.stock.persistence.entity.UserEntity;
 import skyglass.composer.stock.test.config.TestDataConstants;
 
 @Component

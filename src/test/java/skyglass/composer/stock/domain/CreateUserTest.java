@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import skyglass.composer.stock.domain.api.UserServiceImpl;
 import skyglass.composer.stock.dto.UserDTO;
-import skyglass.composer.stock.persistence.JpaUserService;
 import skyglass.composer.stock.test.helper.UserLocalTestHelper;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
 
@@ -16,7 +16,7 @@ import skyglass.composer.stock.test.reset.AbstractBaseTest;
 public class CreateUserTest extends AbstractBaseTest {
 
 	@Autowired
-	private JpaUserService userService;
+	private UserServiceImpl userService;
 
 	private UserLocalTestHelper userTestHelper;
 

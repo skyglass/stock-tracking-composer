@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
     <changeSet author="skyglass" id="create-order-domain">
   
-         <createTable tableName="user">
+         <createTable tableName="USER">
             <column name="uuid" type="VARCHAR(255)">
                 <constraints primaryKey="true" primaryKeyName="userPK"/>
             </column>
@@ -20,7 +20,7 @@
             </column>                                    
         </createTable>   
         
-       <addUniqueConstraint columnNames="username" constraintName="unique_user_username" tableName="user"/>  
+       <addUniqueConstraint columnNames="username" constraintName="unique_user_username" tableName="USER"/>  
     
         <createTable tableName="item">
             <column name="uuid" type="VARCHAR(255)">
@@ -72,9 +72,6 @@
             <column name="uuid" type="VARCHAR(255)">
                 <constraints primaryKey="true" primaryKeyName="stockMovementPK"/>
             </column>
-            <column name="createdat" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>  
             <column name="from_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>  
@@ -86,7 +83,13 @@
             </column>  
             <column name="amount" type="DOUBLE">
                 <constraints nullable="false"/>
-            </column>                                                   
+            </column>  
+            <column name="offset" type="BIGINT">
+                <constraints nullable="false"/>
+            </column> 
+            <column name="createdat" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
 
         </createTable>
         
@@ -117,7 +120,48 @@
         </createTable>  
         
         <addForeignKeyConstraint baseColumnNames="stockmovement_uuid" baseTableName="stockmovement_stockparameter" constraintName="stockmovement_stockparameter_stockmovement_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmovement" validate="true"/>  
-  	    <addForeignKeyConstraint baseColumnNames="parameters_uuid" baseTableName="stockmovement_stockparameter" constraintName="stockmovement_stockparameter_parameters_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockparameter" validate="true"/>  	        
+  	    <addForeignKeyConstraint baseColumnNames="parameters_uuid" baseTableName="stockmovement_stockparameter" constraintName="stockmovement_stockparameter_parameters_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockparameter" validate="true"/>  
+  	    
+  	    
+        <createTable tableName="stockhistory">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="stockHistoryPK"/>
+            </column>
+            <column name="businessunit_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>             
+            <column name="item_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column> 
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>                                         
+            <column name="startdate" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>  
+            <column name="enddate" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>                                           
+
+        </createTable>
+        
+ 	    <addForeignKeyConstraint baseColumnNames="businessunit_uuid" baseTableName="stockhistory" constraintName="stockmovement_businessunit_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>      
+  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stockhistory" constraintName="stockhistory_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>   
+  	    
+  		<createTable tableName="keylock">
+			<column name="key" type="NVARCHAR(255)">
+                <constraints unique = "true"/>
+            </column>
+		</createTable> 	  
+		
+  		<createTable tableName="keyoffset">
+			<column name="key" type="NVARCHAR(255)">
+                <constraints unique = "true"/>
+            </column>
+            <column name="offset" type="BIGINT">
+                <constraints nullable="false"/>
+            </column> 
+		</createTable>		  		  	        
 
 	</changeSet>
 	

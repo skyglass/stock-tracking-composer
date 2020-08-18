@@ -21,18 +21,20 @@ import skyglass.composer.stock.exceptions.ClientException;
 public abstract class AbstractDatabaseResetBean {
 	private static final Logger log = LoggerFactory.getLogger(AbstractDatabaseResetBean.class);
 
-	private static final String[] RESET_TABLE_NAMES = { "USERCONTEXTPERMISSION", "USERCONTEXTROLE", "ROLEPERMISSION", "ROLE" };
+	private static final String[] RESET_TABLE_NAMES = { "STOCK", "STOCKHISTORY", "STOCKMOVEMENT", "STOCKPARAMETER", "STOCKUPDATELOCK" };
 
-	private static final String[] RESET_H2_TABLE_NAMES = { "ROLE_HIERARCHYVIEW" };
+	private static final String[] RESET_H2_TABLE_NAMES = {};
 
-	private static final String[] KEEP_USER_UUIDS = new String[] { "02655648-7238-48e5-a36e-45025559b219" };
+	private static final String[] KEEP_USER_UUIDS = new String[] { "02655648-7238-48e5-a36e-45025559b219", "0e893b6f-1495-4d62-9c1a-abf5c9cc281f" };
 
-	private static final String[] KEEP_BUSINESSOWNER_UUIDS = new String[] { "6018d2e1-b94b-424a-840c-9cbae9074f4e" };
+	private static final String[] KEEP_BUSINESSUNIT_UUIDS = new String[] { "DF789ACB-0CC3-4B4C-BF73-1E68DE4C7CA4", "d659dd95-c3b7-4f55-adf0-596a117c12b9" };
+
+	private static final String[] KEEP_ITEM_UUIDS = new String[] { "9f797b73-ffbe-41c5-b7ed-453d450a7ef4", "34034833-b32b-40ad-928f-eef12c9dbe2c" };
 
 	private static final TableContainer[] PARTIALLY_RESET_TABLES = new TableContainer[] {
-			new TableContainer("USER_GLOBALROLES", "USER_UUID", true, KEEP_USER_UUIDS),
 			new TableContainer("\"USER\"", KEEP_USER_UUIDS),
-			new TableContainer("BUSINESSOWNER", KEEP_BUSINESSOWNER_UUIDS)
+			new TableContainer("BUSINESSUNIT", KEEP_BUSINESSUNIT_UUIDS),
+			new TableContainer("ITEM", KEEP_ITEM_UUIDS)
 	};
 
 	private static final TableContainer[] PARTIALLY_RESET_H2_TABLES = new TableContainer[] {

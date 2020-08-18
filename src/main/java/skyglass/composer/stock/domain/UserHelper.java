@@ -1,7 +1,7 @@
 package skyglass.composer.stock.domain;
 
 import skyglass.composer.stock.exceptions.BusinessRuleValidationException;
-import skyglass.composer.stock.persistence.UserEntity;
+import skyglass.composer.stock.persistence.entity.UserEntity;
 
 public class UserHelper {
 

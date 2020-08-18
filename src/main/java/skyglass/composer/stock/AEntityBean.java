@@ -17,7 +17,7 @@ import skyglass.composer.stock.exceptions.AlreadyExistsException;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 import skyglass.composer.stock.exceptions.PermissionDeniedException;
-import skyglass.composer.stock.persistence.AEntity;
+import skyglass.composer.stock.persistence.entity.AEntity;
 
 @Transactional
 public abstract class AEntityBean<E extends AEntity> implements EntityRepository<E> {
