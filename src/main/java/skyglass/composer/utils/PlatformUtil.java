@@ -1,4 +1,4 @@
-package skyglass.composer.stock.utils;
+package skyglass.composer.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

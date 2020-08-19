@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class StockMovementEntity extends AEntity {
+public class StockMessageEntity extends AEntity {
 
 	private static final long serialVersionUID = 647564188166713065L;
 
@@ -49,6 +49,9 @@ public class StockMovementEntity extends AEntity {
 
 	@Column(nullable = false)
 	private Date createdAt;
+
+	@Column(nullable = false)
+	private String messageId;
 
 	@OneToMany
 	private List<StockParameterEntity> parameters = new ArrayList<>();

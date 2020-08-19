@@ -29,7 +29,7 @@ import skyglass.composer.stock.exceptions.NotAllowedException;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 import skyglass.composer.stock.persistence.entity.EntityUtil;
 import skyglass.composer.stock.persistence.entity.UserEntity;
-import skyglass.composer.stock.utils.PlatformUtil;
+import skyglass.composer.utils.PlatformUtil;
 
 /**
  * @author skyglass

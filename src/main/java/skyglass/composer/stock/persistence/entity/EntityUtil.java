@@ -57,7 +57,7 @@ public class EntityUtil {
 			throws IllegalStateException, UnsupportedOperationException {
 		if (query != null) {
 			@SuppressWarnings("rawtypes")
-			List results = getListResultSavely(query);
+			List results = getListResultSafely(query);
 			if (!results.isEmpty()) {
 				return results.iterator().next();
 			}
@@ -149,7 +149,7 @@ public class EntityUtil {
 
 	@SuppressWarnings("rawtypes")
 	@NotNull
-	public static List getListResultSavely(Query query) throws IllegalStateException, UnsupportedOperationException {
+	public static List getListResultSafely(Query query) throws IllegalStateException, UnsupportedOperationException {
 		if (query != null) {
 			try {
 				List results = query.getResultList();

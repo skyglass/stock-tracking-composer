@@ -12,7 +12,7 @@ import skyglass.composer.stock.domain.UserHelper;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
 import skyglass.composer.stock.persistence.entity.EntityUtil;
 import skyglass.composer.stock.persistence.entity.UserEntity;
-import skyglass.composer.stock.utils.PlatformUtil;
+import skyglass.composer.utils.PlatformUtil;
 
 @Repository
 public class PermissionBean implements PermissionApi {
