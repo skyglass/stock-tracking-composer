@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skyglass.composer.stock.domain.StockMessage;
-import skyglass.composer.stock.domain.api.StockMessageService;
 import skyglass.composer.stock.dto.StockMessageDto;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 import skyglass.composer.stock.persistence.entity.StockMessageEntity;
@@ -15,6 +14,9 @@ public class StockBookingService {
 
 	@Autowired
 	private StockMessageBean stockMessageBean;
+
+	@Autowired
+	private StockUpdateService stockUpdateService;
 
 	public StockMessage createStockMessagge(StockMessageDto stockMessageDto) {
 		if (StringUtils.isBlank(stockMessageDto.getItemUuid())) {
@@ -36,20 +38,21 @@ public class StockBookingService {
 			StockMessageEntity stockMessage = stockMessageBean.findByMessageId(messageId);
 
 			if (stockMessage != null) {
-				return StockMessageService.mapEntity(stockMessage);
+				return StockMessage.mapEntity(stockMessage);
 			}
 
 			stockMessageDto.setId(messageId);
 		}
-		StockMessageEntity result = stockMessageBean.createFromDto(stockMessageDto);
+		StockUpdate result = stockMessageBean.createFromDto(stockMessageDto);
 
-		//stock update must only happen if creation of regrinding stock movement is successful
-		stockUpdateService.changeStock(result.getStockUpdate(), result.getDirection());
-		return result.getDto();
+		//stock update must only happen if creation of stock message is successful
+		stockUpdateService.changeStock(result);
+		StockMessage stockMessage = StockMessage.mapEntity(stockMessageBean.findByUuid(result.getStockMessageUuid()));
+		return stockMessage;
 	}
 
 	private static String createMessageId(String id, String toUuid) {
-		return id.concat(toUuid);
+		return id.concat("_").concat(toUuid);
 	}
 
 }

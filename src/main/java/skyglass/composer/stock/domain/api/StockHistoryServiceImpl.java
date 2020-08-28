@@ -9,12 +9,8 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.domain.BusinessUnit;
-import skyglass.composer.stock.domain.Item;
 import skyglass.composer.stock.domain.StockHistory;
 import skyglass.composer.stock.persistence.StockHistoryRepository;
-import skyglass.composer.stock.persistence.entity.BusinessUnitEntity;
-import skyglass.composer.stock.persistence.entity.ItemEntity;
 import skyglass.composer.stock.persistence.entity.StockHistoryEntity;
 
 @Service
@@ -33,7 +29,7 @@ class StockHistoryServiceImpl implements StockHistoryService {
 	@Override
 	public Iterable<StockHistory> getAll() {
 		return StreamSupport.stream(stockHistoryRepository.findAll().spliterator(), false)
-				.map(this::mapEntity)
+				.map(entity -> StockHistory.mapEntity(entity))
 				.collect(Collectors.toList());
 	}
 
@@ -44,19 +40,7 @@ class StockHistoryServiceImpl implements StockHistoryService {
 			return null;
 		}
 
-		return mapEntity(entity);
-	}
-
-	StockHistory mapEntity(StockHistoryEntity entity) {
-		return new StockHistory(entity.getUuid(), new Item(entity.getItem().getUuid(), entity.getItem().getName()),
-				new BusinessUnit(entity.getBusinessUnit().getUuid(), entity.getBusinessUnit().getName()), entity.getAmount(), entity.getStartDate(), entity.getEndDate());
-
-	}
-
-	StockHistoryEntity map(StockHistory entity) {
-		return new StockHistoryEntity(entity.getUuid(), new ItemEntity(entity.getItem().getUuid(), entity.getItem().getName()),
-				new BusinessUnitEntity(entity.getBusinessUnit().getUuid(), entity.getBusinessUnit().getName()), entity.getAmount(), entity.getStartDate(), entity.getEndDate());
-
+		return StockHistory.mapEntity(entity);
 	}
 
 }

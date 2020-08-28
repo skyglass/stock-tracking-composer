@@ -1,12 +1,15 @@
 package skyglass.composer.stock.persistence.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -43,5 +46,12 @@ public class StockHistoryEntity extends AEntity {
 
 	@Column(nullable = true)
 	private Date endDate;
+
+	@OneToMany
+	private List<StockParameterEntity> parameters = new ArrayList<>();
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 
 }

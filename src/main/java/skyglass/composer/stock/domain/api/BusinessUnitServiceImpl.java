@@ -27,7 +27,7 @@ class BusinessUnitServiceImpl implements BusinessUnitService {
 	@Override
 	public Iterable<BusinessUnit> getAll() {
 		return StreamSupport.stream(businessUnitRepository.findAll().spliterator(), false)
-				.map(this::mapEntity)
+				.map(e -> BusinessUnit.mapEntity(e))
 				.collect(Collectors.toList());
 	}
 
@@ -38,17 +38,7 @@ class BusinessUnitServiceImpl implements BusinessUnitService {
 			return null;
 		}
 
-		return mapEntity(entity);
-	}
-
-	BusinessUnit mapEntity(BusinessUnitEntity entity) {
-		return new BusinessUnit(entity.getUuid(), entity.getName());
-
-	}
-
-	BusinessUnitEntity map(BusinessUnit entity) {
-		return new BusinessUnitEntity(entity.getUuid(), entity.getName());
-
+		return BusinessUnit.mapEntity(entity);
 	}
 
 }

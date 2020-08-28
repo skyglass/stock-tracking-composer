@@ -27,7 +27,7 @@ class ItemServiceImpl implements ItemService {
 	@Override
 	public Iterable<Item> getAll() {
 		return StreamSupport.stream(itemRepository.findAll().spliterator(), false)
-				.map(this::mapEntity)
+				.map(e -> Item.mapEntity(e))
 				.collect(Collectors.toList());
 	}
 
@@ -38,17 +38,7 @@ class ItemServiceImpl implements ItemService {
 			return null;
 		}
 
-		return mapEntity(entity);
-	}
-
-	Item mapEntity(ItemEntity entity) {
-		return new Item(entity.getUuid(), entity.getName());
-
-	}
-
-	ItemEntity map(Item entity) {
-		return new ItemEntity(entity.getUuid(), entity.getName());
-
+		return Item.mapEntity(entity);
 	}
 
 }

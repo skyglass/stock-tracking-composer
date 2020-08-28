@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.domain.BusinessUnit;
+import skyglass.composer.stock.domain.Item;
+import skyglass.composer.stock.domain.StockMessage;
 import skyglass.composer.stock.dto.StockMessageDto;
 import skyglass.composer.stock.persistence.entity.BusinessUnitEntity;
 import skyglass.composer.stock.persistence.entity.EntityUtil;
@@ -38,14 +41,14 @@ public class StockMessageBean extends AEntityBean<StockMessageEntity> {
 		return EntityUtil.getSingleResultSafely(query);
 	}
 
-	public StockMessageEntity createFromDto(StockMessageDto dto) {
+	public StockUpdate createFromDto(StockMessageDto dto) {
 		ItemEntity item = itemBean.findByUuidSecure(dto.getItemUuid());
 		BusinessUnitEntity from = businessUnitBean.findByUuidSecure(dto.getFromUuid());
 		BusinessUnitEntity to = businessUnitBean.findByUuidSecure(dto.getToUuid());
 		StockMessageEntity stockMessage = new StockMessageEntity(null, item, from, to, dto.getAmount(), null, null, dto.getId(),
 				dto.getStockParameters().stream().map(sp -> new StockParameterEntity(sp.getUuid(), sp.getName(), sp.getValue())).collect(Collectors.toList()));
 		create(stockMessage);
-		return stockMessage;
+		return new StockUpdate(Item.mapEntity(item), BusinessUnit.mapEntity(from), BusinessUnit.mapEntity(to), StockMessage.mapEntity(stockMessage));
 	}
 
 }

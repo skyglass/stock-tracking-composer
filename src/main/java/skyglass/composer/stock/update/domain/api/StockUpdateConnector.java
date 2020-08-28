@@ -62,7 +62,7 @@ public class StockUpdateConnector {
 		try (Connection dbConnection = dataSource.getConnection()) {
 
 			DBConnector.DatabaseType dbType = DBConnector.getDatabaseType(dbConnection);
-			String key = businessUnitUuid + itemUuid;
+			String key = businessUnitUuid.concat("_").concat(itemUuid);
 
 			try {
 				InsertQuery insertQuery = QueryFactory.insert(KEY_LOCK_TABLE_NAME, "key");
