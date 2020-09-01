@@ -57,7 +57,7 @@ public class StockBean extends AEntityBean<StockEntity> {
 	}
 
 	@NotNull
-	public Collection<StockEntity> findByItemUuid(String itemUuid) {
+	public Collection<StockEntity> findByItem(String itemUuid) {
 		if (StringUtils.isBlank(itemUuid)) {
 			return Collections.emptyList();
 		}

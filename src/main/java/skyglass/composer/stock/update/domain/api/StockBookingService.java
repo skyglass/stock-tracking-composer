@@ -18,7 +18,7 @@ public class StockBookingService {
 	@Autowired
 	private StockUpdateService stockUpdateService;
 
-	public StockMessage createStockMessagge(StockMessageDto stockMessageDto) {
+	public StockMessage createStockMessage(StockMessageDto stockMessageDto) {
 		if (StringUtils.isBlank(stockMessageDto.getItemUuid())) {
 			throw new NotNullableNorEmptyException("Item UUID");
 		}

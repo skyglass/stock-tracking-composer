@@ -8,23 +8,23 @@ import skyglass.composer.stock.persistence.entity.UserEntity;
 import skyglass.composer.stock.test.bean.MockHelper;
 import skyglass.composer.stock.test.config.TestDataConstants;
 
-public class UserLocalTestHelper {
-	private static UserLocalTestHelper INSTANCE;
+public class UserTestHelper {
+	private static UserTestHelper INSTANCE;
 
 	private UserService userApi;
 
-	public static UserLocalTestHelper getInstance() {
+	public static UserTestHelper getInstance() {
 		return INSTANCE;
 	}
 
-	public static UserLocalTestHelper create(UserService userApi) {
+	public static UserTestHelper create(UserService userApi) {
 		if (INSTANCE == null) {
-			INSTANCE = new UserLocalTestHelper(userApi);
+			INSTANCE = new UserTestHelper(userApi);
 		}
 		return INSTANCE;
 	}
 
-	private UserLocalTestHelper(UserService userApi) {
+	private UserTestHelper(UserService userApi) {
 		this.userApi = userApi;
 	}
 

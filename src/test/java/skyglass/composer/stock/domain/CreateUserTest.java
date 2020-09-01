@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import skyglass.composer.stock.domain.api.UserServiceImpl;
 import skyglass.composer.stock.dto.UserDTO;
-import skyglass.composer.stock.test.helper.UserLocalTestHelper;
+import skyglass.composer.stock.test.helper.UserTestHelper;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
 
 // @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
@@ -18,11 +18,11 @@ public class CreateUserTest extends AbstractBaseTest {
 	@Autowired
 	private UserServiceImpl userService;
 
-	private UserLocalTestHelper userTestHelper;
+	private UserTestHelper userTestHelper;
 
 	@Before
 	public void init() {
-		userTestHelper = UserLocalTestHelper.create(userService);
+		userTestHelper = UserTestHelper.create(userService);
 	}
 
 	@Test
