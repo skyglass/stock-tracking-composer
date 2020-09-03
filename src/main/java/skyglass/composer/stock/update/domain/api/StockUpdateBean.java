@@ -25,10 +25,10 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 	}
 
 	public void changeStockFrom(StockUpdate stockUpdate) {
-		StockMessage stockMovement = entityBeanUtil.find(StockMessage.class, stockUpdate.getStockMessageUuid());
+		StockMessage stockMessage = entityBeanUtil.find(StockMessage.class, stockUpdate.getStockMessageUuid());
 		BusinessUnitEntity businessUnit = entityBeanUtil.find(BusinessUnitEntity.class, stockUpdate.getFromUuid());
 		ItemEntity item = entityBeanUtil.find(ItemEntity.class, stockUpdate.getItemUuid());
-		updateStockFrom(stockUpdate, stockMovement, item, businessUnit);
+		updateStockFrom(stockUpdate, stockMessage, item, businessUnit);
 	}
 
 	private void updateStockTo(StockUpdate stockUpdate, StockMessage stockMessage, ItemEntity item, BusinessUnitEntity businessUnit) {

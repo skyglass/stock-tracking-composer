@@ -84,8 +84,8 @@
             <column name="amount" type="DOUBLE">
                 <constraints nullable="false"/>
             </column>  
-            <column name="offset" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="offset" type="BIGINT" defaultValue="0">
+                <constraints nullable="false" />
             </column> 
             <column name="createdat" type="TIMESTAMP">
                 <constraints nullable="false"/>

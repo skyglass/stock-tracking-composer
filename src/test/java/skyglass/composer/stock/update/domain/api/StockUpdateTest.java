@@ -51,7 +51,7 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 	}
 
 	@Test
-	public void regrindingTest() throws InterruptedException, ExecutionException {
+	public void bookingTest() throws InterruptedException, ExecutionException {
 
 		setupStock();
 
@@ -70,10 +70,6 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit2, 100D, null));
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, existingBusinessUnit, existingBusinessUnit2, 3D, null));
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, existingBusinessUnit2, existingBusinessUnit, 3D, null));
-	}
-
-	private void checkStock(Stock stock, Double amount) {
-		checkStock(stock, existingBusinessUnit, amount);
 	}
 
 	private void checkStock(Stock stock, BusinessUnit businessUnit, Double amount) {

@@ -31,7 +31,7 @@ public abstract class AbstractAsyncStockUpdateTest extends AbstractBaseTest {
 			Callable<Void> callable = new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					stockBookingService.createStockMessagge(dto);
+					stockBookingService.createStockMessage(dto);
 					return null;
 				}
 			};

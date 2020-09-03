@@ -19,6 +19,7 @@ import skyglass.composer.stock.persistence.entity.EntityUtil;
 import skyglass.composer.stock.persistence.entity.ItemEntity;
 import skyglass.composer.stock.persistence.entity.StockMessageEntity;
 import skyglass.composer.stock.persistence.entity.StockParameterEntity;
+import skyglass.composer.utils.date.DateUtil;
 
 @Repository
 @Transactional
@@ -45,7 +46,8 @@ public class StockMessageBean extends AEntityBean<StockMessageEntity> {
 		ItemEntity item = itemBean.findByUuidSecure(dto.getItemUuid());
 		BusinessUnitEntity from = businessUnitBean.findByUuidSecure(dto.getFromUuid());
 		BusinessUnitEntity to = businessUnitBean.findByUuidSecure(dto.getToUuid());
-		StockMessageEntity stockMessage = new StockMessageEntity(null, item, from, to, dto.getAmount(), null, null, dto.getId(),
+		StockMessageEntity stockMessage = new StockMessageEntity(null, item, from, to, dto.getAmount(), null,
+				dto.getCreatedAt() == null ? DateUtil.now() : dto.getCreatedAt(), dto.getId(),
 				dto.getStockParameters().stream().map(sp -> new StockParameterEntity(sp.getUuid(), sp.getName(), sp.getValue())).collect(Collectors.toList()));
 		create(stockMessage);
 		return new StockUpdate(Item.mapEntity(item), BusinessUnit.mapEntity(from), BusinessUnit.mapEntity(to), StockMessage.mapEntity(stockMessage));

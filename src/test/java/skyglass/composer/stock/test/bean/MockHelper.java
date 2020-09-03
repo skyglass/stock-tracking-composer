@@ -11,7 +11,7 @@ import skyglass.composer.stock.test.config.TestDataConstants;
 
 @Component
 public class MockHelper {
-	public static final String TEST_USER1 = TestDataConstants.TEST_USER_1_USERNAME;
+	public static final String TEST_USER1 = TestDataConstants.TEST_USER1_USERNAME;
 
 	private static UserEntity currentUser;
 
@@ -23,15 +23,15 @@ public class MockHelper {
 	}
 
 	public UserInfo getDefaultUser() {
-		return TestDataConstants.TEST_USER_1;
+		return TestDataConstants.TEST_USER1;
 	}
 
 	public void setupDefault() {
-		mockUser(TestDataConstants.TEST_USER_1_USERNAME);
+		mockUser(TestDataConstants.TEST_USER1_USERNAME);
 	}
 
 	public void mockDefaultUser() {
-		mockUser(TestDataConstants.TEST_USER_1_USERNAME);
+		mockUser(TestDataConstants.TEST_USER1_USERNAME);
 	}
 
 	public void logout() {
