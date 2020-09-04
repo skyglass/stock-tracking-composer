@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 
-import skyglass.composer.stock.domain.api.PermissionBean;
-import skyglass.composer.stock.persistence.UserRepository;
+import skyglass.composer.stock.persistence.repository.UserRepository;
+import skyglass.composer.stock.persistence.service.PermissionBean;
 
 public class AbstractMockBeanConfig {
 

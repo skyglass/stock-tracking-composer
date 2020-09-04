@@ -2,9 +2,9 @@ package skyglass.composer.stock.test.helper;
 
 import java.util.function.Consumer;
 
-import skyglass.composer.stock.domain.api.UserService;
 import skyglass.composer.stock.dto.UserDTO;
 import skyglass.composer.stock.persistence.entity.UserEntity;
+import skyglass.composer.stock.persistence.service.UserService;
 import skyglass.composer.stock.test.bean.MockHelper;
 import skyglass.composer.stock.test.config.TestDataConstants;
 

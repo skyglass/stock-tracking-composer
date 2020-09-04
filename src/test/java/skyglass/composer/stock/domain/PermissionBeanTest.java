@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import skyglass.composer.stock.domain.api.PermissionApi;
 import skyglass.composer.stock.persistence.entity.UserEntity;
+import skyglass.composer.stock.persistence.service.PermissionApi;
 import skyglass.composer.stock.test.bean.MockHelper;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
 

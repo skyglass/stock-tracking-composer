@@ -45,7 +45,7 @@ public class StockMessageEntity extends AEntity {
 	private Double amount;
 
 	@Column(nullable = false)
-	private Long offset;
+	private Long offsetKey;
 
 	@Column(nullable = false)
 	private Date createdAt;

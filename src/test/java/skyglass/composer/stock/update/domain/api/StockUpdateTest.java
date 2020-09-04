@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import skyglass.composer.stock.domain.BusinessUnit;
 import skyglass.composer.stock.domain.Item;
 import skyglass.composer.stock.domain.Stock;
-import skyglass.composer.stock.domain.api.BusinessUnitService;
-import skyglass.composer.stock.domain.api.ItemService;
-import skyglass.composer.stock.domain.api.StockService;
+import skyglass.composer.stock.domain.service.StockBookingService;
+import skyglass.composer.stock.persistence.service.BusinessUnitService;
+import skyglass.composer.stock.persistence.service.ItemService;
+import skyglass.composer.stock.persistence.service.StockService;
 import skyglass.composer.stock.test.config.TestDataConstants;
 import skyglass.composer.stock.test.helper.StockBookingTestHelper;
 

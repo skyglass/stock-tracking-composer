@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import skyglass.composer.stock.domain.BusinessUnit;
 import skyglass.composer.stock.domain.NotFoundException;
-import skyglass.composer.stock.domain.api.BusinessUnitService;
+import skyglass.composer.stock.persistence.service.BusinessUnitService;
 
 @RestController
 @RequestMapping("/business-unit")

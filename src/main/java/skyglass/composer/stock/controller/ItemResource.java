@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import skyglass.composer.stock.domain.Item;
 import skyglass.composer.stock.domain.NotFoundException;
-import skyglass.composer.stock.domain.api.ItemService;
+import skyglass.composer.stock.persistence.service.ItemService;
 
 @RestController
 @RequestMapping("/item")

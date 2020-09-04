@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import skyglass.composer.stock.domain.NotFoundException;
 import skyglass.composer.stock.domain.Stock;
-import skyglass.composer.stock.domain.api.StockService;
+import skyglass.composer.stock.persistence.service.StockService;
 
 @RestController
 @RequestMapping("/stock")

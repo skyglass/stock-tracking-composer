@@ -5,8 +5,8 @@ import java.util.function.Consumer;
 import skyglass.composer.stock.domain.BusinessUnit;
 import skyglass.composer.stock.domain.Item;
 import skyglass.composer.stock.domain.StockMessage;
+import skyglass.composer.stock.domain.service.StockBookingService;
 import skyglass.composer.stock.dto.StockMessageDto;
-import skyglass.composer.stock.update.domain.api.StockBookingService;
 
 public class StockBookingTestHelper {
 

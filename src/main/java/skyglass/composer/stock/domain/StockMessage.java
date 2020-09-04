@@ -44,7 +44,7 @@ public class StockMessage extends AObject {
 		return new StockMessage(entity.getUuid(), new Item(entity.getItem().getUuid(), entity.getItem().getName()),
 				new BusinessUnit(entity.getFrom().getUuid(), entity.getFrom().getName()),
 				new BusinessUnit(entity.getTo().getUuid(), entity.getTo().getName()),
-				entity.getAmount(), entity.getOffset(), entity.getCreatedAt(), entity.getMessageId(),
+				entity.getAmount(), entity.getOffsetKey(), entity.getCreatedAt(), entity.getMessageId(),
 				entity.getParameters().stream().map(p -> new StockParameter(p.getUuid(), p.getName(), p.getValue())).collect(Collectors.toList()));
 
 	}

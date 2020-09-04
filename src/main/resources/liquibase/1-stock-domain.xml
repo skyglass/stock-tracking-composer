@@ -84,7 +84,7 @@
             <column name="amount" type="DOUBLE">
                 <constraints nullable="false"/>
             </column>  
-            <column name="offset" type="BIGINT" defaultValue="0">
+            <column name="offsetkey" type="BIGINT" defaultValue="0">
                 <constraints nullable="false" />
             </column> 
             <column name="createdat" type="TIMESTAMP">
@@ -114,7 +114,7 @@
         </createTable>  	       
   	    
   	   <createTable tableName="stockmessage_stockparameter">
-            <column name="stockmessage_uuid" type="NVARCHAR(255)">
+            <column name="stockmessageentity_uuid" type="NVARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="parameters_uuid" type="NVARCHAR(255)">
@@ -122,7 +122,7 @@
             </column>
         </createTable>  
         
-        <addForeignKeyConstraint baseColumnNames="stockmessage_uuid" baseTableName="stockmessage_stockparameter" constraintName="stockmessage_stockparameter_stockmessage_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmessage" validate="true"/>  
+        <addForeignKeyConstraint baseColumnNames="stockmessageentity_uuid" baseTableName="stockmessage_stockparameter" constraintName="stockmessage_stockparameter_stockmessage_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmessage" validate="true"/>  
   	    <addForeignKeyConstraint baseColumnNames="parameters_uuid" baseTableName="stockmessage_stockparameter" constraintName="stockmessage_stockparameter_parameters_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockparameter" validate="true"/>  
   	    
   	    
