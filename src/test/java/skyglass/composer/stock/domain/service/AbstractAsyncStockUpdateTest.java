@@ -1,4 +1,4 @@
-package skyglass.composer.stock.update.domain.api;
+package skyglass.composer.stock.domain.service;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -17,6 +17,9 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 	@Autowired
 	private StockBean stockBean;
 
+	@Autowired
+	private StockHistoryBean stockHistoryBean;
+
 	public void changeStockTo(StockUpdate stockUpdate) {
 		StockMessageEntity stockMessage = entityBeanUtil.find(StockMessageEntity.class, stockUpdate.getStockMessageUuid());
 		BusinessUnitEntity businessUnit = entityBeanUtil.find(BusinessUnitEntity.class, stockUpdate.getToUuid());
@@ -46,13 +49,15 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 	}
 
 	private void doStockFromUpdate(StockUpdate stockUpdate, StockEntity stockFrom, StockMessageEntity stockMessage, ItemEntity item, BusinessUnitEntity businessUnit) {
-		StockEntity result = stockUpdate.setStockAmount(stockFrom, stockFrom.getAmount() - stockMessage.getAmount());
-		entityBeanUtil.merge(result);
+		stockFrom.updateAmount(-stockMessage.getAmount());
+		entityBeanUtil.merge(stockFrom);
+		stockHistoryBean.createHistory(stockFrom, stockMessage, item, businessUnit, true);
 	}
 
 	private void doStockToUpdate(StockUpdate stockUpdate, StockEntity stockTo, StockMessageEntity stockMessage, ItemEntity item, BusinessUnitEntity businessUnit) {
-		StockEntity result = stockUpdate.setStockAmount(stockTo, stockTo.getAmount() + stockMessage.getAmount());
-		entityBeanUtil.merge(result);
+		stockTo.updateAmount(stockMessage.getAmount());
+		entityBeanUtil.merge(stockTo);
+		stockHistoryBean.createHistory(stockTo, stockMessage, item, businessUnit, false);
 	}
 
 }

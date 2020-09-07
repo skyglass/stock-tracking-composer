@@ -36,4 +36,8 @@ public class StockEntity extends AEntity {
 	@Column(nullable = false)
 	private Double amount;
 
+	public void updateAmount(double amount) {
+		this.amount = this.amount + amount;
+	}
+
 }

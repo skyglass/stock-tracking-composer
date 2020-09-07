@@ -11,11 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import skyglass.composer.db.DBConnector;
 import skyglass.composer.db.exceptions.LockedException;
-import skyglass.composer.db.query.InsertQuery;
-import skyglass.composer.db.query.QueryFactory;
-import skyglass.composer.db.query.WhereConditions;
 
 @Repository
 public class StockUpdateConnector {
@@ -61,16 +57,13 @@ public class StockUpdateConnector {
 			throws LockedException, SQLException {
 		try (Connection dbConnection = dataSource.getConnection()) {
 
-			DBConnector.DatabaseType dbType = DBConnector.getDatabaseType(dbConnection);
 			String key = buildKey(businessUnitUuid, itemUuid);
 
 			try {
-				InsertQuery insertQuery = QueryFactory.insert(KEY_LOCK_TABLE_NAME, "key");
+				String insertQuery = "INSERT INTO KEYLOCK VALUES(?)";
 
-				try (PreparedStatement createLockStmt = dbConnection.prepareStatement(insertQuery.buildQuery(dbType))) {
-					int column = 0;
-
-					createLockStmt.setString(++column, key);
+				try (PreparedStatement createLockStmt = dbConnection.prepareStatement(insertQuery)) {
+					createLockStmt.setString(1, key);
 					createLockStmt.execute();
 				}
 			} catch (SQLException ex) {
@@ -116,12 +109,9 @@ public class StockUpdateConnector {
 	private void _releaseLock(DataSource dataSource, String businessUnitUuid, String itemUuid) throws SQLException {
 		try (Connection dbConnection = dataSource.getConnection()) {
 
-			DBConnector.DatabaseType dbType = DBConnector.getDatabaseType(dbConnection);
 			String key = buildKey(businessUnitUuid, itemUuid);
 
-			try (PreparedStatement deleteLockStmt = dbConnection.prepareStatement(QueryFactory.delete().from(KEY_LOCK_TABLE_NAME)
-					.where(WhereConditions.equals("key"))
-					.buildQuery(dbType))) {
+			try (PreparedStatement deleteLockStmt = dbConnection.prepareStatement("DELETE FROM KEYLOCK WHERE KEY = ?")) {
 				deleteLockStmt.setString(1, key);
 				deleteLockStmt.execute();
 			}

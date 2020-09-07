@@ -1,11 +1,12 @@
-/**
- *
- */
 package skyglass.composer.stock;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,23 +16,68 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.db.DatabaseType;
+import skyglass.composer.stock.exceptions.ClientException;
+
 @Repository
 @Transactional(propagation = Propagation.MANDATORY)
 public class EntityBeanUtil {
-	@PersistenceContext(unitName = "platform")
+	private static final Logger log = LoggerFactory.getLogger(EntityBeanUtil.class);
+
+	@PersistenceContext
 	private EntityManager entityManager;
+
+	/** The currently used {@link DataSource}. Could be {@code null} in Spring tests. */
+	@Autowired(required = false)
+	private DataSource dataSource;
+
+	private DatabaseType databaseType = DatabaseType.UNKNOWN;
+
+	@PostConstruct
+	private void resolveDatabaseType() {
+		if (dataSource != null) {
+			try (Connection connection = dataSource.getConnection()) {
+				if (connection != null) {
+					DatabaseMetaData metaData = connection.getMetaData();
+					if (metaData != null) {
+						String databaseName = metaData.getDatabaseProductName();
+						if (StringUtils.isNotBlank(databaseName)) {
+							databaseName = databaseName.trim().toLowerCase();
+
+							if (databaseName.startsWith(DatabaseType.POSTGRE_SQL.getName())) {
+								this.databaseType = DatabaseType.POSTGRE_SQL;
+							} else if (databaseName.startsWith(DatabaseType.SAP_HANA.getName())) {
+								this.databaseType = DatabaseType.SAP_HANA;
+							} else if (databaseName.startsWith(DatabaseType.H2.getName())) {
+								this.databaseType = DatabaseType.H2;
+							} else {
+								log.warn("Found unsupported database " + databaseName + " (" + metaData.getDatabaseProductVersion() + ")");
+							}
+						}
+					}
+				}
+			} catch (SQLException e) {
+				throw new ClientException(e);
+			}
+		}
+	}
 
 	public Query createNativeQuery(String sqlString) {
 		return entityManager.createNativeQuery(sqlString);
 	}
 
-	public Query createNativeQuery(String sqlString, Class<?> resultClass) {
+	public <E> Query createNativeQuery(String sqlString, Class<E> resultClass) {
 		return entityManager.createNativeQuery(sqlString, resultClass);
 	}
 
@@ -105,4 +151,8 @@ public class EntityBeanUtil {
 		entityManager.flush();
 	}
 
+	@NotNull
+	public DatabaseType getDatabaseType() {
+		return databaseType;
+	}
 }

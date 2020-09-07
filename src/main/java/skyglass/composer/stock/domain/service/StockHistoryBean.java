@@ -1,30 +1,35 @@
 package skyglass.composer.stock.domain.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
+import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
-import skyglass.composer.stock.domain.Stock;
-import skyglass.composer.stock.domain.StockMessage;
-import skyglass.composer.stock.domain.StockParameter;
 import skyglass.composer.stock.exceptions.AlreadyExistsException;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
 import skyglass.composer.stock.persistence.entity.BusinessUnitEntity;
 import skyglass.composer.stock.persistence.entity.EntityUtil;
 import skyglass.composer.stock.persistence.entity.ItemEntity;
+import skyglass.composer.stock.persistence.entity.StockEntity;
 import skyglass.composer.stock.persistence.entity.StockHistoryEntity;
+import skyglass.composer.stock.persistence.entity.StockMessageEntity;
 
 @Repository
-@Transactional
+@Transactional(propagation = Propagation.MANDATORY)
 public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 
 	@Autowired
@@ -32,6 +37,9 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 
 	@Autowired
 	private BusinessUnitBean businessUnitBean;
+
+	@Autowired
+	private DataSource dataSource;
 
 	@Override
 	public StockHistoryEntity findByUuid(String uuid) {
@@ -126,12 +134,31 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 		return EntityUtil.getListResultSafely(query);
 	}
 
-	private List<StockHistoryEntity> findValidNextList(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate) {
-		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.sensor.uuid = :sensorUuid AND sh.startDate > :validityDate ORDER BY sh.startDate";
+	private StockHistoryEntity findValidNext(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate) {
+		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item = :item AND sh.businessUnit = :businessUnit AND sh.startDate > :validityDate ORDER BY sh.startDate";
 		TypedQuery<StockHistoryEntity> query = entityBeanUtil.createQuery(queryStr, StockHistoryEntity.class);
+		query.setParameter("item", item);
 		query.setParameter("businessUnit", businessUnit);
 		query.setParameter("validityDate", validityDate);
-		return EntityUtil.getListResultSafely(query);
+		query.setMaxResults(1);
+		return EntityUtil.getSingleResultSafely(query);
+	}
+
+	private void updateNextStock(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate, double amount) {
+		String queryStr = "UPDATE StockHistory sh SET sh.amount = sh.amount + ? WHERE sh.item_uuid = ? AND sh.businessUnit_uuid = ? AND sh.startDate > ?";
+		try {
+			try (Connection dbConnection = dataSource.getConnection()) {
+				try (PreparedStatement updateStmt = dbConnection.prepareStatement(queryStr)) {
+					updateStmt.setDouble(1, amount);
+					updateStmt.setString(2, item.getUuid());
+					updateStmt.setString(3, businessUnit.getUuid());
+					updateStmt.setTimestamp(4, new Timestamp(validityDate.getTime()));
+					updateStmt.execute();
+				}
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public List<StockHistoryEntity> findValidListForPeriod(ItemEntity item, BusinessUnitEntity businessUnit, Date startDate, Date endDate) {
@@ -163,16 +190,15 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 		throw new UnsupportedOperationException("update method is not supported. Please, only use createHistoryForBusinessUnitAndItem(...) methods for update of stock history entities");
 	}
 
-	public StockHistoryEntity createHistory(Stock stock, StockMessage stockMessage) {
-		BusinessUnitEntity businessUnit = entityBeanUtil.find(BusinessUnitEntity.class, stock.getBusinessUnit().getUuid());
-		ItemEntity item = entityBeanUtil.find(ItemEntity.class, stock.getBusinessUnit().getUuid());
-		return createHistoryForItemAndBusinessUnit(item, businessUnit, stock, stockMessage);
+	public StockHistoryEntity createHistory(StockEntity stock, StockMessageEntity stockMessage, ItemEntity item, BusinessUnitEntity businessUnit, boolean isFrom) {
+		return createHistoryForItemAndBusinessUnit(item, businessUnit, stock, stockMessage, isFrom);
 	}
 
 	@NotNull
-	private StockHistoryEntity createHistoryForItemAndBusinessUnit(ItemEntity item, BusinessUnitEntity businessUnit, Stock stock, StockMessage stockMessage) {
+	private StockHistoryEntity createHistoryForItemAndBusinessUnit(ItemEntity item, BusinessUnitEntity businessUnit, StockEntity stock, StockMessageEntity stockMessage, boolean isFrom) {
 		Date validityDate = stockMessage.getCreatedAt();
 		double doubleValue = stock.getAmount();
+		double delta = isFrom ? -stockMessage.getAmount() : stockMessage.getAmount();
 
 		List<StockHistoryEntity> previousList = findValidPreviousList(item, businessUnit, validityDate);
 		StockHistoryEntity previous = null;
@@ -181,25 +207,25 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 			//The only thing we could do in this case is to clean it, so there will be no ambiguity in methods, which depend on stock history unique constraint:
 			//Stock History Unique Constraint: For each validityDate, one and only one stock history element must be found
 			if (previousList.size() > 1) {
-				for (int i = 1; i < previousList.size(); i++) {
-					remove(previousList.get(i));
-				}
+				throw new RuntimeException(
+						"Stock History Unique Constraint Exception: For each validityDate, one and only one stock history element must be found. Please, fix the code!!!");
 			}
 			previous = previousList.get(0);
 		}
 
 		StockHistoryEntity valid = new StockHistoryEntity(null, item, businessUnit, doubleValue, validityDate, previous != null ? previous.getEndDate() : null,
-				StockParameter.entityList(stockMessage.getParameters()));
+				stockMessage.getParameters());
 
 		if (previous != null) {
 			previous.setEndDate(validityDate);
 			merge(previous);
 		}
 
-		List<StockHistoryEntity> nextList = findValidNextList(item, businessUnit, validityDate);
+		StockHistoryEntity next = findValidNext(item, businessUnit, validityDate);
 
-		if (CollectionUtils.isNotEmpty(nextList)) {
-			valid.setEndDate(nextList.get(0).getStartDate());
+		if (next != null) {
+			valid.setEndDate(next.getStartDate());
+			updateNextStock(item, businessUnit, validityDate, delta);
 		}
 
 		//if previous start date equals validity date, then the previous end date also becomes equal to validity date. It means that the new stock history interval completely replaces previous interval. Therefore, previous interval should be deleted.
