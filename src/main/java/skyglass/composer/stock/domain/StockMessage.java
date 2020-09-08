@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import skyglass.composer.stock.persistence.entity.BusinessUnitEntity;
 import skyglass.composer.stock.persistence.entity.ItemEntity;
 import skyglass.composer.stock.persistence.entity.StockMessageEntity;
@@ -17,7 +16,6 @@ import skyglass.composer.stock.persistence.entity.StockParameterEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class StockMessage extends AObject {
 
 	private static final long serialVersionUID = 7924635977183057862L;

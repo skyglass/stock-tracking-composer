@@ -1,5 +1,7 @@
 package skyglass.composer.stock.domain.service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Assert;
@@ -10,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import skyglass.composer.stock.domain.BusinessUnit;
 import skyglass.composer.stock.domain.Item;
 import skyglass.composer.stock.domain.Stock;
-import skyglass.composer.stock.domain.service.StockBookingService;
+import skyglass.composer.stock.domain.StockHistory;
 import skyglass.composer.stock.persistence.service.BusinessUnitService;
 import skyglass.composer.stock.persistence.service.ItemService;
+import skyglass.composer.stock.persistence.service.StockHistoryService;
 import skyglass.composer.stock.persistence.service.StockService;
 import skyglass.composer.stock.test.config.TestDataConstants;
 import skyglass.composer.stock.test.helper.StockBookingTestHelper;
@@ -28,6 +31,9 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired
 	private StockService stockService;
+
+	@Autowired
+	private StockHistoryService stockHistoryService;
 
 	@Autowired
 	private ItemService itemService;
@@ -64,6 +70,8 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		checkStock(stock, existingBusinessUnit, 100D);
 		stock = stockService.findByItemAndBusinessUnit(existingItem, existingBusinessUnit2);
 		checkStock(stock, existingBusinessUnit2, 100D);
+
+		List<StockHistory> history = stockHistoryService.find(existingItem, existingBusinessUnit);
 	}
 
 	private void setupStock() {
@@ -77,6 +85,16 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		Assert.assertEquals(existingItem.getUuid(), stock.getItem().getUuid());
 		Assert.assertEquals(businessUnit.getUuid(), stock.getBusinessUnit().getUuid());
 		Assert.assertEquals(amount, stock.getAmount());
+	}
+
+	private void checkStockHistory(List<StockHistory> stockHistory, BusinessUnit businessUnit, Double amount, Date validityDate) {
+		for (StockHistory stock : stockHistory) {
+			Assert.assertEquals(existingItem.getUuid(), stock.getItem().getUuid());
+			Assert.assertEquals(businessUnit.getUuid(), stock.getBusinessUnit().getUuid());
+			if (stock.getStartDate().getTime() >= validityDate.getTime() && (stock.getEndDate() == null || stock.getEndDate().getTime() > validityDate.getTime())) {
+				Assert.assertEquals(amount, stock.getAmount());
+			}
+		}
 	}
 
 }

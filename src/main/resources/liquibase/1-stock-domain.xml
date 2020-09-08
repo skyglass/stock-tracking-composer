@@ -143,13 +143,25 @@
                 <constraints nullable="false"/>
             </column>  
             <column name="enddate" type="TIMESTAMP">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>                                           
 
         </createTable>
         
  	    <addForeignKeyConstraint baseColumnNames="businessunit_uuid" baseTableName="stockhistory" constraintName="stockmessage_businessunit_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>      
   	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stockhistory" constraintName="stockhistory_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>   
+  	    
+  	   <createTable tableName="stockhistory_stockparameter">
+            <column name="stockhistoryentity_uuid" type="NVARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="parameters_uuid" type="NVARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+        </createTable>  
+        
+        <addForeignKeyConstraint baseColumnNames="stockhistoryentity_uuid" baseTableName="stockhistory_stockparameter" constraintName="stockhistory_stockparameter_stockhistory_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockhistory" validate="true"/>  
+  	    <addForeignKeyConstraint baseColumnNames="parameters_uuid" baseTableName="stockhistory_stockparameter" constraintName="stockhistory_stockparameter_parameters_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockparameter" validate="true"/>  
   	    
   		<createTable tableName="keylock">
 			<column name="key" type="NVARCHAR(255)">

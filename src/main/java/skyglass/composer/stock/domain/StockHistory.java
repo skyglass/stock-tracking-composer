@@ -3,11 +3,11 @@ package skyglass.composer.stock.domain;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import skyglass.composer.stock.persistence.entity.BusinessUnitEntity;
 import skyglass.composer.stock.persistence.entity.ItemEntity;
 import skyglass.composer.stock.persistence.entity.StockHistoryEntity;
@@ -15,7 +15,6 @@ import skyglass.composer.stock.persistence.entity.StockHistoryEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class StockHistory extends AObject {
 
 	private static final long serialVersionUID = 2538795431473160363L;
@@ -47,6 +46,10 @@ public class StockHistory extends AObject {
 				new BusinessUnitEntity(entity.getBusinessUnit().getUuid(), entity.getBusinessUnit().getName()),
 				entity.getAmount(), entity.getStartDate(), entity.getEndDate(), StockParameter.entityList(entity.getParameters()));
 
+	}
+
+	public static List<StockHistory> mapEntityList(List<StockHistoryEntity> list) {
+		return list.stream().map(p -> mapEntity(p)).collect(Collectors.toList());
 	}
 
 }
