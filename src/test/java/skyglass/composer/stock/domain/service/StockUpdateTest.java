@@ -8,19 +8,24 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import skyglass.composer.stock.domain.BusinessUnit;
 import skyglass.composer.stock.domain.Item;
 import skyglass.composer.stock.domain.Stock;
 import skyglass.composer.stock.domain.StockHistory;
+import skyglass.composer.stock.persistence.repository.StockHistoryRepository;
 import skyglass.composer.stock.persistence.service.BusinessUnitService;
 import skyglass.composer.stock.persistence.service.ItemService;
 import skyglass.composer.stock.persistence.service.StockHistoryService;
 import skyglass.composer.stock.persistence.service.StockService;
-import skyglass.composer.stock.test.config.TestDataConstants;
 import skyglass.composer.stock.test.helper.StockBookingTestHelper;
+import skyglass.composer.stock.test.reset.AbstractBaseTest;
+import skyglass.composer.test.config.TestDataConstants;
+import skyglass.composer.test.config.TestDateUtil;
+import skyglass.composer.test.util.AsyncTestUtil;
 
-// @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
+@ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
 public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired
@@ -37,6 +42,9 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired
 	private ItemService itemService;
+
+	@Autowired
+	private StockHistoryRepository stockHistoryRepository;
 
 	private StockBookingTestHelper stockBookingTestHelper;
 
@@ -63,6 +71,7 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		setupStock();
 
 		invokeAll();
+		AsyncTestUtil.pollResult(8, () -> (int) stockHistoryRepository.count());
 
 		Stock stock = stockService.findByItemAndBusinessUnit(existingItem, stockCenter);
 		checkStock(stock, stockCenter, -200D);
@@ -71,14 +80,37 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		stock = stockService.findByItemAndBusinessUnit(existingItem, existingBusinessUnit2);
 		checkStock(stock, existingBusinessUnit2, 100D);
 
-		List<StockHistory> history = stockHistoryService.find(existingItem, existingBusinessUnit);
+		List<StockHistory> history = stockHistoryService.find(existingItem, stockCenter);
+		//checkStockHistory(history, stockCenter, 0D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
+		checkStockHistory(history, stockCenter, -100D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
+		checkStockHistory(history, stockCenter, -200D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
+		checkStockHistory(history, stockCenter, -200D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
+		checkStockHistory(history, stockCenter, -200D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
+
+		history = stockHistoryService.find(existingItem, existingBusinessUnit);
+		//checkStockHistory(history, existingBusinessUnit, 0D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 97D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
+
+		history = stockHistoryService.find(existingItem, existingBusinessUnit2);
+		//checkStockHistory(history, existingBusinessUnit2, 0D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
+		//checkStockHistory(history, existingBusinessUnit2, 0D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 100D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 103D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 100D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
 	}
 
 	private void setupStock() {
-		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit, 100D, null));
-		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit2, 100D, null));
-		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, existingBusinessUnit, existingBusinessUnit2, 3D, null));
-		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, existingBusinessUnit2, existingBusinessUnit, 3D, null));
+		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit, 100D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-02 00:00:01"))));
+		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit2, 100D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-03 00:00:01"))));
+		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, existingBusinessUnit, existingBusinessUnit2, 3D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-04 00:00:01"))));
+		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, existingBusinessUnit2, existingBusinessUnit, 3D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-05 00:00:01"))));
 	}
 
 	private void checkStock(Stock stock, BusinessUnit businessUnit, Double amount) {
@@ -88,12 +120,21 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 	}
 
 	private void checkStockHistory(List<StockHistory> stockHistory, BusinessUnit businessUnit, Double amount, Date validityDate) {
+		boolean found = false;
 		for (StockHistory stock : stockHistory) {
 			Assert.assertEquals(existingItem.getUuid(), stock.getItem().getUuid());
 			Assert.assertEquals(businessUnit.getUuid(), stock.getBusinessUnit().getUuid());
-			if (stock.getStartDate().getTime() >= validityDate.getTime() && (stock.getEndDate() == null || stock.getEndDate().getTime() > validityDate.getTime())) {
-				Assert.assertEquals(amount, stock.getAmount());
+			if (stock.getStartDate().getTime() <= validityDate.getTime() && (stock.getEndDate() == null || stock.getEndDate().getTime() > validityDate.getTime())) {
+				if (found) {
+					Assert.fail("Periods must not intersect");
+				} else {
+					found = true;
+					Assert.assertEquals(amount, stock.getAmount());
+				}
 			}
+		}
+		if (!found) {
+			Assert.fail("Stock was not found");
 		}
 	}
 

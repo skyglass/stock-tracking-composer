@@ -53,13 +53,13 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 	}
 
 	public List<StockHistoryEntity> findForPeriod(Item item, BusinessUnit businessUnit, Date startDate, Date endDate) {
-		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item = :item AND sh.businessUnit = :businessUnit "
+		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item.uuid = :itemUuid AND sh.businessUnit.uuid = :businessUnitUuid "
 				+ (endDate == null ? "" : "AND sh.startDate < :endDate ")
 				+ (startDate == null ? "" : "AND (sh.endDate IS NULL OR sh.endDate > :startDate) ")
 				+ "ORDER BY sh.startDate DESC";
 		TypedQuery<StockHistoryEntity> query = entityBeanUtil.createQuery(queryStr, StockHistoryEntity.class);
-		query.setParameter("businessUnit", businessUnit);
-		query.setParameter("item", item);
+		query.setParameter("itemUuid", item.getUuid());
+		query.setParameter("businessUnitUuid", businessUnit.getUuid());
 		if (startDate != null) {
 			query.setParameter("startDate", startDate);
 		}
@@ -82,10 +82,10 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 	}
 
 	private TypedQuery<StockHistoryEntity> findQuery(Item item, BusinessUnit businessUnit) {
-		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item = :item AND sh.businessUnit = :businessUnit ORDER BY sh.startDate DESC";
+		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item.uuid = :itemUuid AND sh.businessUnit.uuid = :businessUnitUuid ORDER BY sh.startDate DESC";
 		TypedQuery<StockHistoryEntity> query = entityBeanUtil.createQuery(queryStr, StockHistoryEntity.class);
-		query.setParameter("item", item);
-		query.setParameter("businessUnit", businessUnit);
+		query.setParameter("itemUuid", item.getUuid());
+		query.setParameter("businessUnitUuid", businessUnit.getUuid());
 		return query;
 	}
 
@@ -136,7 +136,7 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 
 		if (next != null) {
 			valid.setEndDate(next.getStartDate());
-			updateNextStock(item, businessUnit, validityDate, delta);
+			updateNextStock(item, businessUnit, next.getStartDate(), delta);
 		}
 
 		//if previous start date equals validity date, then the previous end date also becomes equal to validity date. It means that the new stock history interval completely replaces previous interval. Therefore, previous interval should be deleted.
@@ -149,26 +149,26 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 	}
 
 	private List<StockHistoryEntity> findValidPreviousList(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate) {
-		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item = :item AND sh.businessUnit = :businessUnit AND sh.startDate <= :validityDate AND (sh.endDate IS NULL OR sh.endDate > :validityDate) ORDER BY sh.startDate";
+		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item.uuid = :itemUuid AND sh.businessUnit.uuid = :businessUnitUuid AND sh.startDate <= :validityDate AND (sh.endDate IS NULL OR sh.endDate > :validityDate) ORDER BY sh.startDate";
 		TypedQuery<StockHistoryEntity> query = entityBeanUtil.createQuery(queryStr, StockHistoryEntity.class);
-		query.setParameter("item", item);
-		query.setParameter("businessUnit", businessUnit);
+		query.setParameter("itemUuid", item.getUuid());
+		query.setParameter("businessUnitUuid", businessUnit.getUuid());
 		query.setParameter("validityDate", validityDate);
 		return EntityUtil.getListResultSafely(query);
 	}
 
 	private StockHistoryEntity findValidNext(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate) {
-		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item = :item AND sh.businessUnit = :businessUnit AND sh.startDate > :validityDate ORDER BY sh.startDate";
+		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item.uuid = :itemUuid AND sh.businessUnit.uuid = :businessUnitUuid AND sh.startDate > :validityDate ORDER BY sh.startDate";
 		TypedQuery<StockHistoryEntity> query = entityBeanUtil.createQuery(queryStr, StockHistoryEntity.class);
-		query.setParameter("item", item);
-		query.setParameter("businessUnit", businessUnit);
+		query.setParameter("itemUuid", item.getUuid());
+		query.setParameter("businessUnitUuid", businessUnit.getUuid());
 		query.setParameter("validityDate", validityDate);
 		query.setMaxResults(1);
 		return EntityUtil.getSingleResultSafely(query);
 	}
 
 	private void updateNextStock(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate, double amount) {
-		String queryStr = "UPDATE StockHistory sh SET sh.amount = sh.amount + ? WHERE sh.item_uuid = ? AND sh.businessUnit_uuid = ? AND sh.startDate > ?";
+		String queryStr = "UPDATE StockHistory SET amount = amount + ? WHERE item_uuid = ? AND businessUnit_uuid = ? AND startDate >= ?";
 		try {
 			try (Connection dbConnection = dataSource.getConnection()) {
 				try (PreparedStatement updateStmt = dbConnection.prepareStatement(queryStr)) {

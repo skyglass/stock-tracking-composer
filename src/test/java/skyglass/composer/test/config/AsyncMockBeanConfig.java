@@ -1,4 +1,4 @@
-package skyglass.composer.stock.test.config;
+package skyglass.composer.test.config;
 
 import org.springframework.context.annotation.Configuration;
 

@@ -6,7 +6,7 @@ import skyglass.composer.stock.dto.UserDTO;
 import skyglass.composer.stock.persistence.entity.UserEntity;
 import skyglass.composer.stock.persistence.service.UserService;
 import skyglass.composer.stock.test.bean.MockHelper;
-import skyglass.composer.stock.test.config.TestDataConstants;
+import skyglass.composer.test.config.TestDataConstants;
 
 public class UserTestHelper {
 	private static UserTestHelper INSTANCE;

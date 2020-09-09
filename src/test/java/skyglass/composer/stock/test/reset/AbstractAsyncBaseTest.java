@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.test.context.ContextConfiguration;
 
-import skyglass.composer.stock.test.config.AsyncMockBeanConfig;
-import skyglass.composer.stock.test.config.CommonJpaConfig;
-import skyglass.composer.stock.test.config.H2JpaConfig;
-import skyglass.composer.stock.test.config.PsqlJpaConfig;
+import skyglass.composer.test.config.AsyncMockBeanConfig;
+import skyglass.composer.test.config.CommonJpaConfig;
+import skyglass.composer.test.config.H2JpaConfig;
+import skyglass.composer.test.config.PsqlJpaConfig;
 
 @ContextConfiguration(classes = { CommonJpaConfig.class, H2JpaConfig.class, PsqlJpaConfig.class, AsyncMockBeanConfig.class })
 public abstract class AbstractAsyncBaseTest extends AbstractSuperBaseTest {

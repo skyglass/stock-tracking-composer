@@ -1,4 +1,4 @@
-package skyglass.composer.stock.test.config;
+package skyglass.composer.test.config;
 
 import java.sql.SQLException;
 import java.util.Properties;

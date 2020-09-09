@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import skyglass.composer.stock.domain.UserInfo;
 import skyglass.composer.stock.persistence.entity.UserEntity;
 import skyglass.composer.stock.persistence.service.PermissionBean;
-import skyglass.composer.stock.test.config.TestDataConstants;
+import skyglass.composer.test.config.TestDataConstants;
 
 @Component
 public class MockHelper {
