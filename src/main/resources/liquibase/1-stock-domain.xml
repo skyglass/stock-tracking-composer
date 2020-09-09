@@ -140,7 +140,7 @@
                 <constraints nullable="false"/>
             </column>                                         
             <column name="startdate" type="TIMESTAMP">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>  
             <column name="enddate" type="TIMESTAMP">
                 <constraints nullable="true"/>

@@ -54,7 +54,7 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 
 	public List<StockHistoryEntity> findForPeriod(Item item, BusinessUnit businessUnit, Date startDate, Date endDate) {
 		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item.uuid = :itemUuid AND sh.businessUnit.uuid = :businessUnitUuid "
-				+ (endDate == null ? "" : "AND sh.startDate < :endDate ")
+				+ (endDate == null ? "" : "AND (sh.startDate IS NULL OR sh.startDate < :endDate) ")
 				+ (startDate == null ? "" : "AND (sh.endDate IS NULL OR sh.endDate > :startDate) ")
 				+ "ORDER BY sh.startDate DESC";
 		TypedQuery<StockHistoryEntity> query = entityBeanUtil.createQuery(queryStr, StockHistoryEntity.class);
@@ -108,7 +108,6 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 	@NotNull
 	private StockHistoryEntity createHistoryForItemAndBusinessUnit(ItemEntity item, BusinessUnitEntity businessUnit, StockEntity stock, StockMessageEntity stockMessage, boolean isFrom) {
 		Date validityDate = stockMessage.getCreatedAt();
-		double doubleValue = stock.getAmount();
 		double delta = isFrom ? -stockMessage.getAmount() : stockMessage.getAmount();
 
 		List<StockHistoryEntity> previousList = findValidPreviousList(item, businessUnit, validityDate);
@@ -124,15 +123,17 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 			previous = previousList.get(0);
 		}
 
-		StockHistoryEntity valid = new StockHistoryEntity(null, item, businessUnit, doubleValue, validityDate, previous != null ? previous.getEndDate() : null,
+		double currentValue = previous != null ? previous.getAmount() : 0;
+
+		StockHistoryEntity valid = new StockHistoryEntity(null, item, businessUnit, currentValue + delta, validityDate, previous != null ? previous.getEndDate() : null,
 				StockParameter.copyList(stockMessage.getParameters()));
+
+		StockHistoryEntity next = findValidNext(item, businessUnit, validityDate);
 
 		if (previous != null) {
 			previous.setEndDate(validityDate);
 			merge(previous);
 		}
-
-		StockHistoryEntity next = findValidNext(item, businessUnit, validityDate);
 
 		if (next != null) {
 			valid.setEndDate(next.getStartDate());
@@ -141,15 +142,20 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 
 		//if previous start date equals validity date, then the previous end date also becomes equal to validity date. It means that the new stock history interval completely replaces previous interval. Therefore, previous interval should be deleted.
 		//It doesn't make sense to keep interval with the same start and end date in the history anyway
-		if (previous != null && previous.getStartDate().equals(previous.getEndDate())) {
+		if (previous != null && previous.getStartDate() != null && previous.getStartDate().equals(previous.getEndDate())) {
 			remove(previous);
+		}
+
+		if (previous == null) {
+			previous = new StockHistoryEntity(null, item, businessUnit, 0D, null, validityDate, null);
+			persist(previous);
 		}
 
 		return persist(valid);
 	}
 
 	private List<StockHistoryEntity> findValidPreviousList(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate) {
-		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item.uuid = :itemUuid AND sh.businessUnit.uuid = :businessUnitUuid AND sh.startDate <= :validityDate AND (sh.endDate IS NULL OR sh.endDate > :validityDate) ORDER BY sh.startDate";
+		String queryStr = "SELECT sh FROM StockHistoryEntity sh WHERE sh.item.uuid = :itemUuid AND sh.businessUnit.uuid = :businessUnitUuid AND (sh.startDate IS NULL OR sh.startDate <= :validityDate) AND (sh.endDate IS NULL OR sh.endDate > :validityDate) ORDER BY sh.startDate";
 		TypedQuery<StockHistoryEntity> query = entityBeanUtil.createQuery(queryStr, StockHistoryEntity.class);
 		query.setParameter("itemUuid", item.getUuid());
 		query.setParameter("businessUnitUuid", businessUnit.getUuid());
