@@ -124,7 +124,59 @@
         
         <addForeignKeyConstraint baseColumnNames="stockmessageentity_uuid" baseTableName="stockmessage_stockparameter" constraintName="stockmessage_stockparameter_stockmessage_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmessage" validate="true"/>  
   	    <addForeignKeyConstraint baseColumnNames="parameters_uuid" baseTableName="stockmessage_stockparameter" constraintName="stockmessage_stockparameter_parameters_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockparameter" validate="true"/>  
+
+
+
+
+       <createTable tableName="stocktransaction">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="stocktransactionPK"/>
+            </column>
+            <column name="message_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column> 
+			<column name="key" type="NVARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>     
+            <column name="createdat" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>   
+			<column name="pending" type="Boolean" defaultValue="1"/>    
+
+        </createTable>
+        
+ 	    <addForeignKeyConstraint baseColumnNames="message_uuid" baseTableName="stocktransaction" constraintName="stocktransaction_message_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmessage" validate="true"/>  
   	    
+        <createTable tableName="transactionitem">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="transactionItemPK"/>
+            </column>
+            <column name="transaction_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="transactiontype" type="NVARCHAR(32)">
+				<constraints nullable="false"/>
+			</column>
+            <column name="createdat" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>   
+			<column name="pending" type="Boolean" defaultValue="1"/>    			                                                     
+
+        </createTable>
+  	    
+  	   <createTable tableName="stocktransaction_transactionitem">
+            <column name="stocktransactionentity_uuid" type="NVARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="items_uuid" type="NVARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+        </createTable>  
+        
+        <addForeignKeyConstraint baseColumnNames="stocktransactionentity_uuid" baseTableName="stocktransaction_transactionitem" constraintName="stocktransaction_transactionitem_transaction_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stocktransaction" validate="true"/>  
+  	    <addForeignKeyConstraint baseColumnNames="items_uuid" baseTableName="stocktransaction_transactionitem" constraintName="stocktransaction_transactionitem_items_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="transactionitem" validate="true"/>  
+
+
   	    
         <createTable tableName="stockhistory">
             <column name="uuid" type="VARCHAR(255)">
