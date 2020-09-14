@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
-import skyglass.composer.stock.domain.NotFoundException;
-import skyglass.composer.stock.domain.StockMessage;
-import skyglass.composer.stock.persistence.service.StockMessageService;
+import skyglass.composer.stock.domain.model.NotFoundException;
+import skyglass.composer.stock.domain.model.StockMessage;
+import skyglass.composer.stock.entity.service.StockMessageService;
 
 @RestController
 @RequestMapping("/stock-message")

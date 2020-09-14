@@ -1,0 +1,2 @@
+1. implement indexes for all tables
+2. start order-tracking-composer implementation

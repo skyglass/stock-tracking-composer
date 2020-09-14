@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
-import skyglass.composer.stock.domain.IdObject;
+import skyglass.composer.stock.domain.model.IdObject;
 
 public class NotAccessibleException extends ClientException {
 	private static final long serialVersionUID = 1L;

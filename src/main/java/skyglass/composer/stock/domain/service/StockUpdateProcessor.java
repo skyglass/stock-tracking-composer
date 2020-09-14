@@ -22,7 +22,7 @@ public class StockUpdateProcessor {
 		this.stockUpdateConnector = stockUpdateConnector;
 	}
 
-	public void updateStock(String businessUnitUuid, String itemUuid, Runnable runnable) throws IOException, SQLException {
+	public void updateStock(String itemUuid, String businessUnitUuid, Runnable runnable) throws IOException, SQLException {
 
 		boolean success = false;
 		int retries = 0;
@@ -30,7 +30,7 @@ public class StockUpdateProcessor {
 
 		do {
 			try {
-				stockUpdateConnector.acquireLock(dataSource, businessUnitUuid, itemUuid);
+				stockUpdateConnector.acquireLock(dataSource, itemUuid, businessUnitUuid);
 				runnable.run();
 				success = true;
 			} catch (LockedException ex) {
@@ -43,7 +43,7 @@ public class StockUpdateProcessor {
 				lastException = new IOException(ex);
 			} finally {
 				retries++;
-				stockUpdateConnector.releaseLock(dataSource, businessUnitUuid, itemUuid);
+				stockUpdateConnector.releaseLock(dataSource, itemUuid, businessUnitUuid);
 			}
 		} while (!success && retries < 2);
 

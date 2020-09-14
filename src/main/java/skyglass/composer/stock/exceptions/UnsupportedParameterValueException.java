@@ -3,7 +3,7 @@ package skyglass.composer.stock.exceptions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 
-import skyglass.composer.stock.domain.IdObject;
+import skyglass.composer.stock.domain.model.IdObject;
 
 public class UnsupportedParameterValueException extends ClientException {
 	private static final long serialVersionUID = 1L;

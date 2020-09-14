@@ -9,8 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 
-import skyglass.composer.stock.domain.CrudAction;
-import skyglass.composer.stock.domain.IdObject;
+import skyglass.composer.stock.domain.model.CrudAction;
+import skyglass.composer.stock.domain.model.IdObject;
 
 public class NotAllowedException extends NotAccessibleException {
 	private static final long serialVersionUID = 1L;

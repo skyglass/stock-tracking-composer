@@ -5,10 +5,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
-import skyglass.composer.stock.persistence.entity.BusinessUnitEntity;
-import skyglass.composer.stock.persistence.entity.ItemEntity;
-import skyglass.composer.stock.persistence.entity.StockEntity;
-import skyglass.composer.stock.persistence.entity.StockMessageEntity;
+import skyglass.composer.stock.entity.model.BusinessUnitEntity;
+import skyglass.composer.stock.entity.model.ItemEntity;
+import skyglass.composer.stock.entity.model.StockEntity;
+import skyglass.composer.stock.entity.model.StockMessageEntity;
+import skyglass.composer.stock.entity.repository.StockBean;
+import skyglass.composer.stock.entity.repository.StockHistoryBean;
 
 @Repository
 @Transactional
@@ -22,15 +24,15 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 
 	public void changeStockTo(StockUpdate stockUpdate) {
 		StockMessageEntity stockMessage = entityBeanUtil.find(StockMessageEntity.class, stockUpdate.getStockMessageUuid());
-		BusinessUnitEntity businessUnit = entityBeanUtil.find(BusinessUnitEntity.class, stockUpdate.getToUuid());
 		ItemEntity item = entityBeanUtil.find(ItemEntity.class, stockUpdate.getItemUuid());
+		BusinessUnitEntity businessUnit = entityBeanUtil.find(BusinessUnitEntity.class, stockUpdate.getToUuid());
 		updateStockTo(stockUpdate, stockMessage, item, businessUnit);
 	}
 
 	public void changeStockFrom(StockUpdate stockUpdate) {
 		StockMessageEntity stockMessage = entityBeanUtil.find(StockMessageEntity.class, stockUpdate.getStockMessageUuid());
-		BusinessUnitEntity businessUnit = entityBeanUtil.find(BusinessUnitEntity.class, stockUpdate.getFromUuid());
 		ItemEntity item = entityBeanUtil.find(ItemEntity.class, stockUpdate.getItemUuid());
+		BusinessUnitEntity businessUnit = entityBeanUtil.find(BusinessUnitEntity.class, stockUpdate.getFromUuid());
 		updateStockFrom(stockUpdate, stockMessage, item, businessUnit);
 	}
 

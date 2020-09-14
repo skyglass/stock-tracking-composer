@@ -9,19 +9,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import skyglass.composer.stock.domain.BusinessUnit;
-import skyglass.composer.stock.domain.Item;
-import skyglass.composer.stock.domain.Stock;
-import skyglass.composer.stock.domain.StockHistory;
-import skyglass.composer.stock.persistence.service.BusinessUnitService;
-import skyglass.composer.stock.persistence.service.ItemService;
-import skyglass.composer.stock.persistence.service.StockHistoryService;
-import skyglass.composer.stock.persistence.service.StockService;
+import skyglass.composer.stock.domain.model.BusinessUnit;
+import skyglass.composer.stock.domain.model.Item;
+import skyglass.composer.stock.domain.model.Stock;
+import skyglass.composer.stock.domain.model.StockHistory;
+import skyglass.composer.stock.entity.service.BusinessUnitService;
+import skyglass.composer.stock.entity.service.ItemService;
+import skyglass.composer.stock.entity.service.StockHistoryService;
+import skyglass.composer.stock.entity.service.StockService;
 import skyglass.composer.stock.test.helper.StockBookingTestHelper;
 import skyglass.composer.test.config.TestDataConstants;
 import skyglass.composer.test.config.TestDateUtil;
 
-// @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
+//@ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
 public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired

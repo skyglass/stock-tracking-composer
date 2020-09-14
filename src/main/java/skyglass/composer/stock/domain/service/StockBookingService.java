@@ -4,11 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import skyglass.composer.stock.domain.StockMessage;
-import skyglass.composer.stock.dto.StockMessageDto;
+import skyglass.composer.stock.domain.dto.StockMessageDto;
+import skyglass.composer.stock.domain.model.StockMessage;
+import skyglass.composer.stock.entity.model.StockMessageEntity;
+import skyglass.composer.stock.entity.repository.StockMessageBean;
+import skyglass.composer.stock.entity.service.StockMessageService;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
-import skyglass.composer.stock.persistence.entity.StockMessageEntity;
-import skyglass.composer.stock.persistence.service.StockMessageService;
 
 @Service
 public class StockBookingService {
@@ -47,7 +48,7 @@ public class StockBookingService {
 
 			stockMessageDto.setId(messageId);
 		}
-		StockUpdate result = stockMessageBean.createFromDto(stockMessageDto);
+		StockUpdate result = stockUpdateService.createFromDto(stockMessageDto);
 
 		//stock update must only happen if creation of stock message is successful
 		stockUpdateService.changeStock(result);

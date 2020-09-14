@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import skyglass.composer.stock.entity.model.UserEntity;
 import skyglass.composer.stock.exceptions.ClientException;
-import skyglass.composer.stock.persistence.entity.UserEntity;
 import skyglass.composer.stock.test.bean.DatabaseResetBean;
 import skyglass.composer.stock.test.bean.MockHelper;
 

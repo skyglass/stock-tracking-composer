@@ -2,10 +2,9 @@ package skyglass.composer.stock.domain.service;
 
 import java.util.Objects;
 
-import skyglass.composer.stock.domain.BusinessUnit;
-import skyglass.composer.stock.domain.Item;
-import skyglass.composer.stock.domain.StockMessage;
-import skyglass.composer.stock.persistence.entity.StockEntity;
+import skyglass.composer.stock.domain.model.BusinessUnit;
+import skyglass.composer.stock.domain.model.Item;
+import skyglass.composer.stock.domain.model.StockMessage;
 
 public class StockUpdate {
 
@@ -43,11 +42,7 @@ public class StockUpdate {
 	public boolean isBetweenUnits() {
 		return !Objects.equals(fromUuid, toUuid);
 	}
-
-	public StockEntity setStockAmount(StockEntity stock, double updatedAmount) {
-		return new StockEntity(stock.getUuid(), stock.getItem(), stock.getBusinessUnit(), updatedAmount);
-	}
-
+	
 	public boolean shouldUpdateStock() {
 		//if business units are the same , then don't need to update the stocks
 		return isBetweenUnits();

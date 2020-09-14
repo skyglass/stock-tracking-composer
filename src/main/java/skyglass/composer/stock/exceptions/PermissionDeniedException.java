@@ -1,7 +1,7 @@
 package skyglass.composer.stock.exceptions;
 
-import skyglass.composer.stock.domain.CrudAction;
-import skyglass.composer.stock.domain.IdObject;
+import skyglass.composer.stock.domain.model.CrudAction;
+import skyglass.composer.stock.domain.model.IdObject;
 
 public class PermissionDeniedException extends NotAllowedException {
 

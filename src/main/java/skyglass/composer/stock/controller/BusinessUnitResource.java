@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
-import skyglass.composer.stock.domain.BusinessUnit;
-import skyglass.composer.stock.domain.NotFoundException;
-import skyglass.composer.stock.persistence.service.BusinessUnitService;
+import skyglass.composer.stock.domain.model.BusinessUnit;
+import skyglass.composer.stock.domain.model.NotFoundException;
+import skyglass.composer.stock.entity.service.BusinessUnitService;
 
 @RestController
 @RequestMapping("/business-unit")

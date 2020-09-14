@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import skyglass.composer.stock.dto.ExtUserDTO;
-import skyglass.composer.stock.dto.ExtUserNameDTO;
+import skyglass.composer.stock.domain.dto.ExtUserDTO;
+import skyglass.composer.stock.domain.dto.ExtUserNameDTO;
 
 public class PlatformUtil {
 	private static final Logger log = LoggerFactory.getLogger(PlatformUtil.class);

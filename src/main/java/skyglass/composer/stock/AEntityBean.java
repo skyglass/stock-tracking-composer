@@ -1,7 +1,15 @@
 package skyglass.composer.stock;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import javax.persistence.EntityExistsException;
 import javax.persistence.TransactionRequiredException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,19 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.domain.IDeletable;
+import skyglass.composer.stock.domain.model.IDeletable;
+import skyglass.composer.stock.entity.model.AEntity;
+import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.exceptions.AlreadyExistsException;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 import skyglass.composer.stock.exceptions.PermissionDeniedException;
-import skyglass.composer.stock.persistence.entity.AEntity;
 
 @Transactional
 public abstract class AEntityBean<E extends AEntity> implements EntityRepository<E> {
-
-	public static final int DEFAULT_PAGINATED_MAX_RESULTS = 100;
-
-	public static final int DEFAULT_SEARCH_MAX_RESULTS = 20;
 
 	@Autowired
 	protected EntityBeanUtil entityBeanUtil;
@@ -78,6 +83,53 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 		}
 
 		return entityBeanUtil.find(persistentClass, uuid);
+	}
+	
+	@NotNull
+	public Collection<E> findAll() {
+		CriteriaBuilder criteriaBuilder = entityBeanUtil.getCriteriaBuilder();
+		CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(persistentClass);
+		Root<E> from = criteriaQuery.from(persistentClass);
+		CriteriaQuery<E> select = criteriaQuery.select(from);
+		TypedQuery<E> typedQuery = entityBeanUtil.createQuery(select);
+
+		List<E> list = typedQuery.getResultList();
+		if (list == null) {
+			list = Collections.emptyList();
+		}
+
+		return list;
+	}
+
+	@NotNull
+	public Collection<E> findPaginated(int offset, int limit) {
+		CriteriaBuilder criteriaBuilder = entityBeanUtil.getCriteriaBuilder();
+		CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(persistentClass);
+		Root<E> from = criteriaQuery.from(persistentClass);
+		CriteriaQuery<E> select = criteriaQuery.select(from);
+		TypedQuery<E> typedQuery = entityBeanUtil.createQuery(select);
+
+		return findPaginated(typedQuery, offset, limit);
+	}
+
+	@NotNull
+	protected <T extends AEntity> Collection<T> findPaginated(TypedQuery<T> typedQuery, int offset, int limit) {
+		if (typedQuery != null) {
+			if (offset >= 0) {
+				typedQuery.setFirstResult(offset);
+			}
+
+			typedQuery.setMaxResults(limit <= 0 ? EntityUtil.DEFAULT_PAGINATED_MAX_RESULTS : limit);
+
+			List<T> list = typedQuery.getResultList();
+			if (list == null) {
+				list = Collections.emptyList();
+			}
+
+			return list;
+		}
+
+		return Collections.emptyList();
 	}
 
 	@NotNull

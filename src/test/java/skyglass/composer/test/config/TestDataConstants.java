@@ -1,6 +1,6 @@
 package skyglass.composer.test.config;
 
-import skyglass.composer.stock.domain.UserInfo;
+import skyglass.composer.stock.domain.model.UserInfo;
 
 public interface TestDataConstants {
 

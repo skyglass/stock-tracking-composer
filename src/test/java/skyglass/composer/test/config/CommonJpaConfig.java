@@ -76,7 +76,7 @@ public class CommonJpaConfig {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setDataSource(dataSource());
 		em.setPackagesToScan(new String[] {
-				"skyglass.composer.stock.persistence" });
+				"skyglass.composer.stock.entity.model" });
 		em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 		em.setJpaProperties(additionalProperties());
 
