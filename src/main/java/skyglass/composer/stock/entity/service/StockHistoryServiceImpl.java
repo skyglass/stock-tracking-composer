@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.StockHistory;
+import skyglass.composer.stock.domain.repository.StockHistoryBean;
 import skyglass.composer.stock.entity.model.StockHistoryEntity;
-import skyglass.composer.stock.entity.repository.StockHistoryBean;
 
 @Service
 @Transactional

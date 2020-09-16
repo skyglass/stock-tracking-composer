@@ -1,4 +1,4 @@
-package skyglass.composer.stock.entity.repository;
+package skyglass.composer.stock.domain.repository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -175,6 +175,16 @@ public class UserRepository extends AEntityBean<UserEntity> {
 		}
 
 		return user;
+	}
+	
+	@Override
+	public UserEntity update(UserEntity user) {
+		return super.update(user);
+	}
+	
+	@Override
+	public UserEntity create(UserEntity user) {
+		return super.create(user);
 	}
 
 	@NotNull

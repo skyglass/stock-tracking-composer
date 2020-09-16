@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import skyglass.composer.stock.domain.dto.StockMessageDto;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
 import skyglass.composer.stock.entity.model.StockParameterEntity;
+import skyglass.composer.utils.date.DateUtil;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -55,6 +57,12 @@ public class StockMessage extends AObject {
 				entity.getAmount(), entity.getOffset(), entity.getCreatedAt(), entity.getMessageId(),
 				entity.getParameters().stream().map(p -> new StockParameterEntity(p.getUuid(), p.getName(), p.getValue())).collect(Collectors.toList()));
 
+	}
+	
+	public static StockMessageEntity createEntity(StockMessageDto dto, ItemEntity item, BusinessUnitEntity from, BusinessUnitEntity to) {
+		return new StockMessageEntity(null, item, from, to, dto.getAmount(), 0L,
+				dto.getCreatedAt() == null ? DateUtil.now() : dto.getCreatedAt(), dto.getId(),
+				dto.getStockParameters().stream().map(sp -> new StockParameterEntity(sp.getUuid(), sp.getName(), sp.getValue())).collect(Collectors.toList()));		
 	}
 
 }

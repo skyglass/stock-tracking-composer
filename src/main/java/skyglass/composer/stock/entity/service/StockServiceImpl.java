@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.Stock;
+import skyglass.composer.stock.domain.repository.StockBean;
 import skyglass.composer.stock.entity.model.StockEntity;
-import skyglass.composer.stock.entity.repository.StockBean;
 
 @Service
 @Transactional

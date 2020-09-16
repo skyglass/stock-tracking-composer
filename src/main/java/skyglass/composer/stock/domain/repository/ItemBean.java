@@ -1,13 +1,13 @@
-package skyglass.composer.stock.entity.repository;
+package skyglass.composer.stock.domain.repository;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
-import skyglass.composer.stock.entity.model.BusinessUnitEntity;
+import skyglass.composer.stock.entity.model.ItemEntity;
 
 @Repository
 @Transactional
-public class BusinessUnitBean extends AEntityBean<BusinessUnitEntity> {
+public class ItemBean extends AEntityBean<ItemEntity> {
 
 }

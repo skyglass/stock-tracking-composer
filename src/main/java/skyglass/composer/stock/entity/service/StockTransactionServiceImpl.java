@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import skyglass.composer.stock.domain.model.StockTransaction;
-import skyglass.composer.stock.entity.repository.StockTransactionBean;
+import skyglass.composer.stock.domain.repository.StockTransactionBean;
 
 public class StockTransactionServiceImpl implements StockTransactionService {
 	

@@ -141,6 +141,7 @@
                 <constraints nullable="false"/>
             </column>   
 			<column name="pending" type="Boolean" defaultValue="1"/>
+			<column name="canceled" type="Boolean" defaultValue="1"/>
         </createTable>    
         
  	    <addForeignKeyConstraint baseColumnNames="message_uuid" baseTableName="stocktransaction" constraintName="stocktransaction_message_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmessage" validate="true"/>  
@@ -163,6 +164,11 @@
             </column>   
 			<column name="pending" type="Boolean" defaultValue="1"/>    			                                                     
         </createTable>
+        
+ 		<createIndex indexName="unique_transaction_item_transaction_uuid_transactiontype" tableName="transactionitem" unique="true">
+			<column name="transaction_uuid"/>
+			<column name="transactiontype"/>
+		</createIndex>           
         
  	    <addForeignKeyConstraint baseColumnNames="transaction_uuid" baseTableName="transactionitem" constraintName="transactionitem_transaction_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stocktransaction" validate="true"/>          
   	    

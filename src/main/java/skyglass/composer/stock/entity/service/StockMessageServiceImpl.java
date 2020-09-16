@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.domain.model.StockMessage;
+import skyglass.composer.stock.domain.repository.StockMessageBean;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
-import skyglass.composer.stock.entity.repository.StockMessageBean;
 
 @Service
 @Transactional

@@ -1,19 +1,31 @@
-package skyglass.composer.stock.entity.repository;
+package skyglass.composer.stock.domain.repository;
 
 import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.domain.model.StockTransaction;
 import skyglass.composer.stock.entity.model.EntityUtil;
+import skyglass.composer.stock.entity.model.StockMessageEntity;
 import skyglass.composer.stock.entity.model.StockTransactionEntity;
 
+@Repository
+@Transactional(propagation = Propagation.MANDATORY)
 public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 	
+	@Autowired
 	private ItemBean itemBean;
 	
+	@Autowired
 	private BusinessUnitBean businessUnitBean;
 	
+	@Autowired
 	private StockMessageBean stockMessageBean;
 	
 	public StockTransactionEntity findByMessage(String messageUuid) {
@@ -33,6 +45,10 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 		query.setParameter("itemUuid", itemUuid);
 		query.setParameter("businessUnitUuid", businessUnitUuid);
 		return EntityUtil.getListResultSafely(query);
+	}
+	
+	public StockTransactionEntity create(StockMessageEntity stockMessage) {
+		return create(StockTransaction.create(stockMessage));
 	}
 
 }

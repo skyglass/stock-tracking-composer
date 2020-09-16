@@ -9,16 +9,13 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 
 import skyglass.composer.stock.domain.model.BusinessUnit;
+import skyglass.composer.stock.domain.repository.BusinessUnitBean;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
-import skyglass.composer.stock.entity.repository.BusinessUnitBean;
 
 @Component
 class BusinessUnitServiceImpl implements BusinessUnitService {
 
 	private final BusinessUnitBean businessUnitBean;
-
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	BusinessUnitServiceImpl(BusinessUnitBean businessUnitBean) {
 		this.businessUnitBean = businessUnitBean;

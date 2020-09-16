@@ -1,4 +1,4 @@
-package skyglass.composer.stock.entity.repository;
+package skyglass.composer.stock.domain.repository;
 
 import skyglass.composer.stock.entity.model.UserEntity;
 

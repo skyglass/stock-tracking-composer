@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import skyglass.composer.stock.entity.model.StockMessageEntity;
 import skyglass.composer.stock.entity.model.StockTransactionEntity;
+import skyglass.composer.utils.date.DateUtil;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,17 +26,23 @@ public class StockTransaction extends AObject {
 	
 	private boolean pending;
 	
+	private boolean canceled;
+	
 	public static StockTransaction mapEntity(StockTransactionEntity entity) {
-		return new StockTransaction(entity.getUuid(), StockMessage.mapEntity(entity.getMessage()), entity.getCreatedAt(), entity.isPending());
+		return new StockTransaction(entity.getUuid(), StockMessage.mapEntity(entity.getMessage()), entity.getCreatedAt(), entity.isPending(), entity.isCanceled());
 
 	}
 
 	public static StockTransactionEntity map(StockTransaction entity) {
-		return new StockTransactionEntity(entity.getUuid(), StockMessage.map(entity.getMessage()), entity.getCreatedAt(), entity.isPending());
+		return new StockTransactionEntity(entity.getUuid(), StockMessage.map(entity.getMessage()), entity.getCreatedAt(), entity.isPending(), entity.isCanceled());
 	}
 	
 	public static List<StockTransaction> mapEntityList(List<StockTransactionEntity> list) {
 		return list.stream().map(p -> mapEntity(p)).collect(Collectors.toList());
 	}
+	
+	public static StockTransactionEntity create(StockMessageEntity stockMessage) {
+		return new StockTransactionEntity(null, stockMessage, DateUtil.now(), true, false);
+	}	
 
 }

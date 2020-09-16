@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import skyglass.composer.stock.entity.model.StockTransactionEntity;
 import skyglass.composer.stock.entity.model.TransactionItemEntity;
+import skyglass.composer.utils.date.DateUtil;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,6 +36,10 @@ public class TransactionItem extends AObject {
 
 	public static List<TransactionItemEntity> entityList(List<TransactionItem> list) {
 		return list.stream().map(p -> new TransactionItemEntity(p.getUuid(), StockTransaction.map(p.getTransaction()), p.getKey(), p.getTransactionType(), p.getCreatedAt(), p.isPending())).collect(Collectors.toList());
+	}
+	
+	public static TransactionItemEntity create(StockTransactionEntity transaction, String key, TransactionType transactionType) {
+		return new TransactionItemEntity(null, transaction, key, transactionType, DateUtil.now(), true);
 	}
 	
 	

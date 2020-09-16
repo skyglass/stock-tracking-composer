@@ -133,7 +133,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	public E create(E entity)
+	protected E create(E entity)
 			throws AlreadyExistsException, IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity cannot be null");
@@ -157,7 +157,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	public E update(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
+	protected E update(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity cannot be null");
 		}
@@ -192,7 +192,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	public E delete(String uuid) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
+	protected E delete(String uuid) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (StringUtils.isBlank(uuid)) {
 			throw new IllegalArgumentException("UUID cannot neither be null nor empty");
 		}
@@ -200,7 +200,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 		return remove(preDeleteUuid(uuid));
 	}
 
-	public void delete(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
+	protected void delete(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity cannot be null");
 		}
