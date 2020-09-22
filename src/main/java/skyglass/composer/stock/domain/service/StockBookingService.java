@@ -48,11 +48,11 @@ public class StockBookingService {
 
 			stockMessageDto.setId(messageId);
 		}
-		StockUpdate result = stockMessageBean.createFromDto(stockMessageDto);
+		StockMessage result = stockMessageBean.createFromDto(stockMessageDto);
 
 		//stock update must only happen if creation of stock message is successful
-		stockUpdateService.changeStock(result);
-		StockMessage stockMessage = stockMessageService.getByUuid(result.getStockMessageUuid());
+		stockUpdateService.replayTransactions(result);
+		StockMessage stockMessage = stockMessageService.getByUuid(result.getUuid());
 		return stockMessage;
 	}
 

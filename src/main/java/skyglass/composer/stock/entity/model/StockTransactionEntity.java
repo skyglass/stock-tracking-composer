@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class StockTransactionEntity extends AEntity {
-	
+
 	private static final long serialVersionUID = 2280715366097558839L;
 
 	@Id
@@ -31,14 +31,18 @@ public class StockTransactionEntity extends AEntity {
 
 	@ManyToOne(optional = false)
 	private StockMessageEntity message;
-	
+
 	@Column(nullable = false)
 	private Date createdAt;
-	
+
 	@Column
 	private boolean pending;
-	
+
 	@Column
 	private boolean canceled;
+
+	public void setPending(boolean pending) {
+		this.pending = pending;
+	}
 
 }

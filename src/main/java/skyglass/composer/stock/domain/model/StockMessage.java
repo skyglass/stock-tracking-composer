@@ -3,6 +3,7 @@ package skyglass.composer.stock.domain.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +41,15 @@ public class StockMessage extends AObject {
 
 	private List<StockParameter> parameters = new ArrayList<>();
 
+	public boolean isBetweenUnits() {
+		return !Objects.equals(from.getUuid(), to.getUuid());
+	}
+
+	public boolean shouldUpdateStock() {
+		//if business units are the same , then don't need to update the stocks
+		return isBetweenUnits();
+	}
+
 	public static StockMessage mapEntity(StockMessageEntity entity) {
 		return new StockMessage(entity.getUuid(), new Item(entity.getItem().getUuid(), entity.getItem().getName()),
 				new BusinessUnit(entity.getFrom().getUuid(), entity.getFrom().getName()),
@@ -58,11 +68,11 @@ public class StockMessage extends AObject {
 				entity.getParameters().stream().map(p -> new StockParameterEntity(p.getUuid(), p.getName(), p.getValue())).collect(Collectors.toList()));
 
 	}
-	
+
 	public static StockMessageEntity createEntity(StockMessageDto dto, ItemEntity item, BusinessUnitEntity from, BusinessUnitEntity to) {
 		return new StockMessageEntity(null, item, from, to, dto.getAmount(), 0L,
 				dto.getCreatedAt() == null ? DateUtil.now() : dto.getCreatedAt(), dto.getId(),
-				dto.getStockParameters().stream().map(sp -> new StockParameterEntity(sp.getUuid(), sp.getName(), sp.getValue())).collect(Collectors.toList()));		
+				dto.getStockParameters().stream().map(sp -> new StockParameterEntity(sp.getUuid(), sp.getName(), sp.getValue())).collect(Collectors.toList()));
 	}
 
 }

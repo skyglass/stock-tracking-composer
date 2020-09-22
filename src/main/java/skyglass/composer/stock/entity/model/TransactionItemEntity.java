@@ -31,20 +31,24 @@ public class TransactionItemEntity extends AEntity {
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
 	@GeneratedValue(generator = "UUID")
 	private String uuid;
-	
+
 	@ManyToOne(optional = false)
 	private StockTransactionEntity transaction;
-	
+
 	@Column(nullable = false)
 	private String key;
-	
+
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
 
 	@Column(nullable = false)
 	private Date createdAt;
-	
+
 	@Column
 	private boolean pending;
+
+	public void setPending(boolean pending) {
+		this.pending = pending;
+	}
 
 }

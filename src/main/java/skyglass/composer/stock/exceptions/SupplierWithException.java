@@ -1,4 +1,4 @@
-package skyglass.composer.test.util;
+package skyglass.composer.stock.exceptions;
 
 import java.util.function.Supplier;
 

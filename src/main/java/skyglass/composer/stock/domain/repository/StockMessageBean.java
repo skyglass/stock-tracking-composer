@@ -12,7 +12,6 @@ import skyglass.composer.stock.domain.dto.StockMessageDto;
 import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.domain.model.TransactionType;
-import skyglass.composer.stock.domain.service.StockUpdate;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
@@ -22,16 +21,16 @@ import skyglass.composer.stock.entity.model.StockTransactionEntity;
 @Repository
 @Transactional
 public class StockMessageBean extends AEntityBean<StockMessageEntity> {
-	
+
 	@Autowired
 	private ItemBean itemBean;
 
 	@Autowired
 	private BusinessUnitBean businessUnitBean;
-	
+
 	@Autowired
 	private StockTransactionBean stockTransactionBean;
-	
+
 	@Autowired
 	private TransactionItemBean transactionItemBean;
 
@@ -45,8 +44,8 @@ public class StockMessageBean extends AEntityBean<StockMessageEntity> {
 		query.setMaxResults(1);
 		return EntityUtil.getSingleResultSafely(query);
 	}
-	
-	public StockUpdate createFromDto(StockMessageDto dto) {
+
+	public StockMessage createFromDto(StockMessageDto dto) {
 		ItemEntity item = itemBean.findByUuidSecure(dto.getItemUuid());
 		BusinessUnitEntity from = businessUnitBean.findByUuidSecure(dto.getFromUuid());
 		BusinessUnitEntity to = businessUnitBean.findByUuidSecure(dto.getToUuid());
@@ -54,9 +53,7 @@ public class StockMessageBean extends AEntityBean<StockMessageEntity> {
 		StockTransactionEntity transaction = stockTransactionBean.create(stockMessage);
 		transactionItemBean.create(transaction, Stock.key(item.getUuid(), from.getUuid()), TransactionType.StockFrom);
 		transactionItemBean.create(transaction, Stock.key(item.getUuid(), to.getUuid()), TransactionType.StockTo);
-		return StockUpdate.create(item, from, to, stockMessage)	;	
+		return StockMessage.mapEntity(stockMessage);
 	}
-	
-	
 
 }

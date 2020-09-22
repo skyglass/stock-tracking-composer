@@ -33,4 +33,8 @@ public class StockParameter extends AObject {
 		return list.stream().map(p -> new StockParameterEntity(null, p.getName(), p.getValue())).collect(Collectors.toList());
 	}
 
+	public static List<StockParameterEntity> copyEntityList(List<StockParameter> list) {
+		return list.stream().map(p -> new StockParameterEntity(null, p.getName(), p.getValue())).collect(Collectors.toList());
+	}
+
 }

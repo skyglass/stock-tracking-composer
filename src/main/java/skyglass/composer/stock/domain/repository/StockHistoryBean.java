@@ -20,13 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import skyglass.composer.stock.AEntityBean;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
+import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.domain.model.StockParameter;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
-import skyglass.composer.stock.entity.model.StockEntity;
 import skyglass.composer.stock.entity.model.StockHistoryEntity;
-import skyglass.composer.stock.entity.model.StockMessageEntity;
 import skyglass.composer.stock.exceptions.AlreadyExistsException;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
 
@@ -101,14 +100,13 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 		throw new UnsupportedOperationException("update method is not supported. Please, only use createHistoryForBusinessUnitAndItem(...) methods for update of stock history entities");
 	}
 
-	public StockHistoryEntity createHistory(StockEntity stock, StockMessageEntity stockMessage, ItemEntity item, BusinessUnitEntity businessUnit, boolean isFrom) {
-		return createHistoryForItemAndBusinessUnit(item, businessUnit, stock, stockMessage, isFrom);
+	public StockHistoryEntity createHistory(StockMessage stockMessage, ItemEntity item, BusinessUnitEntity businessUnit, double delta) {
+		return createHistoryForItemAndBusinessUnit(item, businessUnit, stockMessage, delta);
 	}
 
 	@NotNull
-	private StockHistoryEntity createHistoryForItemAndBusinessUnit(ItemEntity item, BusinessUnitEntity businessUnit, StockEntity stock, StockMessageEntity stockMessage, boolean isFrom) {
+	private StockHistoryEntity createHistoryForItemAndBusinessUnit(ItemEntity item, BusinessUnitEntity businessUnit, StockMessage stockMessage, double delta) {
 		Date validityDate = stockMessage.getCreatedAt();
-		double delta = isFrom ? -stockMessage.getAmount() : stockMessage.getAmount();
 
 		List<StockHistoryEntity> previousList = findValidPreviousList(item, businessUnit, validityDate);
 		StockHistoryEntity previous = null;
@@ -126,7 +124,7 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 		double currentValue = previous != null ? previous.getAmount() : 0;
 
 		StockHistoryEntity valid = new StockHistoryEntity(null, item, businessUnit, currentValue + delta, validityDate, previous != null ? previous.getEndDate() : null,
-				StockParameter.copyList(stockMessage.getParameters()));
+				StockParameter.copyEntityList(stockMessage.getParameters()));
 
 		StockHistoryEntity next = findValidNext(item, businessUnit, validityDate);
 

@@ -1,9 +1,7 @@
 package skyglass.composer.stock.entity.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -18,13 +16,11 @@ import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
-import skyglass.composer.stock.AEntityBean;
 import skyglass.composer.stock.domain.dto.AEntityDTOFactory;
 import skyglass.composer.stock.domain.model.IdObject;
 import skyglass.composer.stock.exceptions.NotUniqueException;
 
 public class EntityUtil {
-	
 
 	public static final int DEFAULT_PAGINATED_MAX_RESULTS = 100;
 
@@ -32,7 +28,7 @@ public class EntityUtil {
 
 	public static <T extends IdObject> Map<String, T> asMap(Collection<? extends T> entities) {
 		if (entities == null) {
-			return new HashMap<>();
+			return Collections.emptyMap();
 		}
 
 		return entities.stream().collect(Collectors.toMap(entity -> entity.getUuid(), entity -> entity));
@@ -149,7 +145,7 @@ public class EntityUtil {
 			}
 		}
 
-		return new ArrayList<>();
+		return Collections.emptyList();
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -172,7 +168,7 @@ public class EntityUtil {
 			}
 		}
 
-		return new ArrayList();
+		return Collections.emptyList();
 	}
 
 	public static <E> Collection<E> findPaginated(TypedQuery<E> typedQuery, int offset, int limit) {
