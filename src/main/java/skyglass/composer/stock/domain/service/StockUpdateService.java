@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.model.TransactionType;
 import skyglass.composer.stock.domain.repository.StockTransactionBean;
 import skyglass.composer.stock.exceptions.ClientException;
 import skyglass.composer.stock.exceptions.InvalidTransactionStateException;
@@ -51,27 +50,20 @@ public class StockUpdateService {
 		boolean success = false;
 		try {
 			if (stockMessage.shouldUpdateStock()) {
-				if (!stockTransactionBean.isCommitted(stockMessage, TransactionType.StockFrom)) {
-					stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getFrom(),
-							() -> stockUpdateBean.changeStockFrom(stockMessage));
-				}
+				stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getFrom(),
+						() -> stockUpdateBean.changeStockFrom(stockMessage));
 
-				if (!stockTransactionBean.isCommitted(stockMessage, TransactionType.StockTo)) {
-					stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getTo(),
-							() -> stockUpdateBean.changeStockTo(stockMessage));
-				}
+				stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getTo(),
+						() -> stockUpdateBean.changeStockTo(stockMessage));
 			}
 			success = true;
 		} catch (TransactionRollbackException e) {
 			try {
-				if (stockTransactionBean.isCommitted(stockMessage, TransactionType.StockFrom)) {
-					stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getFrom(),
-							() -> stockUpdateBean.revertStockFrom(stockMessage));
-				}
-				if (stockTransactionBean.isCommitted(stockMessage, TransactionType.StockTo)) {
-					stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getTo(),
-							() -> stockUpdateBean.revertStockTo(stockMessage));
-				}
+				stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getFrom(),
+						() -> stockUpdateBean.revertStockFrom(stockMessage));
+				stockUpdateProcessor.updateStock(stockMessage.getItem(), stockMessage.getTo(),
+						() -> stockUpdateBean.revertStockTo(stockMessage));
+
 				success = true;
 			} catch (TransactionRollbackException e2) {
 				throw new InvalidTransactionStateException("Programming Error during Transaction Rollback. Please, fix the code!", e);

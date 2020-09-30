@@ -6,9 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
 import skyglass.composer.stock.domain.model.BusinessUnit;
+import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
+import skyglass.composer.stock.domain.model.TransactionType;
 import skyglass.composer.stock.domain.repository.StockBean;
 import skyglass.composer.stock.domain.repository.StockHistoryBean;
+import skyglass.composer.stock.domain.repository.StockTransactionBean;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockEntity;
@@ -24,20 +27,31 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 	@Autowired
 	private StockHistoryBean stockHistoryBean;
 
+	@Autowired
+	private StockTransactionBean stockTransactionBean;
+
 	public void changeStockTo(StockMessage stockMessage) throws TransactionRollbackException {
-		changeStock(stockMessage, stockMessage.getTo(), true, false);
+		if (!stockTransactionBean.isCommitted(stockMessage, TransactionType.StockTo)) {
+			changeStock(stockMessage, stockMessage.getTo(), true, false);
+		}
 	}
 
 	public void changeStockFrom(StockMessage stockMessage) throws TransactionRollbackException {
-		changeStock(stockMessage, stockMessage.getFrom(), false, false);
+		if (!stockTransactionBean.isCommitted(stockMessage, TransactionType.StockFrom)) {
+			changeStock(stockMessage, stockMessage.getFrom(), false, false);
+		}
 	}
 
 	public void revertStockTo(StockMessage stockMessage) throws TransactionRollbackException {
-		changeStock(stockMessage, stockMessage.getTo(), false, true);
+		if (stockTransactionBean.isCommitted(stockMessage, TransactionType.StockTo)) {
+			changeStock(stockMessage, stockMessage.getTo(), false, true);
+		}
 	}
 
 	public void revertStockFrom(StockMessage stockMessage) throws TransactionRollbackException {
-		changeStock(stockMessage, stockMessage.getFrom(), true, true);
+		if (stockTransactionBean.isCommitted(stockMessage, TransactionType.StockFrom)) {
+			changeStock(stockMessage, stockMessage.getFrom(), true, true);
+		}
 	}
 
 	public void changeStock(StockMessage stockMessage, BusinessUnit businessUnit, boolean increase, boolean isCompensatingTransaction) throws TransactionRollbackException {
@@ -65,7 +79,7 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 	}
 
 	private boolean isStockValid(StockEntity stock, double delta) {
-		return stock.isActive() && stock.getAmount() + delta >= 0;
+		return stock.isActive() && (Stock.isStockCenter(stock) || stock.getAmount() + delta >= 0);
 	}
 
 }

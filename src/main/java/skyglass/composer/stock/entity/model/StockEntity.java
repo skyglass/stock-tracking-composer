@@ -35,14 +35,14 @@ public class StockEntity extends AEntity {
 
 	@Column(nullable = false)
 	private Double amount;
-	
+
 	@Column
 	private boolean active;
 
 	public void updateAmount(double amount) {
 		this.amount = this.amount + amount;
 	}
-	
+
 	public static StockEntity create(ItemEntity item, BusinessUnitEntity businessUnit) {
 		return new StockEntity(null, item, businessUnit, 0D, true);
 	}
