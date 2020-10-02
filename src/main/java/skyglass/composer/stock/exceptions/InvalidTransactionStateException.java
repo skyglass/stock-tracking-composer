@@ -8,4 +8,8 @@ public class InvalidTransactionStateException extends RuntimeException {
 		super(message, e);
 	}
 
+	public InvalidTransactionStateException(String message) {
+		super(message);
+	}
+
 }

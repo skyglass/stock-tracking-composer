@@ -21,7 +21,7 @@ import skyglass.composer.stock.test.helper.StockBookingTestHelper;
 import skyglass.composer.test.config.TestDataConstants;
 import skyglass.composer.test.config.TestDateUtil;
 
-//@ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
+// @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
 public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired
@@ -66,35 +66,46 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		invokeAll();
 
 		Stock stock = stockService.findByItemAndBusinessUnit(existingItem, stockCenter);
-		checkStock(stock, stockCenter, -200D);
+		checkStock(stock, stockCenter, -400D);
 		stock = stockService.findByItemAndBusinessUnit(existingItem, existingBusinessUnit);
-		checkStock(stock, existingBusinessUnit, 100D);
+		checkStock(stock, existingBusinessUnit, 200D);
 		stock = stockService.findByItemAndBusinessUnit(existingItem, existingBusinessUnit2);
-		checkStock(stock, existingBusinessUnit2, 100D);
+		checkStock(stock, existingBusinessUnit2, 200D);
 
 		List<StockHistory> history = stockHistoryService.find(existingItem, stockCenter);
-		checkStockHistory(history, stockCenter, 0D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
-		checkStockHistory(history, stockCenter, -100D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
-		checkStockHistory(history, stockCenter, -200D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
-		checkStockHistory(history, stockCenter, -200D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
-		checkStockHistory(history, stockCenter, -200D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
+		checkStockHistory(history, stockCenter, 0D, TestDateUtil.parseDateTime("2017-11-01 00:00:00"));
+		checkStockHistory(history, stockCenter, -100D, TestDateUtil.parseDateTime("2017-11-01 05:00:00"));
+		checkStockHistory(history, stockCenter, -200D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
+		checkStockHistory(history, stockCenter, -300D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
+		checkStockHistory(history, stockCenter, -400D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
+		checkStockHistory(history, stockCenter, -400D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
+		checkStockHistory(history, stockCenter, -400D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
 
 		history = stockHistoryService.find(existingItem, existingBusinessUnit);
-		checkStockHistory(history, existingBusinessUnit, 0D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit, 97D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 0D, TestDateUtil.parseDateTime("2017-11-01 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-01 05:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 100D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 200D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 200D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 197D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 200D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
 
 		history = stockHistoryService.find(existingItem, existingBusinessUnit2);
-		checkStockHistory(history, existingBusinessUnit2, 0D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit2, 0D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit2, 100D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit2, 103D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
-		checkStockHistory(history, existingBusinessUnit2, 100D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 0D, TestDateUtil.parseDateTime("2017-11-01 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 0D, TestDateUtil.parseDateTime("2017-11-01 05:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 100D, TestDateUtil.parseDateTime("2017-11-02 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 100D, TestDateUtil.parseDateTime("2017-11-03 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 200D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 203D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 200D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
 	}
 
 	private void setupStock() {
+		stockBookingTestHelper.createStockMessage(existingItem, stockCenter, existingBusinessUnit, 100D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-01 00:00:01")));
+		stockBookingTestHelper.createStockMessage(existingItem, stockCenter, existingBusinessUnit2, 100D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-01 05:00:01")));
+
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit, 100D,
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-02 00:00:01"))));
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit2, 100D,

@@ -9,14 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
 import skyglass.composer.stock.domain.dto.StockMessageDto;
-import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.model.TransactionType;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
-import skyglass.composer.stock.entity.model.StockTransactionEntity;
 
 @Repository
 @Transactional
@@ -30,9 +27,6 @@ public class StockMessageBean extends AEntityBean<StockMessageEntity> {
 
 	@Autowired
 	private StockTransactionBean stockTransactionBean;
-
-	@Autowired
-	private TransactionItemBean transactionItemBean;
 
 	public StockMessageEntity findByMessageId(String messageId) {
 		if (StringUtils.isBlank(messageId)) {
@@ -50,9 +44,7 @@ public class StockMessageBean extends AEntityBean<StockMessageEntity> {
 		BusinessUnitEntity from = businessUnitBean.findByUuidSecure(dto.getFromUuid());
 		BusinessUnitEntity to = businessUnitBean.findByUuidSecure(dto.getToUuid());
 		StockMessageEntity stockMessage = create(StockMessage.createEntity(dto, item, from, to));
-		StockTransactionEntity transaction = stockTransactionBean.create(stockMessage);
-		transactionItemBean.create(transaction, Stock.key(item.getUuid(), from.getUuid()), TransactionType.StockFrom);
-		transactionItemBean.create(transaction, Stock.key(item.getUuid(), to.getUuid()), TransactionType.StockTo);
+		stockTransactionBean.create(stockMessage);
 		return StockMessage.mapEntity(stockMessage);
 	}
 

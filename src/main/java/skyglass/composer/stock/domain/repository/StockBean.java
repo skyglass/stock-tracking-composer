@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.domain.model.BusinessUnit;
+import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
@@ -94,10 +96,17 @@ public class StockBean extends AEntityBean<StockEntity> {
 	}
 
 	@NotNull
+	public void deactivateStock(Item item, BusinessUnit businessUnit) {
+
+		TypedQuery<StockEntity> query = stockQueryByItemUuidAndBusinessUnitUuid(itemUuid, businessUnitUuid);
+		return EntityUtil.getSingleResultSafely(query);
+	}
+
+	@NotNull
 	public StockEntity findOrCreateByItemAndBusinessUnit(ItemEntity item, BusinessUnitEntity businessUnit) {
 		StockEntity result = findByItemUuidAndBusinessUnitUuid(item.getUuid(), businessUnit.getUuid());
 		if (result == null) {
-			StockEntity stock =  StockEntity.create(item, businessUnit);
+			StockEntity stock = StockEntity.create(item, businessUnit);
 			result = entityBeanUtil.persist(stock);
 		}
 		return result;

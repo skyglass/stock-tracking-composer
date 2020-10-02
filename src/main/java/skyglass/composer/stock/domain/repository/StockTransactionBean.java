@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import skyglass.composer.stock.AEntityBean;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
+import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.domain.model.StockTransaction;
 import skyglass.composer.stock.domain.model.TransactionType;
@@ -20,6 +21,7 @@ import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
 import skyglass.composer.stock.entity.model.StockTransactionEntity;
 import skyglass.composer.stock.entity.model.TransactionItemEntity;
+import skyglass.composer.stock.exceptions.InvalidTransactionStateException;
 
 @Repository
 @Transactional
@@ -79,26 +81,45 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 		return create(StockTransaction.create(stockMessage));
 	}
 
-	public boolean isCommitted(StockMessage stockMessage, TransactionType transactionType) {
+	public boolean isCommitted(StockMessage stockMessage, Item item, BusinessUnit businessUnit, TransactionType transactionType) {
 		StockTransactionEntity transaction = findByMessage(stockMessage);
 		TransactionItemEntity transactionItem = transactionItemBean.findByTransactionType(transaction, transactionType);
+		if (transactionItem == null) {
+			transactionItem = transactionItemBean.create(transaction, Stock.key(item.getUuid(), businessUnit.getUuid()), transactionType);
+		}
 		return !transactionItem.isPending();
 	}
 
-	public void commitTransactionItem(StockMessage stockMessage, TransactionType transactionType) {
+	public void commitTransactionItem(StockMessage stockMessage, Item item, BusinessUnit businessUnit, TransactionType transactionType) {
 		StockTransactionEntity transaction = findByMessage(stockMessage);
 		TransactionItemEntity transactionItem = transactionItemBean.findByTransactionType(transaction, transactionType);
+		if (transactionItem == null) {
+			throw new InvalidTransactionStateException("Programming Error during Transaction Item Commit. Please, fix the code!");
+		}
 		if (transactionItem.isPending()) {
 			transactionItem.setPending(false);
 			entityBeanUtil.merge(transactionItem);
+		} else {
+			throw new InvalidTransactionStateException("Programming Error during Transaction Item Commit. Please, fix the code!");
 		}
 	}
 
 	public void commitTransaction(StockMessage stockMessage) {
+		assertNoPendingTransactionItems(stockMessage);
 		StockTransactionEntity transaction = findByMessage(stockMessage);
 		if (transaction.isPending()) {
 			transaction.setPending(false);
 			entityBeanUtil.merge(transaction);
+		}
+	}
+
+	private void assertNoPendingTransactionItems(StockMessage stockMessage) {
+		String queryStr = "SELECT COUNT(ti.uuid) FROM TransactionItemEntity ti JOIN ti.transaction t WHERE t.message.uuid = :messageUuid";
+		TypedQuery<Long> query = entityBeanUtil.createQuery(queryStr, Long.class);
+		query.setParameter("messageUuid", stockMessage.getUuid());
+		Long result = EntityUtil.getSingleResultSafely(query);
+		if (result == null || result == 0) {
+			throw new InvalidTransactionStateException("Programming Error during Transaction Item Commit. Please, fix the code!");
 		}
 	}
 

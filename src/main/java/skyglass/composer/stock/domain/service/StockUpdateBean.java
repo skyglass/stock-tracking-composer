@@ -31,30 +31,43 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 	private StockTransactionBean stockTransactionBean;
 
 	public void changeStockTo(StockMessage stockMessage) throws TransactionRollbackException {
-		if (!stockTransactionBean.isCommitted(stockMessage, TransactionType.StockTo)) {
-			changeStock(stockMessage, stockMessage.getTo(), true, false);
+		if (!stockTransactionBean.isCommitted(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockTo)) {
+			changeStock(stockMessage, stockMessage.getTo(), true, false, TransactionType.StockTo);
+			stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockTo);
 		}
 	}
 
 	public void changeStockFrom(StockMessage stockMessage) throws TransactionRollbackException {
-		if (!stockTransactionBean.isCommitted(stockMessage, TransactionType.StockFrom)) {
-			changeStock(stockMessage, stockMessage.getFrom(), false, false);
+		if (!stockTransactionBean.isCommitted(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFrom)) {
+			changeStock(stockMessage, stockMessage.getFrom(), false, false, TransactionType.StockFrom);
+			stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFrom);
 		}
 	}
 
 	public void revertStockTo(StockMessage stockMessage) throws TransactionRollbackException {
-		if (stockTransactionBean.isCommitted(stockMessage, TransactionType.StockTo)) {
-			changeStock(stockMessage, stockMessage.getTo(), false, true);
+		if (stockTransactionBean.isCommitted(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockTo)) {
+			if (!stockTransactionBean.isCommitted(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockToRevert)) {
+				changeStock(stockMessage, stockMessage.getTo(), false, true, TransactionType.StockToRevert);
+				stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockToRevert);
+			}
+		} else {
+			stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockTo);
 		}
 	}
 
 	public void revertStockFrom(StockMessage stockMessage) throws TransactionRollbackException {
-		if (stockTransactionBean.isCommitted(stockMessage, TransactionType.StockFrom)) {
-			changeStock(stockMessage, stockMessage.getFrom(), true, true);
+		if (stockTransactionBean.isCommitted(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFrom)) {
+			if (!stockTransactionBean.isCommitted(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFromRevert)) {
+				changeStock(stockMessage, stockMessage.getFrom(), true, true, TransactionType.StockFromRevert);
+				stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFromRevert);
+			}
+		} else {
+			stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFrom);
 		}
 	}
 
-	public void changeStock(StockMessage stockMessage, BusinessUnit businessUnit, boolean increase, boolean isCompensatingTransaction) throws TransactionRollbackException {
+	public void changeStock(StockMessage stockMessage, BusinessUnit businessUnit, boolean increase, boolean isCompensatingTransaction, TransactionType transactionType)
+			throws TransactionRollbackException {
 		ItemEntity item = entityBeanUtil.find(ItemEntity.class, stockMessage.getItem().getUuid());
 		BusinessUnitEntity businessUnitEntity = entityBeanUtil.find(BusinessUnitEntity.class, businessUnit.getUuid());
 		StockEntity stock = stockBean.findOrCreateByItemAndBusinessUnit(item, businessUnitEntity);
