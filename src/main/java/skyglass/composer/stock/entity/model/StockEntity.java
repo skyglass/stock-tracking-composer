@@ -43,6 +43,10 @@ public class StockEntity extends AEntity {
 		this.amount = this.amount + amount;
 	}
 
+	public void deactivate() {
+		this.active = false;
+	}
+
 	public static StockEntity create(ItemEntity item, BusinessUnitEntity businessUnit) {
 		return new StockEntity(null, item, businessUnit, 0D, true);
 	}

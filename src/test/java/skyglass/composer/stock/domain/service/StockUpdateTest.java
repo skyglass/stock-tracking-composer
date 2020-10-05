@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
@@ -18,10 +19,11 @@ import skyglass.composer.stock.entity.service.ItemService;
 import skyglass.composer.stock.entity.service.StockHistoryService;
 import skyglass.composer.stock.entity.service.StockService;
 import skyglass.composer.stock.test.helper.StockBookingTestHelper;
+import skyglass.composer.stock.test.reset.AbstractBaseTest;
 import skyglass.composer.test.config.TestDataConstants;
 import skyglass.composer.test.config.TestDateUtil;
 
-// @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
+@ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
 public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired
@@ -65,11 +67,13 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 		invokeAll();
 
-		Stock stock = stockService.findByItemAndBusinessUnit(existingItem, stockCenter);
+		setupInvalidStock();
+
+		Stock stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), stockCenter.getUuid());
 		checkStock(stock, stockCenter, -400D);
-		stock = stockService.findByItemAndBusinessUnit(existingItem, existingBusinessUnit);
+		stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), existingBusinessUnit.getUuid());
 		checkStock(stock, existingBusinessUnit, 200D);
-		stock = stockService.findByItemAndBusinessUnit(existingItem, existingBusinessUnit2);
+		stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), existingBusinessUnit2.getUuid());
 		checkStock(stock, existingBusinessUnit2, 200D);
 
 		List<StockHistory> history = stockHistoryService.find(existingItem, stockCenter);
@@ -89,6 +93,8 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		checkStockHistory(history, existingBusinessUnit, 200D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
 		checkStockHistory(history, existingBusinessUnit, 197D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
 		checkStockHistory(history, existingBusinessUnit, 200D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 200D, TestDateUtil.parseDateTime("2017-11-07 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit, 200D, TestDateUtil.parseDateTime("2017-11-08 00:00:00"));
 
 		history = stockHistoryService.find(existingItem, existingBusinessUnit2);
 		checkStockHistory(history, existingBusinessUnit2, 0D, TestDateUtil.parseDateTime("2017-11-01 00:00:00"));
@@ -98,6 +104,8 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		checkStockHistory(history, existingBusinessUnit2, 200D, TestDateUtil.parseDateTime("2017-11-04 00:00:00"));
 		checkStockHistory(history, existingBusinessUnit2, 203D, TestDateUtil.parseDateTime("2017-11-05 00:00:00"));
 		checkStockHistory(history, existingBusinessUnit2, 200D, TestDateUtil.parseDateTime("2017-11-06 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 200D, TestDateUtil.parseDateTime("2017-11-07 00:00:00"));
+		checkStockHistory(history, existingBusinessUnit2, 200D, TestDateUtil.parseDateTime("2017-11-08 00:00:00"));
 	}
 
 	private void setupStock() {
@@ -114,6 +122,27 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-04 00:00:01"))));
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, existingBusinessUnit2, existingBusinessUnit, 3D,
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-05 00:00:01"))));
+	}
+
+	private void setupInvalidStock() {
+		stockBookingTestHelper.createStockMessage(existingItem, existingBusinessUnit, existingBusinessUnit2, 201D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-07 00:00:01")));
+
+		Stock stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), stockCenter.getUuid());
+		checkStock(stock, stockCenter, -400D);
+		stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), existingBusinessUnit.getUuid());
+		checkStock(stock, existingBusinessUnit, 200D);
+		stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), existingBusinessUnit2.getUuid());
+		checkStock(stock, existingBusinessUnit2, 200D);
+
+		stockService.deactivate(existingItem.getUuid(), existingBusinessUnit2.getUuid());
+		stockBookingTestHelper.createStockMessage(existingItem, existingBusinessUnit, existingBusinessUnit2, 100D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-07 00:00:01")));
+
+		stockService.deactivate(existingItem.getUuid(), existingBusinessUnit.getUuid());
+		stockBookingTestHelper.createStockMessage(existingItem, existingBusinessUnit, existingBusinessUnit2, 100D,
+				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-07 00:00:01")));
+
 	}
 
 	private void checkStock(Stock stock, BusinessUnit businessUnit, Double amount) {

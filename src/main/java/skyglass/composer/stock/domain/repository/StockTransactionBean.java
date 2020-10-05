@@ -83,6 +83,9 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 
 	public boolean isCommitted(StockMessage stockMessage, Item item, BusinessUnit businessUnit, TransactionType transactionType) {
 		StockTransactionEntity transaction = findByMessage(stockMessage);
+		if (transaction == null) {
+			return true;
+		}
 		TransactionItemEntity transactionItem = transactionItemBean.findByTransactionType(transaction, transactionType);
 		if (transactionItem == null) {
 			transactionItem = transactionItemBean.create(transaction, Stock.key(item.getUuid(), businessUnit.getUuid()), transactionType);

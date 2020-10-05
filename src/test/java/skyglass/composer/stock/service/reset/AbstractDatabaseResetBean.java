@@ -21,8 +21,8 @@ import skyglass.composer.stock.exceptions.ClientException;
 public abstract class AbstractDatabaseResetBean {
 	private static final Logger log = LoggerFactory.getLogger(AbstractDatabaseResetBean.class);
 
-	private static final String[] RESET_TABLE_NAMES = { "STOCK", "STOCKHISTORY", "STOCKMESSAGE", "STOCKPARAMETER", "KEYLOCK", "KEYOFFSET", "stockmessage_stockparameter", "stocktransaction", "transactionitem",
-			"stockhistory_stockparameter"};
+	private static final String[] RESET_TABLE_NAMES = { "STOCK", "stockhistory_stockparameter", "STOCKHISTORY", "transactionitem", "stocktransaction", "stockmessage_stockparameter", "STOCKMESSAGE",
+			"STOCKPARAMETER", "KEYLOCK", "KEYOFFSET" };
 
 	private static final String[] RESET_H2_TABLE_NAMES = {};
 

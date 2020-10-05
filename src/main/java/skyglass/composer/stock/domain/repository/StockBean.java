@@ -12,8 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.AEntityBean;
-import skyglass.composer.stock.domain.model.BusinessUnit;
-import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
@@ -83,28 +81,24 @@ public class StockBean extends AEntityBean<StockEntity> {
 	}
 
 	@NotNull
-	public StockEntity findByItemUuidAndBusinessUnitUuid(String itemUuid, String businessUnitUuid) {
-		if (StringUtils.isAnyBlank(itemUuid, businessUnitUuid)) {
-			return null;
-		}
-
-		itemBean.findByUuidSecure(itemUuid);
-		businessUnitBean.findByUuidSecure(businessUnitUuid);
-
-		TypedQuery<StockEntity> query = stockQueryByItemUuidAndBusinessUnitUuid(itemUuid, businessUnitUuid);
+	public StockEntity findByItemAndBusinessUnit(String itemUuid, String businessUnitUuid) {
+		TypedQuery<StockEntity> query = stockQueryByItemAndBusinessUnit(itemUuid, businessUnitUuid);
 		return EntityUtil.getSingleResultSafely(query);
 	}
 
 	@NotNull
-	public void deactivateStock(Item item, BusinessUnit businessUnit) {
-
-		TypedQuery<StockEntity> query = stockQueryByItemUuidAndBusinessUnitUuid(itemUuid, businessUnitUuid);
-		return EntityUtil.getSingleResultSafely(query);
+	public StockEntity deactivateStock(String itemUuid, String businessUnitUuid) {
+		StockEntity stock = findByItemAndBusinessUnit(itemUuid, businessUnitUuid);
+		if (stock.isActive()) {
+			stock.deactivate();
+			entityBeanUtil.merge(stock);
+		}
+		return stock;
 	}
 
 	@NotNull
 	public StockEntity findOrCreateByItemAndBusinessUnit(ItemEntity item, BusinessUnitEntity businessUnit) {
-		StockEntity result = findByItemUuidAndBusinessUnitUuid(item.getUuid(), businessUnit.getUuid());
+		StockEntity result = findByItemAndBusinessUnit(item.getUuid(), businessUnit.getUuid());
 		if (result == null) {
 			StockEntity stock = StockEntity.create(item, businessUnit);
 			result = entityBeanUtil.persist(stock);
@@ -112,7 +106,7 @@ public class StockBean extends AEntityBean<StockEntity> {
 		return result;
 	}
 
-	private TypedQuery<StockEntity> stockQueryByItemUuidAndBusinessUnitUuid(String itemUuid, String businessUnitUuid) {
+	private TypedQuery<StockEntity> stockQueryByItemAndBusinessUnit(String itemUuid, String businessUnitUuid) {
 		String queryStr = "SELECT st FROM StockEntity st WHERE st.item.uuid = :itemUuid "
 				+ "AND st.businessUnit.uuid = :businessUnitUuid";
 		TypedQuery<StockEntity> query = entityBeanUtil.createQuery(queryStr, StockEntity.class);

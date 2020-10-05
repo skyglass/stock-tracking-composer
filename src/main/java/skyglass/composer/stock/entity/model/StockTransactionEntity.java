@@ -38,9 +38,6 @@ public class StockTransactionEntity extends AEntity {
 	@Column
 	private boolean pending;
 
-	@Column
-	private boolean canceled;
-
 	public void setPending(boolean pending) {
 		this.pending = pending;
 	}

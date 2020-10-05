@@ -1,7 +1,5 @@
 package skyglass.composer.stock.entity.service;
 
-import skyglass.composer.stock.domain.model.BusinessUnit;
-import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.Stock;
 
 public interface StockService {
@@ -10,6 +8,8 @@ public interface StockService {
 
 	Stock getByUuid(String uuid);
 
-	Stock findByItemAndBusinessUnit(Item item, BusinessUnit businessUnit);
+	Stock findByItemAndBusinessUnit(String itemUuid, String businessUnitUuid);
+
+	Stock deactivate(String itemUuid, String businessUnitUuid);
 
 }

@@ -23,6 +23,12 @@ class StockServiceImpl implements StockService {
 	@Autowired
 	private StockBean stockBean;
 
+	@Autowired
+	private ItemService itemService;
+
+	@Autowired
+	private BusinessUnitService businessUnitService;
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -44,8 +50,17 @@ class StockServiceImpl implements StockService {
 	}
 
 	@Override
-	public Stock findByItemAndBusinessUnit(Item item, BusinessUnit businessUnit) {
-		return Stock.mapEntity(stockBean.findByItemUuidAndBusinessUnitUuid(item.getUuid(), businessUnit.getUuid()));
+	public Stock findByItemAndBusinessUnit(String itemUuid, String businessUnitUuid) {
+		Item item = itemService.getByUuid(itemUuid);
+		BusinessUnit businessUnit = businessUnitService.getByUuid(businessUnitUuid);
+		return Stock.mapEntity(stockBean.findByItemAndBusinessUnit(item.getUuid(), businessUnit.getUuid()));
+	}
+
+	@Override
+	public Stock deactivate(String itemUuid, String businessUnitUuid) {
+		Item item = itemService.getByUuid(itemUuid);
+		BusinessUnit businessUnit = businessUnitService.getByUuid(businessUnitUuid);
+		return Stock.mapEntity(stockBean.deactivateStock(item.getUuid(), businessUnit.getUuid()));
 	}
 
 }

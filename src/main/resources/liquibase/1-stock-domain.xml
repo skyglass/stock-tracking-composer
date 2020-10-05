@@ -141,7 +141,6 @@
                 <constraints nullable="false"/>
             </column>   
 			<column name="pending" type="Boolean" defaultValue="1"/>
-			<column name="canceled" type="Boolean" defaultValue="1"/>
         </createTable>    
         
  	    <addForeignKeyConstraint baseColumnNames="message_uuid" baseTableName="stocktransaction" constraintName="stocktransaction_message_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="stockmessage" validate="true"/>  
