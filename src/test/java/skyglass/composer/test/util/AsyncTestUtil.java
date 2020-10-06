@@ -7,7 +7,7 @@ import org.junit.Assert;
 public class AsyncTestUtil {
 
 	public static int pollResult(int size, Supplier<Integer> pollingSizeSupplier) throws InterruptedException {
-		return pollResult(size, 10000, 2000, pollingSizeSupplier);
+		return pollResult(size, 100000, 2000, pollingSizeSupplier);
 	}
 
 	public static <T> int pollResult(int size, int timeout, int interval, Supplier<Integer> pollingSizeSupplier) throws InterruptedException {

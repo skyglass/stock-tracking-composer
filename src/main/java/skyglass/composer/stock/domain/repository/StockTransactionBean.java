@@ -28,28 +28,32 @@ import skyglass.composer.stock.exceptions.InvalidTransactionStateException;
 public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 
 	@Autowired
-	private ItemBean itemBean;
-
-	@Autowired
-	private BusinessUnitBean businessUnitBean;
-
-	@Autowired
 	private TransactionItemBean transactionItemBean;
+
+	public void deleteCommittedTransactions() {
+		deleteCommittedTransactions(null, null);
+	}
 
 	public void deleteCommittedTransactions(Item item, BusinessUnit businessUnit) {
 		String queryStr = "DELETE FROM TransactionItemEntity ti WHERE ti.uuid IN (SELECT ti.uuid FROM TransactionItemEntity ti JOIN ti.transaction tr JOIN tr.message m "
-				+ "WHERE tr.pending = :pending AND m.item.uuid = :itemUuid AND (m.from.uuid = :businessUnitUuid OR m.to.uuid = :businessUnitUuid))";
+				+ "WHERE tr.pending = :pending"
+				+ (item != null ? " AND m.item.uuid = :itemUuid AND (m.from.uuid = :businessUnitUuid OR m.to.uuid = :businessUnitUuid))" : ")");
 		Query itemQuery = entityBeanUtil.createQuery(queryStr);
-		itemQuery.setParameter("itemUuid", item.getUuid());
-		itemQuery.setParameter("businessUnitUuid", businessUnit.getUuid());
+		if (item != null) {
+			itemQuery.setParameter("itemUuid", item.getUuid());
+			itemQuery.setParameter("businessUnitUuid", businessUnit.getUuid());
+		}
 		itemQuery.setParameter("pending", false);
 		itemQuery.executeUpdate();
 
 		queryStr = "DELETE FROM StockTransactionEntity tr WHERE tr.uuid IN (SELECT tr.uuid FROM StockTransactionEntity tr JOIN tr.message m "
-				+ "WHERE tr.pending = :pending AND m.item.uuid = :itemUuid AND (m.from.uuid = :businessUnitUuid OR m.to.uuid = :businessUnitUuid))";
+				+ "WHERE tr.pending = :pending"
+				+ (item != null ? " AND m.item.uuid = :itemUuid AND (m.from.uuid = :businessUnitUuid OR m.to.uuid = :businessUnitUuid))" : ")");
 		Query query = entityBeanUtil.createQuery(queryStr);
-		query.setParameter("itemUuid", item.getUuid());
-		query.setParameter("businessUnitUuid", businessUnit.getUuid());
+		if (item != null) {
+			query.setParameter("itemUuid", item.getUuid());
+			query.setParameter("businessUnitUuid", businessUnit.getUuid());
+		}
 		query.setParameter("pending", false);
 		query.executeUpdate();
 	}
@@ -61,18 +65,22 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 		return EntityUtil.getSingleResultSafely(query);
 	}
 
+	public List<StockMessage> findPendingMessages() {
+		return findPendingMessages(null, null);
+	}
+
 	public List<StockMessage> findPendingMessages(Item item, BusinessUnit businessUnit) {
 		return findPendingTransactions(item, businessUnit).stream().map(e -> StockMessage.mapEntity(e.getMessage())).collect(Collectors.toList());
 	}
 
 	private List<StockTransactionEntity> findPendingTransactions(Item item, BusinessUnit businessUnit) {
-		itemBean.findByUuidSecure(item.getUuid());
-		businessUnitBean.findByUuidSecure(businessUnit.getUuid());
-		String queryStr = "SELECT st FROM StockTransactionEntity st WHERE st.message.item.uuid = :itemUuid "
-				+ "AND (st.message.from.uuid = :businessUnitUuid OR st.message.to.uuid = :businessUnitUuid) AND st.pending = :pending";
+		String queryStr = "SELECT st FROM StockTransactionEntity st WHERE st.pending = :pending"
+				+ (item != null ? " AND st.message.item.uuid = :itemUuid AND (st.message.from.uuid = :businessUnitUuid OR st.message.to.uuid = :businessUnitUuid)" : "");
 		TypedQuery<StockTransactionEntity> query = entityBeanUtil.createQuery(queryStr, StockTransactionEntity.class);
-		query.setParameter("itemUuid", item.getUuid());
-		query.setParameter("businessUnitUuid", businessUnit.getUuid());
+		if (item != null) {
+			query.setParameter("itemUuid", item.getUuid());
+			query.setParameter("businessUnitUuid", businessUnit.getUuid());
+		}
 		query.setParameter("pending", true);
 		return EntityUtil.getListResultSafely(query);
 	}
@@ -116,12 +124,31 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 		}
 	}
 
-	private void assertNoPendingTransactionItems(StockMessage stockMessage) {
-		String queryStr = "SELECT COUNT(ti.uuid) FROM TransactionItemEntity ti JOIN ti.transaction t WHERE t.message.uuid = :messageUuid";
+	public int getPendingTransactionsCount() {
+		String queryStr = "SELECT COUNT(st.uuid) FROM StockTransactionEntity st WHERE st.pending = :pending";
 		TypedQuery<Long> query = entityBeanUtil.createQuery(queryStr, Long.class);
-		query.setParameter("messageUuid", stockMessage.getUuid());
+		query.setParameter("pending", true);
 		Long result = EntityUtil.getSingleResultSafely(query);
 		if (result == null || result == 0) {
+			assertNoPendingTransactionItems();
+		}
+		return result == null ? 0 : result.intValue();
+	}
+
+	public void assertNoPendingTransactionItems() {
+		assertNoPendingTransactionItems(null);
+	}
+
+	private void assertNoPendingTransactionItems(StockMessage stockMessage) {
+		String queryStr = "SELECT COUNT(ti.uuid) FROM TransactionItemEntity ti JOIN ti.transaction t WHERE ti.pending = :pending"
+				+ (stockMessage != null ? " AND t.message.uuid = :messageUuid" : "");
+		TypedQuery<Long> query = entityBeanUtil.createQuery(queryStr, Long.class);
+		if (stockMessage != null) {
+			query.setParameter("messageUuid", stockMessage.getUuid());
+		}
+		query.setParameter("pending", true);
+		Long result = EntityUtil.getSingleResultSafely(query);
+		if (result != null && result > 0) {
 			throw new InvalidTransactionStateException("Programming Error during Transaction Item Commit. Please, fix the code!");
 		}
 	}

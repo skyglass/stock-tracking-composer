@@ -38,6 +38,12 @@ public class StockUpdateService {
 		this.stockUpdateProcessor = new StockUpdateProcessor(dataSource, stockUpdateConnector);
 	}
 
+	public void replayTransactions() {
+		stockTransactionBean.deleteCommittedTransactions();
+		List<StockMessage> stockMessages = stockTransactionBean.findPendingMessages();
+		stockMessages.stream().forEach(s -> replayTransaction(s));
+	}
+
 	public void replayTransactions(StockMessage stockMessage) {
 		stockTransactionBean.deleteCommittedTransactions(stockMessage.getItem(), stockMessage.getFrom());
 		stockTransactionBean.deleteCommittedTransactions(stockMessage.getItem(), stockMessage.getTo());

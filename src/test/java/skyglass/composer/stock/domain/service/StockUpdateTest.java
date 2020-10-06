@@ -14,6 +14,7 @@ import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockHistory;
+import skyglass.composer.stock.domain.repository.StockTransactionBean;
 import skyglass.composer.stock.entity.service.BusinessUnitService;
 import skyglass.composer.stock.entity.service.ItemService;
 import skyglass.composer.stock.entity.service.StockHistoryService;
@@ -22,6 +23,7 @@ import skyglass.composer.stock.test.helper.StockBookingTestHelper;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
 import skyglass.composer.test.config.TestDataConstants;
 import skyglass.composer.test.config.TestDateUtil;
+import skyglass.composer.test.util.AsyncTestUtil;
 
 @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
 public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
@@ -40,6 +42,9 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired
 	private ItemService itemService;
+
+	@Autowired
+	private StockTransactionBean stockTransactionBean;
 
 	private StockBookingTestHelper stockBookingTestHelper;
 
@@ -68,6 +73,8 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		invokeAll();
 
 		setupInvalidStock();
+
+		AsyncTestUtil.pollResult(0, () -> stockTransactionBean.getPendingTransactionsCount());
 
 		Stock stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), stockCenter.getUuid());
 		checkStock(stock, stockCenter, -400D);
@@ -124,9 +131,11 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-05 00:00:01"))));
 	}
 
-	private void setupInvalidStock() {
+	private void setupInvalidStock() throws InterruptedException {
 		stockBookingTestHelper.createStockMessage(existingItem, existingBusinessUnit, existingBusinessUnit2, 201D,
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-07 00:00:01")));
+
+		AsyncTestUtil.pollResult(0, () -> stockTransactionBean.getPendingTransactionsCount());
 
 		Stock stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), stockCenter.getUuid());
 		checkStock(stock, stockCenter, -400D);
