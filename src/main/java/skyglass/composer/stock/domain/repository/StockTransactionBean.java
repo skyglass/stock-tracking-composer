@@ -59,7 +59,7 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 	}
 
 	public StockTransactionEntity findByMessage(StockMessage stockMessage) {
-		String queryStr = "SELECT st FROM StockTransactionEntity st WHERE st.message.uuid = :messageUuid ";
+		String queryStr = "SELECT st FROM StockTransactionEntity st WHERE st.message.uuid = :messageUuid";
 		TypedQuery<StockTransactionEntity> query = entityBeanUtil.createQuery(queryStr, StockTransactionEntity.class);
 		query.setParameter("messageUuid", stockMessage.getUuid());
 		return EntityUtil.getSingleResultSafely(query);
@@ -89,11 +89,15 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 		return create(StockTransaction.create(stockMessage));
 	}
 
-	public boolean isCommitted(StockMessage stockMessage, Item item, BusinessUnit businessUnit, TransactionType transactionType) {
+	public StockTransactionEntity getPendingTransaction(StockMessage stockMessage) {
 		StockTransactionEntity transaction = findByMessage(stockMessage);
-		if (transaction == null) {
-			return true;
+		if (transaction != null && transaction.isPending()) {
+			return transaction;
 		}
+		return null;
+	}
+
+	public boolean isCommitted(StockTransactionEntity transaction, Item item, BusinessUnit businessUnit, TransactionType transactionType) {
 		TransactionItemEntity transactionItem = transactionItemBean.findByTransactionType(transaction, transactionType);
 		if (transactionItem == null) {
 			transactionItem = transactionItemBean.create(transaction, Stock.key(item.getUuid(), businessUnit.getUuid()), transactionType);
@@ -118,7 +122,7 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 	public void commitTransaction(StockMessage stockMessage) {
 		assertNoPendingTransactionItems(stockMessage);
 		StockTransactionEntity transaction = findByMessage(stockMessage);
-		if (transaction.isPending()) {
+		if (transaction != null) {
 			transaction.setPending(false);
 			entityBeanUtil.merge(transaction);
 		}

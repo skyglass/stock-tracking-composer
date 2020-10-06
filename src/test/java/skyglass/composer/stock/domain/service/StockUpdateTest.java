@@ -18,6 +18,7 @@ import skyglass.composer.stock.domain.repository.StockTransactionBean;
 import skyglass.composer.stock.entity.service.BusinessUnitService;
 import skyglass.composer.stock.entity.service.ItemService;
 import skyglass.composer.stock.entity.service.StockHistoryService;
+import skyglass.composer.stock.entity.service.StockMessageService;
 import skyglass.composer.stock.entity.service.StockService;
 import skyglass.composer.stock.test.helper.StockBookingTestHelper;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
@@ -44,6 +45,9 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 	private ItemService itemService;
 
 	@Autowired
+	private StockMessageService stockMessageService;
+
+	@Autowired
 	private StockTransactionBean stockTransactionBean;
 
 	private StockBookingTestHelper stockBookingTestHelper;
@@ -68,12 +72,20 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 	@Test
 	public void bookingTest() throws InterruptedException, ExecutionException {
 
-		setupStock();
+		setupInitialStock();
 
+		AsyncTestUtil.pollResult(2, () -> stockMessageService.getAll().size());
+		AsyncTestUtil.pollResult(0, () -> stockTransactionBean.getPendingTransactionsCount());
+
+		setupStock();
 		invokeAll();
+
+		AsyncTestUtil.pollResult(6, () -> stockMessageService.getAll().size());
+		AsyncTestUtil.pollResult(0, () -> stockTransactionBean.getPendingTransactionsCount());
 
 		setupInvalidStock();
 
+		AsyncTestUtil.pollResult(9, () -> stockMessageService.getAll().size());
 		AsyncTestUtil.pollResult(0, () -> stockTransactionBean.getPendingTransactionsCount());
 
 		Stock stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), stockCenter.getUuid());
@@ -115,12 +127,14 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		checkStockHistory(history, existingBusinessUnit2, 200D, TestDateUtil.parseDateTime("2017-11-08 00:00:00"));
 	}
 
-	private void setupStock() {
+	private void setupInitialStock() {
 		stockBookingTestHelper.createStockMessage(existingItem, stockCenter, existingBusinessUnit, 100D,
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-01 00:00:01")));
 		stockBookingTestHelper.createStockMessage(existingItem, stockCenter, existingBusinessUnit2, 100D,
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-01 05:00:01")));
+	}
 
+	private void setupStock() {
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit, 100D,
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-02 00:00:01"))));
 		dtos.add(stockBookingTestHelper.createStockMessageDto(existingItem, stockCenter, existingBusinessUnit2, 100D,
@@ -135,6 +149,7 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 		stockBookingTestHelper.createStockMessage(existingItem, existingBusinessUnit, existingBusinessUnit2, 201D,
 				dto -> dto.setCreatedAt(TestDateUtil.parseDateTime("2017-11-07 00:00:01")));
 
+		AsyncTestUtil.pollResult(7, () -> stockMessageService.getAll().size());
 		AsyncTestUtil.pollResult(0, () -> stockTransactionBean.getPendingTransactionsCount());
 
 		Stock stock = stockService.findByItemAndBusinessUnit(existingItem.getUuid(), stockCenter.getUuid());

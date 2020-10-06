@@ -8,12 +8,15 @@ import org.springframework.stereotype.Component;
 public class StockBookingScheduler {
 
 	@Autowired
-	private StockUpdateService stockUpdateService;
+	private StockBookingAsyncTask stockBookingAsyncTask;
 
 	// runs every 5 seconds
 	@Scheduled(cron = "0/5 * * * * *")
 	public void executeSchedulerTask() {
-		stockUpdateService.replayTransactions();
+		int i = 7;
+		while (i-- > 0) {
+			stockBookingAsyncTask.task();
+		}
 	}
 
 }

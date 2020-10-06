@@ -1,5 +1,6 @@
 package skyglass.composer.stock.entity.service;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -27,7 +28,7 @@ public class StockMessageServiceImpl implements StockMessageService {
 	}
 
 	@Override
-	public Iterable<StockMessage> getAll() {
+	public Collection<StockMessage> getAll() {
 		return StreamSupport.stream(stockMessageBean.findAll().spliterator(), false)
 				.map(sm -> StockMessage.mapEntity(sm))
 				.collect(Collectors.toList());
