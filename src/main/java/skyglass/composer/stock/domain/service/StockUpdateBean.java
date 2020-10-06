@@ -61,6 +61,9 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 				}
 			} else {
 				stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockTo);
+				if (!stockTransactionBean.isCommitted(transaction, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockToRevert)) {
+					stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getTo(), TransactionType.StockToRevert);
+				}
 			}
 		}
 	}
@@ -75,6 +78,9 @@ public class StockUpdateBean extends AEntityBean<StockEntity> {
 				}
 			} else {
 				stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFrom);
+				if (!stockTransactionBean.isCommitted(transaction, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFromRevert)) {
+					stockTransactionBean.commitTransactionItem(stockMessage, stockMessage.getItem(), stockMessage.getFrom(), TransactionType.StockFromRevert);
+				}
 			}
 		}
 	}
