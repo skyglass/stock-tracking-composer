@@ -41,6 +41,19 @@ public class DateUtil {
 
 	private static final String ISO_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
+	public static String getOffsetSeconds(String timezone, Date date) {
+		if (StringUtils.isBlank(timezone)) {
+			return Integer.toString(0);
+		}
+		TimeZone tz = TimeZone.getTimeZone(timezone);
+		int offset = getOffset(tz, date) / 1000;
+		return Integer.toString(offset);
+	}
+
+	private static int getOffset(TimeZone tz, Date date) {
+		return date == null ? tz.getRawOffset() : tz.getOffset(date.getTime());
+	}
+
 	public static DateTimeFormatter getDisplayDateFormatter(String timezone) {
 		return getFormatter(DISPLAY_DATE_PATTERN, timezone);
 	}

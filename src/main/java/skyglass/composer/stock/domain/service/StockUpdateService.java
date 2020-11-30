@@ -54,7 +54,7 @@ public class StockUpdateService {
 		stockMessages.stream().forEach(s -> replayTransaction(s));
 	}
 
-	private void replayTransaction(final StockMessage stockMessage) {
+	public void replayTransaction(final StockMessage stockMessage) {
 		boolean success = false;
 		try {
 			if (stockMessage.shouldUpdateStock()) {

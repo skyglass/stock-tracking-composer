@@ -26,6 +26,14 @@ public class EntityUtil {
 
 	public static final int DEFAULT_SEARCH_MAX_RESULTS = 20;
 
+	@SuppressWarnings("unchecked")
+	@NotNull
+	public static List<Map<Object, Object>> getMapListResultSafely(Query query) throws IllegalStateException, UnsupportedOperationException {
+		//query.setHint(QueryHints.RESULT_TYPE, ResultType.Map);
+		//Implement map result for hibernate query
+		return getListResultSafely(query);
+	}
+
 	public static <T extends IdObject> Map<String, T> asMap(Collection<? extends T> entities) {
 		if (entities == null) {
 			return Collections.emptyMap();
