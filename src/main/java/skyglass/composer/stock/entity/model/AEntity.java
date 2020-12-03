@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import javax.persistence.MappedSuperclass;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import skyglass.composer.stock.domain.model.IdObject;
 
 /**
@@ -34,7 +36,7 @@ public abstract class AEntity implements IdObject {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " " + this.getUuid();
+		return new ReflectionToStringBuilder(this).build();
 	}
 
 }

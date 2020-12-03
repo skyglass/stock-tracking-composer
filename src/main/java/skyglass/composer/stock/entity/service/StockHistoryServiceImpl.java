@@ -12,19 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.StockHistory;
-import skyglass.composer.stock.domain.repository.StockHistoryBean;
+import skyglass.composer.stock.domain.repository.StockHistoryRepository;
 import skyglass.composer.stock.entity.model.StockHistoryEntity;
 
 @Service
 @Transactional
 class StockHistoryServiceImpl implements StockHistoryService {
 
-	private final StockHistoryBean stockHistoryBean;
+	private final StockHistoryRepository stockHistoryBean;
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	StockHistoryServiceImpl(StockHistoryBean stockHistoryBean) {
+	StockHistoryServiceImpl(StockHistoryRepository stockHistoryBean) {
 		this.stockHistoryBean = stockHistoryBean;
 	}
 

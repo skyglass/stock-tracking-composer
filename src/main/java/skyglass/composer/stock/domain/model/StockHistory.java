@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockHistoryEntity;
 
@@ -35,7 +34,7 @@ public class StockHistory extends AObject {
 
 	public static StockHistory mapEntity(StockHistoryEntity entity) {
 		return new StockHistory(entity.getUuid(), new Item(entity.getItem().getUuid(), entity.getItem().getName()),
-				new BusinessUnit(entity.getBusinessUnit().getUuid(), entity.getBusinessUnit().getName()),
+				BusinessUnit.mapEntity(entity.getBusinessUnit()),
 				entity.getAmount(), entity.getStartDate(), entity.getEndDate(), StockParameter.list(entity.getParameters()));
 
 	}
@@ -43,7 +42,7 @@ public class StockHistory extends AObject {
 	public static StockHistoryEntity map(StockHistory entity) {
 		return new StockHistoryEntity(entity.getUuid(),
 				new ItemEntity(entity.getItem().getUuid(), entity.getItem().getName()),
-				new BusinessUnitEntity(entity.getBusinessUnit().getUuid(), entity.getBusinessUnit().getName()),
+				BusinessUnit.map(entity.getBusinessUnit()),
 				entity.getAmount(), entity.getStartDate(), entity.getEndDate(), StockParameter.entityList(entity.getParameters()));
 
 	}

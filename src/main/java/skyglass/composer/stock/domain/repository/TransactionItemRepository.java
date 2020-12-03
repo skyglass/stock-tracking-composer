@@ -17,7 +17,7 @@ import skyglass.composer.stock.entity.model.TransactionItemEntity;
 
 @Repository
 @Transactional(propagation = Propagation.MANDATORY)
-public class TransactionItemBean extends AEntityBean<TransactionItemEntity> {
+public class TransactionItemRepository extends AEntityBean<TransactionItemEntity> {
 
 	public List<TransactionItemEntity> findByTransaction(StockTransactionEntity transaction) {
 		String queryStr = "SELECT ti FROM TransactionItemEntity ti WHERE ti.transaction.uuid = :transactionUuid";
@@ -42,7 +42,7 @@ public class TransactionItemBean extends AEntityBean<TransactionItemEntity> {
 	}
 
 	public TransactionItemEntity create(StockTransactionEntity transaction, String key, TransactionType transactionType) {
-		return create(TransactionItem.create(transaction, key, transactionType));
+		return createEntity(TransactionItem.create(transaction, key, transactionType));
 	}
 
 }

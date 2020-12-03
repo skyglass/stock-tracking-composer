@@ -79,6 +79,8 @@ public class UserDTOFactory extends AEntityDTOFactory {
 			dto.setFirstName(extUserDTO.getName().getGivenName());
 			dto.setLastName(extUserDTO.getName().getFamilyName());
 		}
+		dto.setOwnerUuid(user.getOwner().getUuid());
+		dto.setOwnerName(user.getOwner().getName());
 		return dto;
 	}
 

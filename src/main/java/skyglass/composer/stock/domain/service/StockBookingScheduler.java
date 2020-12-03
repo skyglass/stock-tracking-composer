@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.repository.StockTransactionBean;
+import skyglass.composer.stock.domain.repository.StockTransactionRepository;
 
 @Component
 public class StockBookingScheduler {
@@ -16,7 +16,7 @@ public class StockBookingScheduler {
 	private StockBookingAsyncTask stockBookingAsyncTask;
 
 	@Autowired
-	private StockTransactionBean stockTransactionBean;
+	private StockTransactionRepository stockTransactionBean;
 
 	// runs every 5 seconds
 	@Scheduled(cron = "0/5 * * * * *")

@@ -9,9 +9,9 @@ import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.domain.model.TransactionType;
-import skyglass.composer.stock.domain.repository.StockBean;
-import skyglass.composer.stock.domain.repository.StockHistoryBean;
-import skyglass.composer.stock.domain.repository.StockTransactionBean;
+import skyglass.composer.stock.domain.repository.StockRepository;
+import skyglass.composer.stock.domain.repository.StockHistoryRepository;
+import skyglass.composer.stock.domain.repository.StockTransactionRepository;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockEntity;
@@ -23,13 +23,13 @@ import skyglass.composer.stock.exceptions.TransactionRollbackException;
 public class StockUpdateBean extends AEntityBean<StockEntity> {
 
 	@Autowired
-	private StockBean stockBean;
+	private StockRepository stockBean;
 
 	@Autowired
-	private StockHistoryBean stockHistoryBean;
+	private StockHistoryRepository stockHistoryBean;
 
 	@Autowired
-	private StockTransactionBean stockTransactionBean;
+	private StockTransactionRepository stockTransactionBean;
 
 	public void changeStockTo(StockMessage stockMessage) throws TransactionRollbackException {
 		StockTransactionEntity transaction = stockTransactionBean.getPendingTransaction(stockMessage);

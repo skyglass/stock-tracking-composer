@@ -17,16 +17,16 @@ import skyglass.composer.stock.entity.model.StockMessageEntity;
 
 @Repository
 @Transactional
-public class StockMessageBean extends AEntityBean<StockMessageEntity> {
+public class StockMessageRepository extends AEntityBean<StockMessageEntity> {
 
 	@Autowired
-	private ItemBean itemBean;
+	private ItemRepository itemBean;
 
 	@Autowired
-	private BusinessUnitBean businessUnitBean;
+	private BusinessUnitRepository businessUnitBean;
 
 	@Autowired
-	private StockTransactionBean stockTransactionBean;
+	private StockTransactionRepository stockTransactionBean;
 
 	public StockMessageEntity findByMessageId(String messageId) {
 		if (StringUtils.isBlank(messageId)) {
@@ -43,7 +43,7 @@ public class StockMessageBean extends AEntityBean<StockMessageEntity> {
 		ItemEntity item = itemBean.findByUuidSecure(dto.getItemUuid());
 		BusinessUnitEntity from = businessUnitBean.findByUuidSecure(dto.getFromUuid());
 		BusinessUnitEntity to = businessUnitBean.findByUuidSecure(dto.getToUuid());
-		StockMessageEntity stockMessage = create(StockMessage.createEntity(dto, item, from, to));
+		StockMessageEntity stockMessage = createEntity(StockMessage.createEntity(dto, item, from, to));
 		stockTransactionBean.create(stockMessage);
 		return StockMessage.mapEntity(stockMessage);
 	}

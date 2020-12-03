@@ -16,14 +16,16 @@ public class BusinessUnit extends AObject {
 
 	private String name;
 
-	public static BusinessUnit mapEntity(BusinessUnitEntity entity) {
-		return new BusinessUnit(entity.getUuid(), entity.getName());
+	private BusinessOwner owner;
 
+	private BusinessUnit parent;
+
+	public static BusinessUnit mapEntity(BusinessUnitEntity entity) {
+		return entity == null ? null : new BusinessUnit(entity.getUuid(), entity.getName(), BusinessOwner.mapEntity(entity.getOwner()), mapEntity(entity.getParent()));
 	}
 
 	public static BusinessUnitEntity map(BusinessUnit entity) {
-		return new BusinessUnitEntity(entity.getUuid(), entity.getName());
-
+		return entity == null ? null : new BusinessUnitEntity(entity.getUuid(), entity.getName(), BusinessOwner.map(entity.getOwner()), map(entity.getParent()));
 	}
 
 }

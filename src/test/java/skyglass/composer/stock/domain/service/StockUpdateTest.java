@@ -8,25 +8,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockHistory;
-import skyglass.composer.stock.domain.repository.StockTransactionBean;
+import skyglass.composer.stock.domain.repository.StockTransactionRepository;
 import skyglass.composer.stock.entity.service.BusinessUnitService;
 import skyglass.composer.stock.entity.service.ItemService;
 import skyglass.composer.stock.entity.service.StockHistoryService;
 import skyglass.composer.stock.entity.service.StockMessageService;
 import skyglass.composer.stock.entity.service.StockService;
 import skyglass.composer.stock.test.helper.StockBookingTestHelper;
-import skyglass.composer.stock.test.reset.AbstractBaseTest;
 import skyglass.composer.test.config.TestDataConstants;
 import skyglass.composer.test.config.TestDateUtil;
 import skyglass.composer.test.util.AsyncTestUtil;
 
-@ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
+// @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })
 public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 
 	@Autowired
@@ -48,7 +46,7 @@ public class StockUpdateTest extends AbstractAsyncStockUpdateTest {
 	private StockMessageService stockMessageService;
 
 	@Autowired
-	private StockTransactionBean stockTransactionBean;
+	private StockTransactionRepository stockTransactionBean;
 
 	private StockBookingTestHelper stockBookingTestHelper;
 

@@ -176,15 +176,13 @@ public class UserRepository extends AEntityBean<UserEntity> {
 
 		return user;
 	}
-	
-	@Override
+
 	public UserEntity update(UserEntity user) {
-		return super.update(user);
+		return updateEntity(user);
 	}
-	
-	@Override
+
 	public UserEntity create(UserEntity user) {
-		return super.create(user);
+		return createEntity(user);
 	}
 
 	@NotNull

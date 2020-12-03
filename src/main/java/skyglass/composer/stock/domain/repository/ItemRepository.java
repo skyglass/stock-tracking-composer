@@ -8,6 +8,6 @@ import skyglass.composer.stock.entity.model.ItemEntity;
 
 @Repository
 @Transactional
-public class ItemBean extends AEntityBean<ItemEntity> {
+public class ItemRepository extends AEntityBean<ItemEntity> {
 
 }

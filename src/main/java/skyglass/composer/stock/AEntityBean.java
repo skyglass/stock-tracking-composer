@@ -84,7 +84,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 
 		return entityBeanUtil.find(persistentClass, uuid);
 	}
-	
+
 	@NotNull
 	public Collection<E> findAll() {
 		CriteriaBuilder criteriaBuilder = entityBeanUtil.getCriteriaBuilder();
@@ -133,7 +133,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	protected E create(E entity)
+	protected E createEntity(E entity)
 			throws AlreadyExistsException, IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity cannot be null");
@@ -143,7 +143,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	protected E persist(@NotNull E entity)
+	private E persist(@NotNull E entity)
 			throws AlreadyExistsException, IllegalArgumentException, IllegalStateException {
 		try {
 			entityBeanUtil.persist(entity);
@@ -157,7 +157,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	protected E update(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
+	protected E updateEntity(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity cannot be null");
 		}
@@ -170,7 +170,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 		return merge(entity);
 	}
 
-	protected E merge(@NotNull E entity) throws IllegalArgumentException, IllegalStateException {
+	private E merge(@NotNull E entity) throws IllegalArgumentException, IllegalStateException {
 		try {
 
 			return entityBeanUtil.merge(entity);
@@ -180,7 +180,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	protected E preDeleteUuid(@NotNull String uuid)
+	private E preDeleteUuid(@NotNull String uuid)
 			throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		E entity = findByUuid(uuid);
 		if (entity == null) {
@@ -192,7 +192,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	}
 
 	@NotNull
-	protected E delete(String uuid) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
+	protected E deleteEntity(String uuid) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (StringUtils.isBlank(uuid)) {
 			throw new IllegalArgumentException("UUID cannot neither be null nor empty");
 		}
@@ -200,7 +200,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 		return remove(preDeleteUuid(uuid));
 	}
 
-	protected void delete(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
+	protected void deleteEntity(E entity) throws IllegalArgumentException, IllegalStateException, NotAccessibleException {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity cannot be null");
 		}
@@ -208,7 +208,7 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 		remove(entity);
 	}
 
-	protected E remove(@NotNull E entity) throws IllegalArgumentException, IllegalStateException {
+	private E remove(@NotNull E entity) throws IllegalArgumentException, IllegalStateException {
 		try {
 			if (entity instanceof IDeletable) {
 				((IDeletable) entity).setDeleted(true);

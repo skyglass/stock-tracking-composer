@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.Stock;
-import skyglass.composer.stock.domain.repository.StockBean;
+import skyglass.composer.stock.domain.repository.StockRepository;
 import skyglass.composer.stock.entity.model.StockEntity;
 
 @Service
@@ -21,7 +21,7 @@ import skyglass.composer.stock.entity.model.StockEntity;
 class StockServiceImpl implements StockService {
 
 	@Autowired
-	private StockBean stockBean;
+	private StockRepository stockBean;
 
 	@Autowired
 	private ItemService itemService;

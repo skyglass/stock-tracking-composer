@@ -26,6 +26,10 @@ public class UserDTO extends AEntityDTO implements IUser {
 
 	private String lastName;
 
+	private String ownerUuid;
+
+	private String ownerName;
+
 	public String getEmail() {
 		return email;
 	}
@@ -56,6 +60,22 @@ public class UserDTO extends AEntityDTO implements IUser {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getOwnerUuid() {
+		return ownerUuid;
+	}
+
+	public void setOwnerUuid(String ownerUuid) {
+		this.ownerUuid = ownerUuid;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
 	}
 
 }

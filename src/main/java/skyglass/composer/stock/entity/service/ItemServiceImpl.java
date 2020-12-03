@@ -9,18 +9,18 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 
 import skyglass.composer.stock.domain.model.Item;
-import skyglass.composer.stock.domain.repository.ItemBean;
+import skyglass.composer.stock.domain.repository.ItemRepository;
 import skyglass.composer.stock.entity.model.ItemEntity;
 
 @Component
 class ItemServiceImpl implements ItemService {
 
-	private final ItemBean itemBean;
+	private final ItemRepository itemBean;
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	ItemServiceImpl(ItemBean itemBean) {
+	ItemServiceImpl(ItemRepository itemBean) {
 		this.itemBean = itemBean;
 	}
 

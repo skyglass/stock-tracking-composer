@@ -19,13 +19,13 @@ import skyglass.composer.stock.entity.model.StockEntity;
 
 @Repository
 @Transactional
-public class StockBean extends AEntityBean<StockEntity> {
+public class StockRepository extends AEntityBean<StockEntity> {
 
 	@Autowired
-	private ItemBean itemBean;
+	private ItemRepository itemBean;
 
 	@Autowired
-	private BusinessUnitBean businessUnitBean;
+	private BusinessUnitRepository businessUnitBean;
 
 	private TypedQuery<StockEntity> stockQuery(String queryStr, String whereExtension) {
 		if (whereExtension != null) {
@@ -91,7 +91,7 @@ public class StockBean extends AEntityBean<StockEntity> {
 		StockEntity stock = findByItemAndBusinessUnit(itemUuid, businessUnitUuid);
 		if (stock.isActive()) {
 			stock.deactivate();
-			entityBeanUtil.merge(stock);
+			updateEntity(stock);
 		}
 		return stock;
 	}
@@ -101,7 +101,7 @@ public class StockBean extends AEntityBean<StockEntity> {
 		StockEntity result = findByItemAndBusinessUnit(item.getUuid(), businessUnit.getUuid());
 		if (result == null) {
 			StockEntity stock = StockEntity.create(item, businessUnit);
-			result = entityBeanUtil.persist(stock);
+			result = createEntity(stock);
 		}
 		return result;
 	}

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockEntity;
 
@@ -31,14 +30,14 @@ public class Stock extends AObject {
 	private boolean active;
 
 	public static Stock mapEntity(StockEntity entity) {
-		return new Stock(entity.getUuid(), new Item(entity.getItem().getUuid(), entity.getItem().getName()), new BusinessUnit(entity.getBusinessUnit().getUuid(), entity.getBusinessUnit().getName()),
+		return new Stock(entity.getUuid(), new Item(entity.getItem().getUuid(), entity.getItem().getName()), BusinessUnit.mapEntity(entity.getBusinessUnit()),
 				entity.getAmount(), entity.isActive());
 
 	}
 
 	public static StockEntity map(Stock entity) {
 		return new StockEntity(entity.getUuid(), new ItemEntity(entity.getItem().getUuid(), entity.getItem().getName()),
-				new BusinessUnitEntity(entity.getBusinessUnit().getUuid(), entity.getBusinessUnit().getName()), entity.getAmount(), entity.isActive());
+				BusinessUnit.map(entity.getBusinessUnit()), entity.getAmount(), entity.isActive());
 
 	}
 

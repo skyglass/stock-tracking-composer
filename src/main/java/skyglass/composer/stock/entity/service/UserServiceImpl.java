@@ -22,7 +22,9 @@ import skyglass.composer.stock.domain.dto.ExtUserDTO;
 import skyglass.composer.stock.domain.dto.UserDTO;
 import skyglass.composer.stock.domain.dto.UserDTOFactory;
 import skyglass.composer.stock.domain.model.CrudAction;
+import skyglass.composer.stock.domain.repository.BusinessOwnerRepository;
 import skyglass.composer.stock.domain.repository.UserRepository;
+import skyglass.composer.stock.entity.model.BusinessOwnerEntity;
 import skyglass.composer.stock.entity.model.UserEntity;
 import skyglass.composer.stock.exceptions.ClientException;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
@@ -37,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private BusinessOwnerRepository businessOwnerRepository;
 
 	@Override
 	public UserDTO getUserInfoByName(String username) {
@@ -151,7 +156,8 @@ public class UserServiceImpl implements UserService {
 			throw new NotNullableNorEmptyException(UserDTO.class, "Lastname");
 		}
 
-		UserEntity entity = new UserEntity(null, userDto.getUsername(), null, userDto.getEmail(), userDto.getFirstName() + userDto.getLastName());
+		BusinessOwnerEntity businessOwner = businessOwnerRepository.findByUuidSecure(userDto.getOwnerUuid());
+		UserEntity entity = new UserEntity(null, userDto.getUsername(), null, userDto.getEmail(), userDto.getFirstName() + userDto.getLastName(), businessOwner);
 		UserEntity response = userRepository.create(UserDTOFactory.createUser(entity, userDto));
 		ExtUserDTO extUser = userRepository.getUserFromExt(response.getName());
 		UserDTO responseDTO = UserDTOFactory.createUserDTO(response, extUser);

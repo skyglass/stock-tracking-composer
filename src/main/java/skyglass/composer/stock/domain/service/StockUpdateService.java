@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.repository.StockTransactionBean;
+import skyglass.composer.stock.domain.repository.StockTransactionRepository;
 import skyglass.composer.stock.exceptions.ClientException;
 import skyglass.composer.stock.exceptions.InvalidTransactionStateException;
 import skyglass.composer.stock.exceptions.TransactionRollbackException;
@@ -32,7 +32,7 @@ public class StockUpdateService {
 	private StockUpdateBean stockUpdateBean;
 
 	@Autowired
-	private StockTransactionBean stockTransactionBean;
+	private StockTransactionRepository stockTransactionBean;
 
 	@PostConstruct
 	public void init() throws Exception {

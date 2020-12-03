@@ -1,0 +1,63 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="skyglass" id="create-order-domain">
+  
+         <createTable tableName="USER">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints primaryKey="true" primaryKeyName="userPK"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>   
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>  
+             <column name="password" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>  
+			<column name="OWNER_UUID" type="NVARCHAR(255)" >
+				<constraints nullable="false"/>
+			</column>                                              
+        </createTable> 
+        
+		<createTable tableName="BUSINESSOWNER">
+			<column name="UUID" type="NVARCHAR(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="NAME" type="NVARCHAR(255)" >
+				<constraints nullable="false" />
+			</column>				
+		</createTable>	
+		
+		<addUniqueConstraint columnNames="NAME" constraintName="unique_businessowner" disabled="false" tableName="BUSINESSOWNER"/>
+ 	    <addForeignKeyConstraint baseColumnNames="OWNER_UUID" baseTableName="USER" constraintName="user_owner_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSOWNER" />  				
+	
+		<createTable tableName="BUSINESSUNIT">
+				<column name="UUID" type="NVARCHAR(255)">
+					<constraints nullable="false" primaryKey="true" />
+				</column>
+				<column name="NAME" type="NVARCHAR(255)" >
+					<constraints nullable="false" />
+				</column>				
+				<column name="OWNER_UUID" type="NVARCHAR(255)" >
+					<constraints nullable="false" />
+				</column>					
+				<column name="PARENT_UUID" type="NVARCHAR(255)" >
+					<constraints nullable="true" />
+				</column>					
+		</createTable>
+		
+		<addUniqueConstraint columnNames="NAME, PARENT_UUID" constraintName="composite_unique_businessunit" disabled="false" tableName="BUSINESSUNIT"/>
+	    <createIndex  tableName="BUSINESSUNIT" indexName="businessUnit_name_idx" unique="false">  
+	        <column name="NAME" />
+	    </createIndex>
+ 	    <addForeignKeyConstraint baseColumnNames="OWNER_UUID" baseTableName="BUSINESSUNIT" constraintName="businessUnit_owner_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSOWNER" />  
+ 	    <addForeignKeyConstraint baseColumnNames="PARENT_UUID" baseTableName="BUSINESSUNIT" constraintName="businessUnit_parent_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSUNIT" />  	            
+	  		  	        
+
+	</changeSet>
+	
+</databaseChangeLog>

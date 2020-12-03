@@ -11,19 +11,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.repository.StockMessageBean;
+import skyglass.composer.stock.domain.repository.StockMessageRepository;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
 
 @Service
 @Transactional
 public class StockMessageServiceImpl implements StockMessageService {
 
-	private final StockMessageBean stockMessageBean;
+	private final StockMessageRepository stockMessageBean;
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	StockMessageServiceImpl(StockMessageBean stockMessageBean) {
+	StockMessageServiceImpl(StockMessageRepository stockMessageBean) {
 		this.stockMessageBean = stockMessageBean;
 	}
 

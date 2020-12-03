@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -14,11 +13,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "businessunit")
+@Table(name = "businessowner")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class BusinessUnitEntity extends AEntity {
+public class BusinessOwnerEntity extends AEntity {
 
 	private static final long serialVersionUID = 8750966701381584635L;
 
@@ -29,11 +28,5 @@ public class BusinessUnitEntity extends AEntity {
 
 	@Column(nullable = false)
 	private String name;
-
-	@ManyToOne
-	private BusinessOwnerEntity owner;
-
-	@ManyToOne
-	private BusinessUnitEntity parent;
 
 }

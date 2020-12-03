@@ -25,10 +25,10 @@ import skyglass.composer.stock.exceptions.InvalidTransactionStateException;
 
 @Repository
 @Transactional
-public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
+public class StockTransactionRepository extends AEntityBean<StockTransactionEntity> {
 
 	@Autowired
-	private TransactionItemBean transactionItemBean;
+	private TransactionItemRepository transactionItemBean;
 
 	public void deleteCommittedTransactions() {
 		deleteCommittedTransactions(null, null);
@@ -86,7 +86,7 @@ public class StockTransactionBean extends AEntityBean<StockTransactionEntity> {
 	}
 
 	public StockTransactionEntity create(StockMessageEntity stockMessage) {
-		return create(StockTransaction.create(stockMessage));
+		return createEntity(StockTransaction.create(stockMessage));
 	}
 
 	public StockTransactionEntity getPendingTransaction(StockMessage stockMessage) {

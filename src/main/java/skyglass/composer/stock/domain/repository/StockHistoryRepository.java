@@ -26,12 +26,11 @@ import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockHistoryEntity;
-import skyglass.composer.stock.exceptions.AlreadyExistsException;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
 
 @Repository
 @Transactional(propagation = Propagation.MANDATORY)
-public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
+public class StockHistoryRepository extends AEntityBean<StockHistoryEntity> {
 
 	@Autowired
 	private DataSource dataSource;
@@ -88,18 +87,6 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 		return query;
 	}
 
-	@Override
-	public StockHistoryEntity create(StockHistoryEntity entity)
-			throws AlreadyExistsException, IllegalArgumentException, IllegalStateException, NotAccessibleException {
-		throw new UnsupportedOperationException("create method is not supported. Please, only use createHistoryForBusinessUnitAndItem(...) methods for creation of stock history entities");
-	}
-
-	@Override
-	public StockHistoryEntity update(StockHistoryEntity entity)
-			throws AlreadyExistsException, IllegalArgumentException, IllegalStateException, NotAccessibleException {
-		throw new UnsupportedOperationException("update method is not supported. Please, only use createHistoryForBusinessUnitAndItem(...) methods for update of stock history entities");
-	}
-
 	public StockHistoryEntity createHistory(StockMessage stockMessage, ItemEntity item, BusinessUnitEntity businessUnit, double delta) {
 		return createHistoryForItemAndBusinessUnit(item, businessUnit, stockMessage, delta);
 	}
@@ -130,7 +117,7 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 
 		if (previous != null) {
 			previous.setEndDate(validityDate);
-			merge(previous);
+			updateEntity(previous);
 		}
 
 		if (next != null) {
@@ -141,15 +128,15 @@ public class StockHistoryBean extends AEntityBean<StockHistoryEntity> {
 		//if previous start date equals validity date, then the previous end date also becomes equal to validity date. It means that the new stock history interval completely replaces previous interval. Therefore, previous interval should be deleted.
 		//It doesn't make sense to keep interval with the same start and end date in the history anyway
 		if (previous != null && previous.getStartDate() != null && previous.getStartDate().equals(previous.getEndDate())) {
-			remove(previous);
+			deleteEntity(previous);
 		}
 
 		if (previous == null) {
 			previous = new StockHistoryEntity(null, item, businessUnit, 0D, null, validityDate, null);
-			persist(previous);
+			createEntity(previous);
 		}
 
-		return persist(valid);
+		return createEntity(valid);
 	}
 
 	private List<StockHistoryEntity> findValidPreviousList(ItemEntity item, BusinessUnitEntity businessUnit, Date validityDate) {

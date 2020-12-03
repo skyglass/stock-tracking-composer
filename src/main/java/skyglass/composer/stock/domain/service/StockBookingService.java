@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import skyglass.composer.stock.domain.dto.StockMessageDto;
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.repository.StockMessageBean;
+import skyglass.composer.stock.domain.repository.StockMessageRepository;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 
@@ -14,7 +14,7 @@ import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 public class StockBookingService {
 
 	@Autowired
-	private StockMessageBean stockMessageBean;
+	private StockMessageRepository stockMessageBean;
 
 	public StockMessage createStockMessage(StockMessageDto stockMessageDto) {
 		if (StringUtils.isBlank(stockMessageDto.getItemUuid())) {
