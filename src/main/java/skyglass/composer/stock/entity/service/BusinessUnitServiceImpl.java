@@ -1,6 +1,6 @@
 package skyglass.composer.stock.entity.service;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -42,13 +42,12 @@ class BusinessUnitServiceImpl implements BusinessUnitService {
 	}
 
 	@Override
-	public Collection<BusinessUnit> find(BusinessUnit parent) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BusinessUnit> find(BusinessUnit parent) {
+		return BusinessUnit.mapEntity(businessUnitRepository.find(parent));
 	}
 
 	@Override
-	public Collection<BusinessUnit> findAll(BusinessUnit parent) {
+	public List<BusinessUnit> findAll(BusinessUnit parent) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -10,4 +10,9 @@ import skyglass.composer.stock.entity.model.BusinessOwnerEntity;
 @Transactional
 public class BusinessOwnerRepository extends AEntityBean<BusinessOwnerEntity> {
 
+	public BusinessOwnerEntity create(BusinessOwnerEntity entity) {
+		BusinessOwnerEntity result = createEntity(entity);
+		return result;
+	}
+
 }

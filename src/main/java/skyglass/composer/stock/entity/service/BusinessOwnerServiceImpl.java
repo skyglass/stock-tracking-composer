@@ -12,27 +12,32 @@ import skyglass.composer.stock.entity.model.BusinessOwnerEntity;
 @Component
 class BusinessOwnerServiceImpl implements BusinessOwnerService {
 
-	private final BusinessOwnerRepository businessOwnerBean;
+	private final BusinessOwnerRepository businessOwnerRepository;
 
-	BusinessOwnerServiceImpl(BusinessOwnerRepository businessOwnerBean) {
-		this.businessOwnerBean = businessOwnerBean;
+	BusinessOwnerServiceImpl(BusinessOwnerRepository businessOwnerRepository) {
+		this.businessOwnerRepository = businessOwnerRepository;
 	}
 
 	@Override
 	public Iterable<BusinessOwner> getAll() {
-		return StreamSupport.stream(businessOwnerBean.findAll().spliterator(), false)
+		return StreamSupport.stream(businessOwnerRepository.findAll().spliterator(), false)
 				.map(e -> BusinessOwner.mapEntity(e))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public BusinessOwner getByUuid(String uuid) {
-		BusinessOwnerEntity entity = this.businessOwnerBean.findByUuid(uuid);
+		BusinessOwnerEntity entity = this.businessOwnerRepository.findByUuid(uuid);
 		if (entity == null) {
 			return null;
 		}
 
 		return BusinessOwner.mapEntity(entity);
+	}
+
+	@Override
+	public BusinessOwner create(BusinessOwner businessOwner) {
+		return BusinessOwner.mapEntity(businessOwnerRepository.create(BusinessOwner.map(businessOwner)));
 	}
 
 }

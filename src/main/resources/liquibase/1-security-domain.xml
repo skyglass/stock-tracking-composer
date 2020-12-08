@@ -58,6 +58,23 @@
  	    <addForeignKeyConstraint baseColumnNames="PARENT_UUID" baseTableName="BUSINESSUNIT" constraintName="businessUnit_parent_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSUNIT" />  	            
 	  		  	        
 
+		<createTable tableName="BUSINESSUNITHIERARCHY">
+				<column name="UUID" type="NVARCHAR(255)">
+					<constraints nullable="false" primaryKey="true" />
+				</column>
+				<column name="CHILD_UUID" type="NVARCHAR(255)" >
+					<constraints nullable="false" />
+				</column>				
+				<column name="PARENT_UUID" type="NVARCHAR(255)" >
+					<constraints nullable="false" />
+				</column>									
+		</createTable>
+		
+		<addUniqueConstraint columnNames="CHILD_UUID, PARENT_UUID" constraintName="composite_unique_businessunithierarchy" disabled="false" tableName="BUSINESSUNITHIERARCHY"/>
+ 	    <addForeignKeyConstraint baseColumnNames="CHILD_UUID" baseTableName="BUSINESSUNITHIERARCHY" constraintName="businessUnitHierarchy_child_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSUNIT" />  
+ 	    <addForeignKeyConstraint baseColumnNames="PARENT_UUID" baseTableName="BUSINESSUNITHIERARCHY" constraintName="businessUnitHierarchy_parent_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSUNIT" />  	
+
+
 	</changeSet>
 	
 </databaseChangeLog>

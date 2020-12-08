@@ -8,4 +8,6 @@ public interface BusinessOwnerService {
 
 	BusinessOwner getByUuid(String uuid);
 
+	BusinessOwner create(BusinessOwner businessOwner);
+
 }

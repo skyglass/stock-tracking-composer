@@ -1,6 +1,6 @@
 package skyglass.composer.stock.entity.service;
 
-import java.util.Collection;
+import java.util.List;
 
 import skyglass.composer.stock.domain.model.BusinessUnit;
 
@@ -12,8 +12,8 @@ public interface BusinessUnitService {
 
 	BusinessUnit create(BusinessUnit businessUnit);
 
-	Collection<BusinessUnit> find(BusinessUnit parent);
+	List<BusinessUnit> find(BusinessUnit parent);
 
-	Collection<BusinessUnit> findAll(BusinessUnit parent);
+	List<BusinessUnit> findAll(BusinessUnit parent);
 
 }
