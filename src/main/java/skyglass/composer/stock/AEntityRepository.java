@@ -26,7 +26,7 @@ import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 import skyglass.composer.stock.exceptions.PermissionDeniedException;
 
 @Transactional
-public abstract class AEntityBean<E extends AEntity> implements EntityRepository<E> {
+public abstract class AEntityRepository<E extends AEntity> implements EntityRepository<E> {
 
 	@Autowired
 	protected EntityBeanUtil entityBeanUtil;
@@ -34,8 +34,8 @@ public abstract class AEntityBean<E extends AEntity> implements EntityRepository
 	protected final Class<E> persistentClass;
 
 	@SuppressWarnings("unchecked")
-	public AEntityBean() {
-		persistentClass = (Class<E>) GenericTypeResolver.resolveTypeArgument(getClass(), AEntityBean.class);
+	public AEntityRepository() {
+		persistentClass = (Class<E>) GenericTypeResolver.resolveTypeArgument(getClass(), AEntityRepository.class);
 		if (persistentClass == null) {
 			throw new IllegalStateException("persistentClass cannot be null");
 		}

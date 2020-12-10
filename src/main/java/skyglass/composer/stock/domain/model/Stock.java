@@ -5,14 +5,11 @@ import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockEntity;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class Stock extends AObject {
 
 	private static final long serialVersionUID = -1639576602087075222L;
@@ -28,18 +25,6 @@ public class Stock extends AObject {
 	private Double amount;
 
 	private boolean active;
-
-	public static Stock mapEntity(StockEntity entity) {
-		return new Stock(entity.getUuid(), new Item(entity.getItem().getUuid(), entity.getItem().getName()), BusinessUnit.mapEntity(entity.getBusinessUnit()),
-				entity.getAmount(), entity.isActive());
-
-	}
-
-	public static StockEntity map(Stock entity) {
-		return new StockEntity(entity.getUuid(), new ItemEntity(entity.getItem().getUuid(), entity.getItem().getName()),
-				BusinessUnit.map(entity.getBusinessUnit()), entity.getAmount(), entity.isActive());
-
-	}
 
 	public static String key(String itemUuid, String businessUnitUuid) {
 		return itemUuid.concat("_").concat(businessUnitUuid);

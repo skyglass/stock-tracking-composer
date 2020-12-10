@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
@@ -19,7 +19,7 @@ import skyglass.composer.stock.entity.model.StockEntity;
 
 @Repository
 @Transactional
-public class StockRepository extends AEntityBean<StockEntity> {
+public class StockRepository extends AEntityRepository<StockEntity> {
 
 	@Autowired
 	private ItemRepository itemBean;

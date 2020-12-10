@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
@@ -20,7 +20,7 @@ import skyglass.composer.stock.exceptions.TransactionRollbackException;
 
 @Repository
 @Transactional
-public class StockUpdateBean extends AEntityBean<StockEntity> {
+public class StockUpdateRepository extends AEntityRepository<StockEntity> {
 
 	@Autowired
 	private StockRepository stockBean;

@@ -6,22 +6,22 @@ import java.util.stream.Collectors;
 import skyglass.composer.stock.domain.model.AObject;
 import skyglass.composer.stock.entity.model.AEntity;
 
-public interface EntityFactory<A extends AObject, E extends AEntity> {
+public interface ObjectFactory<A extends AObject, E extends AEntity> {
 
-	public A createDto(E entity);
+	public A createObject(E entity);
 
-	public E createEntity(A dto);
+	public E createEntity(A object);
 
-	public default A dto(E entity) {
-		return createDto(entity);
+	public default A object(E entity) {
+		return createObject(entity);
 	}
 
 	public default E entity(A dto) {
 		return createEntity(dto);
 	}
 
-	public default List<A> dtoList(List<E> list) {
-		return list.stream().map(p -> dto(p)).collect(Collectors.toList());
+	public default List<A> objectList(List<E> list) {
+		return list.stream().map(p -> object(p)).collect(Collectors.toList());
 	}
 
 	public default List<E> entityList(List<A> list) {

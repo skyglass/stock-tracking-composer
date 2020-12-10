@@ -17,11 +17,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.AEntityRepository;
+import skyglass.composer.stock.domain.factory.StockParameterFactory;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.model.StockParameter;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
@@ -30,10 +30,13 @@ import skyglass.composer.stock.exceptions.NotAccessibleException;
 
 @Repository
 @Transactional(propagation = Propagation.MANDATORY)
-public class StockHistoryRepository extends AEntityBean<StockHistoryEntity> {
+public class StockHistoryRepository extends AEntityRepository<StockHistoryEntity> {
 
 	@Autowired
 	private DataSource dataSource;
+
+	@Autowired
+	private StockParameterFactory stockParameterFactory;
 
 	@Override
 	public StockHistoryEntity findByUuid(String uuid) {
@@ -111,7 +114,7 @@ public class StockHistoryRepository extends AEntityBean<StockHistoryEntity> {
 		double currentValue = previous != null ? previous.getAmount() : 0;
 
 		StockHistoryEntity valid = new StockHistoryEntity(null, item, businessUnit, currentValue + delta, validityDate, previous != null ? previous.getEndDate() : null,
-				StockParameter.copyEntityList(stockMessage.getParameters()));
+				stockParameterFactory.copyObjectList(stockMessage.getParameters()));
 
 		StockHistoryEntity next = findValidNext(item, businessUnit, validityDate);
 

@@ -3,12 +3,11 @@ package skyglass.composer.stock.entity.service;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.stock.domain.factory.StockHistoryFactory;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.StockHistory;
@@ -19,33 +18,30 @@ import skyglass.composer.stock.entity.model.StockHistoryEntity;
 @Transactional
 class StockHistoryServiceImpl implements StockHistoryService {
 
-	private final StockHistoryRepository stockHistoryBean;
+	@Autowired
+	private StockHistoryRepository stockHistoryRepository;
 
-	@PersistenceContext
-	private EntityManager entityManager;
-
-	StockHistoryServiceImpl(StockHistoryRepository stockHistoryBean) {
-		this.stockHistoryBean = stockHistoryBean;
-	}
+	@Autowired
+	private StockHistoryFactory stockHistoryFactory;
 
 	@Override
 	public StockHistory findByUuid(String uuid) {
-		StockHistoryEntity entity = this.stockHistoryBean.findByUuid(uuid);
+		StockHistoryEntity entity = this.stockHistoryRepository.findByUuid(uuid);
 		if (entity == null) {
 			return null;
 		}
 
-		return StockHistory.mapEntity(entity);
+		return stockHistoryFactory.object(entity);
 	}
 
 	@Override
 	public List<StockHistory> find(Item item, BusinessUnit businessUnit) {
-		return StockHistory.mapEntityList(stockHistoryBean.find(item, businessUnit));
+		return stockHistoryFactory.objectList(stockHistoryRepository.find(item, businessUnit));
 	}
 
 	@Override
 	public List<StockHistory> findForPeriod(Item item, BusinessUnit businessUnit, Date startDate, Date endDate) {
-		return StockHistory.mapEntityList(stockHistoryBean.findForPeriod(item, businessUnit, startDate, endDate));
+		return stockHistoryFactory.objectList(stockHistoryRepository.findForPeriod(item, businessUnit, startDate, endDate));
 	}
 
 }

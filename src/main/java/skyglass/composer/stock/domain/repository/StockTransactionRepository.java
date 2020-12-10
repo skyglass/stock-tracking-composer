@@ -10,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.AEntityRepository;
+import skyglass.composer.stock.domain.factory.StockMessageFactory;
+import skyglass.composer.stock.domain.factory.StockTransactionFactory;
+import skyglass.composer.stock.domain.factory.TransactionItemFactory;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.model.StockTransaction;
 import skyglass.composer.stock.domain.model.TransactionType;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
@@ -25,10 +27,19 @@ import skyglass.composer.stock.exceptions.InvalidTransactionStateException;
 
 @Repository
 @Transactional
-public class StockTransactionRepository extends AEntityBean<StockTransactionEntity> {
+public class StockTransactionRepository extends AEntityRepository<StockTransactionEntity> {
 
 	@Autowired
-	private TransactionItemRepository transactionItemBean;
+	private TransactionItemRepository transactionItemRepository;
+
+	@Autowired
+	private StockMessageFactory stockMessageFactory;
+
+	@Autowired
+	private StockTransactionFactory stockTransactionFactory;
+
+	@Autowired
+	private TransactionItemFactory transactionItemFactory;
 
 	public void deleteCommittedTransactions() {
 		deleteCommittedTransactions(null, null);
@@ -70,7 +81,9 @@ public class StockTransactionRepository extends AEntityBean<StockTransactionEnti
 	}
 
 	public List<StockMessage> findPendingMessages(Item item, BusinessUnit businessUnit) {
-		return findPendingTransactions(item, businessUnit).stream().map(e -> StockMessage.mapEntity(e.getMessage())).collect(Collectors.toList());
+		return findPendingTransactions(item, businessUnit).stream()
+				.map(e -> stockMessageFactory.object(e.getMessage()))
+				.collect(Collectors.toList());
 	}
 
 	private List<StockTransactionEntity> findPendingTransactions(Item item, BusinessUnit businessUnit) {
@@ -86,7 +99,7 @@ public class StockTransactionRepository extends AEntityBean<StockTransactionEnti
 	}
 
 	public StockTransactionEntity create(StockMessageEntity stockMessage) {
-		return createEntity(StockTransaction.create(stockMessage));
+		return createEntity(stockTransactionFactory.createEntity(stockMessage));
 	}
 
 	public StockTransactionEntity getPendingTransaction(StockMessage stockMessage) {
@@ -98,16 +111,16 @@ public class StockTransactionRepository extends AEntityBean<StockTransactionEnti
 	}
 
 	public boolean isCommitted(StockTransactionEntity transaction, Item item, BusinessUnit businessUnit, TransactionType transactionType) {
-		TransactionItemEntity transactionItem = transactionItemBean.findByTransactionType(transaction, transactionType);
+		TransactionItemEntity transactionItem = transactionItemRepository.findByTransactionType(transaction, transactionType);
 		if (transactionItem == null) {
-			transactionItem = transactionItemBean.create(transaction, Stock.key(item.getUuid(), businessUnit.getUuid()), transactionType);
+			transactionItem = transactionItemFactory.createEntity(transaction, Stock.key(item.getUuid(), businessUnit.getUuid()), transactionType);
 		}
 		return !transactionItem.isPending();
 	}
 
 	public void commitTransactionItem(StockMessage stockMessage, Item item, BusinessUnit businessUnit, TransactionType transactionType) {
 		StockTransactionEntity transaction = findByMessage(stockMessage);
-		TransactionItemEntity transactionItem = transactionItemBean.findByTransactionType(transaction, transactionType);
+		TransactionItemEntity transactionItem = transactionItemRepository.findByTransactionType(transaction, transactionType);
 		if (transactionItem == null) {
 			throw new InvalidTransactionStateException("Programming Error during Transaction Item Commit. Please, fix the code!");
 		}

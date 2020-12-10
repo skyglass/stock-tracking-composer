@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 import skyglass.composer.stock.entity.model.EntityUtil;
 
 @Repository
 @Transactional
-public class BusinessUnitRepository extends AEntityBean<BusinessUnitEntity> {
+public class BusinessUnitRepository extends AEntityRepository<BusinessUnitEntity> {
 
 	@Autowired
 	private BusinessUnitHierarchyRepository businessUnitHierarchyRepository;

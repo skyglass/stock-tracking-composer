@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityBean;
+import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.domain.dto.ExtUserDTO;
 import skyglass.composer.stock.domain.dto.UserDTO;
 import skyglass.composer.stock.domain.dto.UserDTOFactory;
@@ -35,7 +35,7 @@ import skyglass.composer.utils.PlatformUtil;
  */
 @Repository
 @Transactional
-public class UserRepository extends AEntityBean<UserEntity> {
+public class UserRepository extends AEntityRepository<UserEntity> {
 
 	@Autowired
 	protected PermissionBean permissionBean;

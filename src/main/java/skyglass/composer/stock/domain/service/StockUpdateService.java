@@ -29,7 +29,7 @@ public class StockUpdateService {
 	private DataSource dataSource;
 
 	@Autowired
-	private StockUpdateBean stockUpdateBean;
+	private StockUpdateRepository stockUpdateBean;
 
 	@Autowired
 	private StockTransactionRepository stockTransactionBean;

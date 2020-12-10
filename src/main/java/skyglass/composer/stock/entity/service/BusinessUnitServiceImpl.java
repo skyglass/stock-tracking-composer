@@ -2,10 +2,11 @@ package skyglass.composer.stock.entity.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import skyglass.composer.stock.domain.factory.BusinessUnitFactory;
 import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.repository.BusinessUnitRepository;
 import skyglass.composer.stock.entity.model.BusinessUnitEntity;
@@ -13,16 +14,16 @@ import skyglass.composer.stock.entity.model.BusinessUnitEntity;
 @Component
 class BusinessUnitServiceImpl implements BusinessUnitService {
 
-	private final BusinessUnitRepository businessUnitRepository;
+	@Autowired
+	private BusinessUnitRepository businessUnitRepository;
 
-	BusinessUnitServiceImpl(BusinessUnitRepository businessUnitBean) {
-		this.businessUnitRepository = businessUnitBean;
-	}
+	@Autowired
+	private BusinessUnitFactory businessUnitFactory;
 
 	@Override
 	public Iterable<BusinessUnit> getAll() {
-		return StreamSupport.stream(businessUnitRepository.findAll().spliterator(), false)
-				.map(e -> BusinessUnit.mapEntity(e))
+		return businessUnitRepository.findAll().stream()
+				.map(e -> businessUnitFactory.object(e))
 				.collect(Collectors.toList());
 	}
 
@@ -33,17 +34,18 @@ class BusinessUnitServiceImpl implements BusinessUnitService {
 			return null;
 		}
 
-		return BusinessUnit.mapEntity(entity);
+		return businessUnitFactory.object(entity);
 	}
 
 	@Override
 	public BusinessUnit create(BusinessUnit businessUnit) {
-		return BusinessUnit.mapEntity(businessUnitRepository.create(BusinessUnit.map(businessUnit)));
+		return businessUnitFactory.object(businessUnitRepository.create(
+				businessUnitFactory.entity(businessUnit)));
 	}
 
 	@Override
 	public List<BusinessUnit> find(BusinessUnit parent) {
-		return BusinessUnit.mapEntity(businessUnitRepository.find(parent));
+		return businessUnitFactory.objectList(businessUnitRepository.find(parent));
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skyglass.composer.stock.domain.dto.StockMessageDto;
+import skyglass.composer.stock.domain.factory.StockMessageFactory;
 import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.domain.repository.StockMessageRepository;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
@@ -14,7 +15,10 @@ import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 public class StockBookingService {
 
 	@Autowired
-	private StockMessageRepository stockMessageBean;
+	private StockMessageRepository stockMessageRepository;
+
+	@Autowired
+	private StockMessageFactory stockMessageFactory;
 
 	public StockMessage createStockMessage(StockMessageDto stockMessageDto) {
 		if (StringUtils.isBlank(stockMessageDto.getItemUuid())) {
@@ -33,15 +37,15 @@ public class StockBookingService {
 
 			String messageId = createMessageId(stockMessageDto.getId(), stockMessageDto.getToUuid());
 
-			StockMessageEntity stockMessage = stockMessageBean.findByMessageId(messageId);
+			StockMessageEntity stockMessage = stockMessageRepository.findByMessageId(messageId);
 
 			if (stockMessage != null) {
-				return StockMessage.mapEntity(stockMessage);
+				return stockMessageFactory.object(stockMessage);
 			}
 
 			stockMessageDto.setId(messageId);
 		}
-		StockMessage result = stockMessageBean.createFromDto(stockMessageDto);
+		StockMessage result = stockMessageFactory.object(stockMessageDto);
 
 		//stock update must only happen if creation of stock message is successful
 		//stockUpdateService.replayTransactions(result);

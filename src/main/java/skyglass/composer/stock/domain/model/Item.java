@@ -3,7 +3,6 @@ package skyglass.composer.stock.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import skyglass.composer.stock.entity.model.ItemEntity;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,15 +14,5 @@ public class Item extends AObject {
 	private String uuid;
 
 	private String name;
-
-	public static Item mapEntity(ItemEntity entity) {
-		return new Item(entity.getUuid(), entity.getName());
-
-	}
-
-	public static ItemEntity map(Item entity) {
-		return new ItemEntity(entity.getUuid(), entity.getName());
-
-	}
 
 }

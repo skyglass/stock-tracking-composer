@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityBean;
-import skyglass.composer.stock.domain.model.TransactionItem;
+import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.domain.model.TransactionType;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.StockTransactionEntity;
@@ -17,7 +16,7 @@ import skyglass.composer.stock.entity.model.TransactionItemEntity;
 
 @Repository
 @Transactional(propagation = Propagation.MANDATORY)
-public class TransactionItemRepository extends AEntityBean<TransactionItemEntity> {
+public class TransactionItemRepository extends AEntityRepository<TransactionItemEntity> {
 
 	public List<TransactionItemEntity> findByTransaction(StockTransactionEntity transaction) {
 		String queryStr = "SELECT ti FROM TransactionItemEntity ti WHERE ti.transaction.uuid = :transactionUuid";
@@ -39,10 +38,6 @@ public class TransactionItemRepository extends AEntityBean<TransactionItemEntity
 		query.setParameter("transactionUuid", transaction.getUuid());
 		query.setParameter("transactionType", transactionType);
 		return EntityUtil.getSingleResultSafely(query);
-	}
-
-	public TransactionItemEntity create(StockTransactionEntity transaction, String key, TransactionType transactionType) {
-		return createEntity(TransactionItem.create(transaction, key, transactionType));
 	}
 
 }

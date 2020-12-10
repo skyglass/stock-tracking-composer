@@ -2,14 +2,12 @@ package skyglass.composer.stock.entity.service;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.stock.domain.factory.StockMessageFactory;
 import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.domain.repository.StockMessageRepository;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
@@ -18,30 +16,27 @@ import skyglass.composer.stock.entity.model.StockMessageEntity;
 @Transactional
 public class StockMessageServiceImpl implements StockMessageService {
 
-	private final StockMessageRepository stockMessageBean;
+	@Autowired
+	private StockMessageRepository stockMessageRepository;
 
-	@PersistenceContext
-	private EntityManager entityManager;
-
-	StockMessageServiceImpl(StockMessageRepository stockMessageBean) {
-		this.stockMessageBean = stockMessageBean;
-	}
+	@Autowired
+	private StockMessageFactory stockMessageFactory;
 
 	@Override
 	public Collection<StockMessage> getAll() {
-		return StreamSupport.stream(stockMessageBean.findAll().spliterator(), false)
-				.map(sm -> StockMessage.mapEntity(sm))
+		return stockMessageRepository.findAll().stream()
+				.map(sm -> stockMessageFactory.object(sm))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public StockMessage getByUuid(String uuid) {
-		StockMessageEntity entity = this.stockMessageBean.findByUuid(uuid);
+		StockMessageEntity entity = this.stockMessageRepository.findByUuid(uuid);
 		if (entity == null) {
 			return null;
 		}
 
-		return StockMessage.mapEntity(entity);
+		return stockMessageFactory.object(entity);
 	}
 
 }
