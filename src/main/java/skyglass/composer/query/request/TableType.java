@@ -5,7 +5,7 @@ public enum TableType {
 	StockMessage("StockMessage", "s"), //
 	StockHistory("StockHistory", "s"), //
 	Stock("Stock", "s"), //
-	BusinessUnit("BusinessUnit", "bu"), //
+	Context("Context", "ctx"), //
 	User("\"USER\"", "u");
 
 	private final String tableName;

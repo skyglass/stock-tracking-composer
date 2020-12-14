@@ -28,13 +28,13 @@ public abstract class AbstractDatabaseResetBean {
 
 	private static final String[] KEEP_USER_UUIDS = new String[] { "02655648-7238-48e5-a36e-45025559b219", "0e893b6f-1495-4d62-9c1a-abf5c9cc281f" };
 
-	private static final String[] KEEP_BUSINESSUNIT_UUIDS = new String[] { "158d60d5-5a81-4b1f-b7d6-36a349e05082", "DF789ACB-0CC3-4B4C-BF73-1E68DE4C7CA4", "d659dd95-c3b7-4f55-adf0-596a117c12b9" };
+	private static final String[] KEEP_CONTEXT_UUIDS = new String[] { "158d60d5-5a81-4b1f-b7d6-36a349e05082", "DF789ACB-0CC3-4B4C-BF73-1E68DE4C7CA4", "d659dd95-c3b7-4f55-adf0-596a117c12b9" };
 
 	private static final String[] KEEP_ITEM_UUIDS = new String[] { "9f797b73-ffbe-41c5-b7ed-453d450a7ef4", "34034833-b32b-40ad-928f-eef12c9dbe2c" };
 
 	private static final TableContainer[] PARTIALLY_RESET_TABLES = new TableContainer[] {
 			new TableContainer("\"USER\"", KEEP_USER_UUIDS),
-			new TableContainer("BUSINESSUNIT", KEEP_BUSINESSUNIT_UUIDS),
+			new TableContainer("CONTEXT", KEEP_CONTEXT_UUIDS),
 			new TableContainer("ITEM", KEEP_ITEM_UUIDS)
 	};
 

@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.repository.StockTransactionRepository;
+import skyglass.composer.stock.entity.repository.StockTransactionRepository;
 
 @Component
 public class StockBookingScheduler {

@@ -4,9 +4,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import skyglass.composer.stock.domain.model.UserInfo;
-import skyglass.composer.stock.domain.repository.PermissionBean;
-import skyglass.composer.stock.entity.model.UserEntity;
+import skyglass.composer.security.domain.model.UserInfo;
+import skyglass.composer.security.entity.model.UserEntity;
+import skyglass.composer.security.entity.repository.PermissionBean;
 import skyglass.composer.test.config.TestDataConstants;
 
 @Component

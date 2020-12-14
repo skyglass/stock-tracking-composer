@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import skyglass.composer.stock.domain.repository.UserRepository;
-import skyglass.composer.stock.entity.model.UserEntity;
+import skyglass.composer.security.entity.model.UserEntity;
+import skyglass.composer.security.entity.repository.UserRepository;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
 
 // @ActiveProfiles({ AbstractBaseTest.PROFILE_PSQL })

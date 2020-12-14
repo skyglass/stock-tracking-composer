@@ -8,8 +8,8 @@ public interface StockService {
 
 	Stock getByUuid(String uuid);
 
-	Stock findByItemAndBusinessUnit(String itemUuid, String businessUnitUuid);
+	Stock findByItemAndContext(String itemUuid, String contextUuid);
 
-	Stock deactivate(String itemUuid, String businessUnitUuid);
+	Stock deactivate(String itemUuid, String contextUuid);
 
 }

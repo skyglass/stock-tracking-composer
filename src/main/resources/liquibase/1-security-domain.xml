@@ -23,7 +23,7 @@
 			</column>                                              
         </createTable> 
         
-		<createTable tableName="BUSINESSOWNER">
+		<createTable tableName="OWNER">
 			<column name="UUID" type="NVARCHAR(255)">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
@@ -32,10 +32,10 @@
 			</column>				
 		</createTable>	
 		
-		<addUniqueConstraint columnNames="NAME" constraintName="unique_businessowner" disabled="false" tableName="BUSINESSOWNER"/>
- 	    <addForeignKeyConstraint baseColumnNames="OWNER_UUID" baseTableName="USER" constraintName="user_owner_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSOWNER" />  				
+		<addUniqueConstraint columnNames="NAME" constraintName="unique_owner" disabled="false" tableName="OWNER"/>
+ 	    <addForeignKeyConstraint baseColumnNames="OWNER_UUID" baseTableName="USER" constraintName="user_owner_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="OWNER" />  				
 	
-		<createTable tableName="BUSINESSUNIT">
+		<createTable tableName="CONTEXT">
 				<column name="UUID" type="NVARCHAR(255)">
 					<constraints nullable="false" primaryKey="true" />
 				</column>
@@ -50,15 +50,15 @@
 				</column>					
 		</createTable>
 		
-		<addUniqueConstraint columnNames="NAME, PARENT_UUID" constraintName="composite_unique_businessunit" disabled="false" tableName="BUSINESSUNIT"/>
-	    <createIndex  tableName="BUSINESSUNIT" indexName="businessUnit_name_idx" unique="false">  
+		<addUniqueConstraint columnNames="NAME, PARENT_UUID" constraintName="composite_unique_context" disabled="false" tableName="CONTEXT"/>
+	    <createIndex  tableName="CONTEXT" indexName="context_name_idx" unique="false">  
 	        <column name="NAME" />
 	    </createIndex>
- 	    <addForeignKeyConstraint baseColumnNames="OWNER_UUID" baseTableName="BUSINESSUNIT" constraintName="businessUnit_owner_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSOWNER" />  
- 	    <addForeignKeyConstraint baseColumnNames="PARENT_UUID" baseTableName="BUSINESSUNIT" constraintName="businessUnit_parent_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSUNIT" />  	            
+ 	    <addForeignKeyConstraint baseColumnNames="OWNER_UUID" baseTableName="CONTEXT" constraintName="context_owner_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="OWNER" />  
+ 	    <addForeignKeyConstraint baseColumnNames="PARENT_UUID" baseTableName="CONTEXT" constraintName="context_parent_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="CONTEXT" />  	            
 	  		  	        
 
-		<createTable tableName="BUSINESSUNITHIERARCHY">
+		<createTable tableName="CONTEXTHIERARCHY">
 				<column name="UUID" type="NVARCHAR(255)">
 					<constraints nullable="false" primaryKey="true" />
 				</column>
@@ -70,9 +70,9 @@
 				</column>									
 		</createTable>
 		
-		<addUniqueConstraint columnNames="CHILD_UUID, PARENT_UUID" constraintName="composite_unique_businessunithierarchy" disabled="false" tableName="BUSINESSUNITHIERARCHY"/>
- 	    <addForeignKeyConstraint baseColumnNames="CHILD_UUID" baseTableName="BUSINESSUNITHIERARCHY" constraintName="businessUnitHierarchy_child_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSUNIT" />  
- 	    <addForeignKeyConstraint baseColumnNames="PARENT_UUID" baseTableName="BUSINESSUNITHIERARCHY" constraintName="businessUnitHierarchy_parent_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="BUSINESSUNIT" />  	
+		<addUniqueConstraint columnNames="CHILD_UUID, PARENT_UUID" constraintName="composite_unique_contexthierarchy" disabled="false" tableName="CONTEXTHIERARCHY"/>
+ 	    <addForeignKeyConstraint baseColumnNames="CHILD_UUID" baseTableName="CONTEXTHIERARCHY" constraintName="contextHierarchy_child_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="CONTEXT" />  
+ 	    <addForeignKeyConstraint baseColumnNames="PARENT_UUID" baseTableName="CONTEXTHIERARCHY" constraintName="contextHierarchy_parent_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="UUID" referencedTableName="CONTEXT" />  	
 
 
 	</changeSet>

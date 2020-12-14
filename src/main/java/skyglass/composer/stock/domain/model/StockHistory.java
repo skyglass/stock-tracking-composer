@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import skyglass.composer.security.domain.model.Context;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class StockHistory extends AObject {
 
 	private Item item;
 
-	private BusinessUnit businessUnit;
+	private Context context;
 
 	private Double amount;
 

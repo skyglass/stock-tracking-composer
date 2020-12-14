@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import skyglass.composer.db.exceptions.LockedException;
-import skyglass.composer.stock.domain.model.BusinessUnit;
+import skyglass.composer.security.domain.model.Context;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.exceptions.RunnableWithException;
 import skyglass.composer.stock.exceptions.TransactionRollbackException;
@@ -26,7 +26,7 @@ public class StockUpdateProcessor {
 		this.stockUpdateConnector = stockUpdateConnector;
 	}
 
-	public void updateStock(Item item, BusinessUnit businessUnit, RunnableWithException<TransactionRollbackException> runnable) throws IOException, SQLException, TransactionRollbackException {
+	public void updateStock(Item item, Context context, RunnableWithException<TransactionRollbackException> runnable) throws IOException, SQLException, TransactionRollbackException {
 
 		boolean success = false;
 		int retries = 0;
@@ -34,7 +34,7 @@ public class StockUpdateProcessor {
 
 		do {
 			try {
-				stockUpdateConnector.acquireLock(dataSource, item.getUuid(), businessUnit.getUuid());
+				stockUpdateConnector.acquireLock(dataSource, item.getUuid(), context.getUuid());
 				runnable.run();
 				success = true;
 			} catch (LockedException ex) {
@@ -47,7 +47,7 @@ public class StockUpdateProcessor {
 				lastException = new IOException(ex);
 			} finally {
 				retries++;
-				stockUpdateConnector.releaseLock(dataSource, item.getUuid(), businessUnit.getUuid());
+				stockUpdateConnector.releaseLock(dataSource, item.getUuid(), context.getUuid());
 			}
 		} while (!success && retries < 2);
 

@@ -1,6 +1,7 @@
 package skyglass.composer.stock.domain.factory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import skyglass.composer.stock.AObjectFactory;
 import skyglass.composer.stock.domain.model.TransactionItem;
@@ -9,6 +10,7 @@ import skyglass.composer.stock.entity.model.StockTransactionEntity;
 import skyglass.composer.stock.entity.model.TransactionItemEntity;
 import skyglass.composer.utils.date.DateUtil;
 
+@Component
 public class TransactionItemFactory extends AObjectFactory<TransactionItem, TransactionItemEntity> {
 
 	@Autowired
@@ -29,7 +31,7 @@ public class TransactionItemFactory extends AObjectFactory<TransactionItem, Tran
 				object.getKey(), object.getTransactionType(), object.getCreatedAt(), object.isPending());
 	}
 
-	public TransactionItemEntity createEntity(StockTransactionEntity transaction, String key, TransactionType transactionType) {
+	public TransactionItemEntity entity(StockTransactionEntity transaction, String key, TransactionType transactionType) {
 		return new TransactionItemEntity(null, transaction, key, transactionType, DateUtil.now(), true);
 	}
 

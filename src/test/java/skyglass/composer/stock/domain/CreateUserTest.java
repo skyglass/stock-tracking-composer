@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import skyglass.composer.stock.domain.dto.UserDTO;
-import skyglass.composer.stock.entity.service.UserServiceImpl;
+import skyglass.composer.security.domain.dto.UserDTO;
+import skyglass.composer.security.entity.service.UserServiceImpl;
 import skyglass.composer.stock.test.helper.UserTestHelper;
 import skyglass.composer.stock.test.reset.AbstractBaseTest;
 

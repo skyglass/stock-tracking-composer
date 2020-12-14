@@ -1,6 +1,6 @@
 package skyglass.composer.test.config;
 
-import skyglass.composer.stock.domain.model.UserInfo;
+import skyglass.composer.security.domain.model.UserInfo;
 
 public interface TestDataConstants {
 
@@ -14,9 +14,9 @@ public interface TestDataConstants {
 
 	public static final String STOCK_CENTER_UUID = "158d60d5-5a81-4b1f-b7d6-36a349e05082";
 
-	public static final String BUSINESSUNIT1_UUID = "DF789ACB-0CC3-4B4C-BF73-1E68DE4C7CA4";
+	public static final String CONTEXT1_UUID = "DF789ACB-0CC3-4B4C-BF73-1E68DE4C7CA4";
 
-	public static final String BUSINESSUNIT2_UUID = "d659dd95-c3b7-4f55-adf0-596a117c12b9";
+	public static final String CONTEXT2_UUID = "d659dd95-c3b7-4f55-adf0-596a117c12b9";
 
 	public static final String ITEM1_UUID = "9f797b73-ffbe-41c5-b7ed-453d450a7ef4";
 

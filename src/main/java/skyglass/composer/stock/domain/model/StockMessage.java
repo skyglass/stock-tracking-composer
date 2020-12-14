@@ -8,6 +8,7 @@ import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import skyglass.composer.security.domain.model.Context;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,9 +21,9 @@ public class StockMessage extends AObject {
 
 	private Item item;
 
-	private BusinessUnit from;
+	private Context from;
 
-	private BusinessUnit to;
+	private Context to;
 
 	private Double amount;
 

@@ -17,6 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import skyglass.composer.security.entity.model.ContextEntity;
 
 @Entity
 @Table(name = "stockmessage")
@@ -36,10 +37,10 @@ public class StockMessageEntity extends AEntity {
 	private ItemEntity item;
 
 	@ManyToOne(optional = false)
-	private BusinessUnitEntity from;
+	private ContextEntity from;
 
 	@ManyToOne(optional = false)
-	private BusinessUnitEntity to;
+	private ContextEntity to;
 
 	@Column(nullable = false)
 	private Double amount;

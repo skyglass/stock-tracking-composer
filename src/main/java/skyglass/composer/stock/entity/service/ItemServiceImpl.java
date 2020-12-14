@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import skyglass.composer.stock.domain.factory.ItemFactory;
 import skyglass.composer.stock.domain.model.Item;
-import skyglass.composer.stock.domain.repository.ItemRepository;
 import skyglass.composer.stock.entity.model.ItemEntity;
+import skyglass.composer.stock.entity.repository.ItemRepository;
 
 @Component
 class ItemServiceImpl implements ItemService {

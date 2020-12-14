@@ -1,9 +1,12 @@
 package skyglass.composer.stock.domain.factory;
 
+import org.springframework.stereotype.Component;
+
 import skyglass.composer.stock.ACopyObjectFactory;
 import skyglass.composer.stock.domain.model.StockParameter;
 import skyglass.composer.stock.entity.model.StockParameterEntity;
 
+@Component
 public class StockParameterFactory extends ACopyObjectFactory<StockParameter, StockParameterEntity> {
 
 	@Override

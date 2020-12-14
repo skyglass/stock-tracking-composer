@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.security.domain.model.Context;
 import skyglass.composer.stock.domain.factory.StockHistoryFactory;
-import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.StockHistory;
-import skyglass.composer.stock.domain.repository.StockHistoryRepository;
 import skyglass.composer.stock.entity.model.StockHistoryEntity;
+import skyglass.composer.stock.entity.repository.StockHistoryRepository;
 
 @Service
 @Transactional
@@ -35,13 +35,13 @@ class StockHistoryServiceImpl implements StockHistoryService {
 	}
 
 	@Override
-	public List<StockHistory> find(Item item, BusinessUnit businessUnit) {
-		return stockHistoryFactory.objectList(stockHistoryRepository.find(item, businessUnit));
+	public List<StockHistory> find(Item item, Context context) {
+		return stockHistoryFactory.objectList(stockHistoryRepository.find(item, context));
 	}
 
 	@Override
-	public List<StockHistory> findForPeriod(Item item, BusinessUnit businessUnit, Date startDate, Date endDate) {
-		return stockHistoryFactory.objectList(stockHistoryRepository.findForPeriod(item, businessUnit, startDate, endDate));
+	public List<StockHistory> findForPeriod(Item item, Context context, Date startDate, Date endDate) {
+		return stockHistoryFactory.objectList(stockHistoryRepository.findForPeriod(item, context, startDate, endDate));
 	}
 
 }

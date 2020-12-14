@@ -21,7 +21,7 @@
             <column name="item_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column> 
-            <column name="businessunit_uuid" type="VARCHAR(255)">
+            <column name="context_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>                       
             <column name="amount" type="DOUBLE">
@@ -30,13 +30,13 @@
             <column name="active" type="Boolean" defaultValue="1"/>                        
         </createTable>
         
- 		<createIndex indexName="unique_stock_item_businessunit" tableName="stock" unique="true">
+ 		<createIndex indexName="unique_stock_item_context" tableName="stock" unique="true">
 			<column name="item_uuid"/>
-			<column name="businessunit_uuid"/>
+			<column name="context_uuid"/>
 		</createIndex>       
         
  	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stock" constraintName="stock_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>  
-  	    <addForeignKeyConstraint baseColumnNames="businessunit_uuid" baseTableName="stock" constraintName="stock_businessunit_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  	          
+  	    <addForeignKeyConstraint baseColumnNames="context_uuid" baseTableName="stock" constraintName="stock_context_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="context" validate="true"/>  	          
                 
  
         <createTable tableName="stockmessage">
@@ -67,8 +67,8 @@
 
         </createTable>
         
- 	    <addForeignKeyConstraint baseColumnNames="from_uuid" baseTableName="stockmessage" constraintName="stockmessage_from_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  
-  	    <addForeignKeyConstraint baseColumnNames="to_uuid" baseTableName="stockmessage" constraintName="stockmessage_to_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>  	    
+ 	    <addForeignKeyConstraint baseColumnNames="from_uuid" baseTableName="stockmessage" constraintName="stockmessage_from_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="context" validate="true"/>  
+  	    <addForeignKeyConstraint baseColumnNames="to_uuid" baseTableName="stockmessage" constraintName="stockmessage_to_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="context" validate="true"/>  	    
   	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stockmessage" constraintName="stockmessage_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/> 
   	    
         <createTable tableName="stockparameter">
@@ -148,7 +148,7 @@
             <column name="item_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>            
-            <column name="businessunit_uuid" type="VARCHAR(255)">
+            <column name="context_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>             
             <column name="amount" type="DOUBLE">
@@ -163,12 +163,12 @@
 
         </createTable>
         
- 	    <addForeignKeyConstraint baseColumnNames="businessunit_uuid" baseTableName="stockhistory" constraintName="stockmessage_businessunit_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="businessunit" validate="true"/>      
+ 	    <addForeignKeyConstraint baseColumnNames="context_uuid" baseTableName="stockhistory" constraintName="stockmessage_context_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="context" validate="true"/>      
   	    <addForeignKeyConstraint baseColumnNames="item_uuid" baseTableName="stockhistory" constraintName="stockhistory_item_uuid_fk" deferrable="false" initiallyDeferred="false" referencedColumnNames="uuid" referencedTableName="item" validate="true"/>   
   	    
  		<createIndex indexName="idx_stockhistory_ts_inverse" tableName="stockhistory" unique="false">
 			<column name="item_uuid"/>
-			<column name="businessunit_uuid"/>
+			<column name="context_uuid"/>
 			<column name="startdate"/>	
 			<column name="enddate" descending="true" />					
 		</createIndex>    	    

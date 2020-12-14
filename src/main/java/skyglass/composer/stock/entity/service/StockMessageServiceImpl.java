@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.stock.domain.factory.StockMessageFactory;
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.repository.StockMessageRepository;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
+import skyglass.composer.stock.entity.repository.StockMessageRepository;
 
 @Service
 @Transactional

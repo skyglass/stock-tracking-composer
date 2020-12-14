@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.security.domain.model.Context;
+import skyglass.composer.security.entity.service.ContextService;
 import skyglass.composer.stock.domain.factory.StockFactory;
-import skyglass.composer.stock.domain.model.BusinessUnit;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.domain.model.Stock;
-import skyglass.composer.stock.domain.repository.StockRepository;
 import skyglass.composer.stock.entity.model.StockEntity;
+import skyglass.composer.stock.entity.repository.StockRepository;
 
 @Service
 @Transactional
@@ -27,7 +28,7 @@ class StockServiceImpl implements StockService {
 	private ItemService itemService;
 
 	@Autowired
-	private BusinessUnitService businessUnitService;
+	private ContextService contextService;
 
 	@Override
 	public Iterable<Stock> getAll() {
@@ -46,17 +47,17 @@ class StockServiceImpl implements StockService {
 	}
 
 	@Override
-	public Stock findByItemAndBusinessUnit(String itemUuid, String businessUnitUuid) {
+	public Stock findByItemAndContext(String itemUuid, String contextUuid) {
 		Item item = itemService.getByUuid(itemUuid);
-		BusinessUnit businessUnit = businessUnitService.getByUuid(businessUnitUuid);
-		return stockFactory.object(stockRepository.findByItemAndBusinessUnit(item.getUuid(), businessUnit.getUuid()));
+		Context context = contextService.getByUuid(contextUuid);
+		return stockFactory.object(stockRepository.findByItemAndContext(item.getUuid(), context.getUuid()));
 	}
 
 	@Override
-	public Stock deactivate(String itemUuid, String businessUnitUuid) {
+	public Stock deactivate(String itemUuid, String contextUuid) {
 		Item item = itemService.getByUuid(itemUuid);
-		BusinessUnit businessUnit = businessUnitService.getByUuid(businessUnitUuid);
-		return stockFactory.object(stockRepository.deactivateStock(item.getUuid(), businessUnit.getUuid()));
+		Context context = contextService.getByUuid(contextUuid);
+		return stockFactory.object(stockRepository.deactivateStock(item.getUuid(), context.getUuid()));
 	}
 
 }

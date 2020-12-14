@@ -24,10 +24,10 @@ public class StockUpdateConnector {
 
 	private static final long RELEASE_LOCK_TIMEOUT = 40000;
 
-	public void acquireLock(DataSource dataSource, String itemUuid, String businessUnitUuid)
+	public void acquireLock(DataSource dataSource, String itemUuid, String contextUuid)
 			throws LockedException, SQLException, InterruptedException {
-		if (StringUtils.isAnyBlank(itemUuid, businessUnitUuid)) {
-			throw new IllegalArgumentException("Neither businessUnitUuid, nor itemUuid can be null or empty");
+		if (StringUtils.isAnyBlank(itemUuid, contextUuid)) {
+			throw new IllegalArgumentException("Neither contextUuid, nor itemUuid can be null or empty");
 		}
 
 		int maxRetries = 800;
@@ -38,7 +38,7 @@ public class StockUpdateConnector {
 			retry++;
 
 			try {
-				_acquireLock(dataSource, itemUuid, businessUnitUuid);
+				_acquireLock(dataSource, itemUuid, contextUuid);
 				return;
 			} catch (LockedException ex) {
 				if (System.currentTimeMillis() > start + ACQUIRE_LOCK_TIMEOUT) {
@@ -54,11 +54,11 @@ public class StockUpdateConnector {
 		throw new LockedException();
 	}
 
-	private void _acquireLock(DataSource dataSource, String itemUuid, String businessUnitUuid)
+	private void _acquireLock(DataSource dataSource, String itemUuid, String contextUuid)
 			throws LockedException, SQLException {
 		try (Connection dbConnection = dataSource.getConnection()) {
 
-			String key = Stock.key(itemUuid, businessUnitUuid);
+			String key = Stock.key(itemUuid, contextUuid);
 
 			try {
 				String insertQuery = "INSERT INTO KEYLOCK VALUES(?)";
@@ -75,9 +75,9 @@ public class StockUpdateConnector {
 
 	}
 
-	public void releaseLock(DataSource dataSource, String itemUuid, String businessUnitUuid) throws SQLException {
-		if (StringUtils.isAnyBlank(itemUuid, businessUnitUuid)) {
-			throw new IllegalArgumentException("Neither itemUuid, nor businessUnitUuid can be null or empty");
+	public void releaseLock(DataSource dataSource, String itemUuid, String contextUuid) throws SQLException {
+		if (StringUtils.isAnyBlank(itemUuid, contextUuid)) {
+			throw new IllegalArgumentException("Neither itemUuid, nor contextUuid can be null or empty");
 		}
 
 		int maxRetries = 1600;
@@ -88,7 +88,7 @@ public class StockUpdateConnector {
 			retry++;
 
 			try {
-				_releaseLock(dataSource, itemUuid, businessUnitUuid);
+				_releaseLock(dataSource, itemUuid, contextUuid);
 				return;
 			} catch (SQLException ex) {
 				if (System.currentTimeMillis() > start + RELEASE_LOCK_TIMEOUT) {
@@ -107,10 +107,10 @@ public class StockUpdateConnector {
 		log.error("Giving up after " + retry + " retries, could not release lock!");
 	}
 
-	private void _releaseLock(DataSource dataSource, String itemUuid, String businessUnitUuid) throws SQLException {
+	private void _releaseLock(DataSource dataSource, String itemUuid, String contextUuid) throws SQLException {
 		try (Connection dbConnection = dataSource.getConnection()) {
 
-			String key = Stock.key(itemUuid, businessUnitUuid);
+			String key = Stock.key(itemUuid, contextUuid);
 
 			try (PreparedStatement deleteLockStmt = dbConnection.prepareStatement("DELETE FROM KEYLOCK WHERE KEY = ?")) {
 				deleteLockStmt.setString(1, key);
@@ -118,6 +118,5 @@ public class StockUpdateConnector {
 			}
 		}
 	}
-
 
 }

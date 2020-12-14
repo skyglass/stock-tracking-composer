@@ -12,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import skyglass.composer.security.entity.model.ContextEntity;
 
 @Entity
 @Table(name = "stock")
@@ -31,7 +32,7 @@ public class StockEntity extends AEntity {
 	private ItemEntity item;
 
 	@ManyToOne(optional = false)
-	private BusinessUnitEntity businessUnit;
+	private ContextEntity context;
 
 	@Column(nullable = false)
 	private Double amount;
@@ -47,8 +48,8 @@ public class StockEntity extends AEntity {
 		this.active = false;
 	}
 
-	public static StockEntity create(ItemEntity item, BusinessUnitEntity businessUnit) {
-		return new StockEntity(null, item, businessUnit, 0D, true);
+	public static StockEntity create(ItemEntity item, ContextEntity context) {
+		return new StockEntity(null, item, context, 0D, true);
 	}
 
 }

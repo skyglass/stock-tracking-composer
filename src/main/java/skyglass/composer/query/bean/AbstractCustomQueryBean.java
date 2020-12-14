@@ -24,9 +24,9 @@ import skyglass.composer.query.request.CustomGetRowsRequest;
 import skyglass.composer.query.request.QueryContext;
 import skyglass.composer.query.response.CustomGetRowsResponse;
 import skyglass.composer.query.response.CustomPivotValuesResponse;
+import skyglass.composer.security.entity.model.UserEntity;
 import skyglass.composer.stock.EntityBeanUtil;
 import skyglass.composer.stock.entity.model.EntityUtil;
-import skyglass.composer.stock.entity.model.UserEntity;
 
 @Repository
 @Transactional

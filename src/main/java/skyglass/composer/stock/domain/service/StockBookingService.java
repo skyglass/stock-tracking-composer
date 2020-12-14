@@ -7,12 +7,16 @@ import org.springframework.stereotype.Service;
 import skyglass.composer.stock.domain.dto.StockMessageDto;
 import skyglass.composer.stock.domain.factory.StockMessageFactory;
 import skyglass.composer.stock.domain.model.StockMessage;
-import skyglass.composer.stock.domain.repository.StockMessageRepository;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
+import skyglass.composer.stock.entity.repository.StockMessageRepository;
+import skyglass.composer.stock.entity.repository.StockTransactionRepository;
 import skyglass.composer.stock.exceptions.NotNullableNorEmptyException;
 
 @Service
 public class StockBookingService {
+
+	@Autowired
+	private StockTransactionRepository stockTransactionRepository;
 
 	@Autowired
 	private StockMessageRepository stockMessageRepository;
@@ -45,12 +49,14 @@ public class StockBookingService {
 
 			stockMessageDto.setId(messageId);
 		}
-		StockMessage result = stockMessageFactory.object(stockMessageDto);
+		StockMessageEntity entity = stockMessageRepository.create(
+				stockMessageFactory.entity(stockMessageDto));
+		stockTransactionRepository.create(entity);
 
 		//stock update must only happen if creation of stock message is successful
 		//stockUpdateService.replayTransactions(result);
 		//StockMessage stockMessage = stockMessageService.getByUuid(result.getUuid());
-		return result;
+		return stockMessageFactory.object(entity);
 	}
 
 	private static String createMessageId(String id, String toUuid) {
