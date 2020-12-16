@@ -47,7 +47,10 @@
 				</column>					
 				<column name="PARENT_UUID" type="NVARCHAR(255)" >
 					<constraints nullable="true" />
-				</column>					
+				</column>
+	            <column name="level" type="INTEGER">
+	                <constraints nullable="false"/>
+	            </column> 									
 		</createTable>
 		
 		<addUniqueConstraint columnNames="NAME, PARENT_UUID" constraintName="composite_unique_context" disabled="false" tableName="CONTEXT"/>

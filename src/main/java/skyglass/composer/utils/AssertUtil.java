@@ -2,6 +2,8 @@ package skyglass.composer.utils;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -62,6 +64,23 @@ public class AssertUtil {
 			if (!s.get()) {
 				throw new BusinessRuleValidationException(message);
 			}
+		}
+	}
+
+	@SafeVarargs
+	public static <T> void found(String message, List<T> list, Predicate<T>... predicates) {
+		boolean found = false;
+		for (T element : list) {
+			for (Predicate<T> predicate : predicates) {
+				if (!predicate.test(element)) {
+					continue;
+				}
+			}
+			found = true;
+			break;
+		}
+		if (!found) {
+			throw new BusinessRuleValidationException(message);
 		}
 	}
 

@@ -12,8 +12,12 @@ public interface ContextService {
 
 	Context create(Context context);
 
+	void delete(Context context);
+
 	List<Context> find(Context parent);
 
 	List<Context> findAll(Context parent);
+
+	Context findByName(Context parent, String name);
 
 }

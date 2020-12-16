@@ -37,4 +37,7 @@ public class ContextEntity extends AEntity {
 	@ManyToOne
 	private ContextEntity parent;
 
+	@Column(nullable = false)
+	private int level;
+
 }

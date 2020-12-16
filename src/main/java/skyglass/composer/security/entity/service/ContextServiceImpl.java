@@ -50,8 +50,19 @@ class ContextServiceImpl implements ContextService {
 
 	@Override
 	public List<Context> findAll(Context parent) {
-		// TODO Auto-generated method stub
-		return null;
+		return contextFactory.objectList(contextRepository.findAll(parent));
+	}
+
+	@Override
+	public Context findByName(Context parent, String name) {
+		return contextFactory.object(contextRepository.findByName(parent, name));
+	}
+
+	@Override
+	public void delete(Context context) {
+		ContextEntity entity = contextFactory.entity(context);
+		contextRepository.deleteHierarchy(entity);
+		contextRepository.delete(entity);
 	}
 
 }

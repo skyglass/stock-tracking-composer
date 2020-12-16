@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import skyglass.composer.security.domain.model.Context;
 import skyglass.composer.security.entity.model.ContextEntity;
+import skyglass.composer.security.entity.repository.ContextRepository;
 import skyglass.composer.stock.AObjectFactory;
 
 @Component
@@ -12,6 +13,9 @@ public class ContextFactory extends AObjectFactory<Context, ContextEntity> {
 
 	@Autowired
 	private OwnerFactory ownerFactory;
+
+	@Autowired
+	private ContextRepository contextRepository;
 
 	@Override
 	public Context createObject(ContextEntity entity) {
@@ -22,9 +26,12 @@ public class ContextFactory extends AObjectFactory<Context, ContextEntity> {
 
 	@Override
 	public ContextEntity createEntity(Context object) {
+		ContextEntity parentEntity = object.getParent() == null ? null
+				: contextRepository.findByUuidSecure(object.getParent().getUuid());
+		int level = parentEntity == null ? 0 : parentEntity.getLevel() + 1;
 		return object == null ? null
 				: new ContextEntity(object.getUuid(), object.getName(),
-						ownerFactory.entity(object.getOwner()), entity(object.getParent()));
+						ownerFactory.entity(object.getOwner()), parentEntity, level);
 	}
 
 }
