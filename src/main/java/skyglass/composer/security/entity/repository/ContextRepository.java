@@ -34,20 +34,54 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 		return result;
 	}
 
-	public void deleteHierarchy(ContextEntity entity) {
-		String queryStr = "DELETE FROM ContextHierarchyEntity ctx WHERE ctx.parent.uuid = :parentUuid";
-		Query query = entityBeanUtil.createQuery(queryStr);
-		query.setParameter("parentUuid", entity.getUuid());
-		query.executeUpdate();
-	}
-
 	public void delete(ContextEntity entity) {
-		String queryStr = "DELETE FROM ContextEntity ctx WHERE ctx.uuid IN ("
-				+ "SELECT ctx.uuid FROM ContextEntity ctx WHERE ctx.parent.uuid = :parentUuid "
-				+ "ORDER BY ctx.level DESC)";
-		Query query = entityBeanUtil.createQuery(queryStr);
-		query.setParameter("parentUuid", entity.getUuid());
-		query.executeUpdate();
+
+		Integer level = null;
+
+		do {
+			String queryStr = "SELECT MAX(ctx.level) FROM ContextHierarchy ctxh "
+					+ "JOIN Context ctx ON ctx.uuid = ctxh.child_uuid "
+					+ "AND ctxh.parent_uuid = :parentUuid";
+
+			Query levelQuery = entityBeanUtil.createNativeQuery(queryStr);
+			levelQuery.setParameter("parentUuid", entity.getUuid());
+			level = (Integer) EntityUtil.getSingleResultSafely(levelQuery);
+
+			if (level > 0) {
+				queryStr = "SELECT ctx.uuid FROM ContextHierarchy ctxh "
+						+ "JOIN Context ctx ON ctx.uuid = ctxh.child_uuid "
+						+ "AND ctx.level = :level AND ctxh.parent_uuid = :parentUuid";
+
+				Query uuidQuery = entityBeanUtil.createNativeQuery(queryStr);
+				uuidQuery.setParameter("level", level);
+				uuidQuery.setParameter("parentUuid", entity.getUuid());
+
+				@SuppressWarnings("unchecked")
+				List<String> uuids = (List<String>) EntityUtil.getListResultSafely(uuidQuery);
+
+				queryStr = "DELETE FROM ContextHierarchyEntity ctx WHERE ctx.child.uuid IN :uuids";
+				Query deleteQuery = entityBeanUtil.createQuery(queryStr);
+				deleteQuery.setParameter("uuids", uuids);
+				deleteQuery.executeUpdate();
+
+				queryStr = "DELETE FROM ContextEntity ctx WHERE ctx.uuid IN :uuids";
+				deleteQuery = entityBeanUtil.createQuery(queryStr);
+				deleteQuery.setParameter("uuids", uuids);
+				deleteQuery.executeUpdate();
+
+			}
+		} while (level > 0);
+
+		String queryStr = "DELETE FROM ContextHierarchyEntity ctx WHERE ctx.child.uuid = :parentUuid";
+		Query deleteQuery = entityBeanUtil.createQuery(queryStr);
+		deleteQuery.setParameter("parentUuid", entity.getUuid());
+		deleteQuery.executeUpdate();
+
+		queryStr = "DELETE FROM ContextEntity ctx WHERE ctx.uuid = :parentUuid";
+		deleteQuery = entityBeanUtil.createQuery(queryStr);
+		deleteQuery.setParameter("parentUuid", entity.getUuid());
+		deleteQuery.executeUpdate();
+
 	}
 
 	public List<ContextEntity> find(Context parent) {

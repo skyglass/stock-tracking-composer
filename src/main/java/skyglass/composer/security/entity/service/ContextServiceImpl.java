@@ -61,7 +61,6 @@ class ContextServiceImpl implements ContextService {
 	@Override
 	public void delete(Context context) {
 		ContextEntity entity = contextFactory.entity(context);
-		contextRepository.deleteHierarchy(entity);
 		contextRepository.delete(entity);
 	}
 
