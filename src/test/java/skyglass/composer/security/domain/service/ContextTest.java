@@ -61,7 +61,7 @@ public class ContextTest extends AbstractBaseTest {
 		Assert.assertEquals(context, result);
 		Assert.assertEquals(context.getName(), result.getName());
 
-		contextService.delete(result);
+		contextService.delete(result.getUuid());
 
 		result = contextService.findByName(null, "test1");
 		Assert.assertNull(result);
@@ -69,6 +69,7 @@ public class ContextTest extends AbstractBaseTest {
 
 	@Test
 	public void testCreateContextWithParent() {
+		int initSize = contextService.findAll().size();
 		Context parent = contextTestHelper.create("parent", owner);
 		Assert.assertEquals("parent", parent.getName());
 
@@ -78,16 +79,16 @@ public class ContextTest extends AbstractBaseTest {
 
 		Context result = contextService.findByName(null, "child");
 		Assert.assertNull(result);
-		result = contextService.findByName(parent, "child");
+		result = contextService.findByName(parent.getUuid(), "child");
 		Assert.assertEquals(child.getName(), result.getName());
 
-		List<Context> list = contextService.find(parent);
+		List<Context> list = contextService.find(parent.getUuid());
 		AssertUtil.found("Context child not found", list, e -> Objects.equals("child", e.getName()));
 
-		list = contextService.findAll(parent);
+		list = contextService.findAll(parent.getUuid());
 		AssertUtil.found("Context child not found", list, e -> Objects.equals("child", e.getName()));
 
-		contextService.delete(parent);
+		contextService.delete(parent.getUuid());
 
 		result = contextService.findByName(null, "child");
 		Assert.assertNull(result);
@@ -95,8 +96,8 @@ public class ContextTest extends AbstractBaseTest {
 		result = contextService.findByName(null, "parent");
 		Assert.assertNull(result);
 
-		list = contextService.findAll(parent);
-		Assert.assertEquals(0, list.size());
+		list = contextService.findAll();
+		Assert.assertEquals(initSize, list.size());
 	}
 
 }

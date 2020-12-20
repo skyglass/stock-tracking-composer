@@ -1,5 +1,6 @@
 package skyglass.composer.security.entity.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ class ContextServiceImpl implements ContextService {
 	private ContextFactory contextFactory;
 
 	@Override
-	public Iterable<Context> getAll() {
+	public List<Context> findAll() {
 		return contextRepository.findAll().stream()
 				.map(e -> contextFactory.object(e))
 				.collect(Collectors.toList());
@@ -44,24 +45,34 @@ class ContextServiceImpl implements ContextService {
 	}
 
 	@Override
-	public List<Context> find(Context parent) {
-		return contextFactory.objectList(contextRepository.find(parent));
+	public List<Context> find(String parentUuid) {
+		return contextFactory.objectList(contextRepository.find(parentUuid));
 	}
 
 	@Override
-	public List<Context> findAll(Context parent) {
-		return contextFactory.objectList(contextRepository.findAll(parent));
+	public List<Context> findAll(String parentUuid) {
+		return contextFactory.objectList(contextRepository.findAll(parentUuid));
 	}
 
 	@Override
-	public Context findByName(Context parent, String name) {
-		return contextFactory.object(contextRepository.findByName(parent, name));
+	public Context findByName(String parentUuid, String name) {
+		return contextFactory.object(contextRepository.findByName(parentUuid, name));
 	}
 
 	@Override
-	public void delete(Context context) {
-		ContextEntity entity = contextFactory.entity(context);
-		contextRepository.delete(entity);
+	public void delete(String contextUuid) {
+		contextRepository.delete(contextUuid);
+	}
+
+	@Override
+	public List<Context> createAll(Context... contexts) {
+		return contextFactory.objectList(contextRepository.createList(
+				contextFactory.entityList(Arrays.asList(contexts))));
+	}
+
+	@Override
+	public void deleteAll(String... contextUuids) {
+		Arrays.asList(contextUuids).forEach(uuid -> delete(uuid));
 	}
 
 }

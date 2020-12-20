@@ -6,18 +6,22 @@ import skyglass.composer.security.domain.model.Context;
 
 public interface ContextService {
 
-	Iterable<Context> getAll();
+	List<Context> findAll();
 
 	Context getByUuid(String uuid);
 
 	Context create(Context context);
 
-	void delete(Context context);
+	List<Context> createAll(Context... contexts);
 
-	List<Context> find(Context parent);
+	void delete(String contextUuid);
 
-	List<Context> findAll(Context parent);
+	void deleteAll(String... contextUuids);
 
-	Context findByName(Context parent, String name);
+	List<Context> find(String parentUuid);
+
+	List<Context> findAll(String parentUuid);
+
+	Context findByName(String parentUuid, String name);
 
 }

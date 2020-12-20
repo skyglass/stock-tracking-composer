@@ -3,6 +3,8 @@ package skyglass.composer.security.controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.List;
+
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +28,8 @@ class ContextResource {
 	}
 
 	@GetMapping("/")
-	public Iterable<Context> retrieveAllContexts() {
-		return contextService.getAll();
+	public List<Context> retrieveAllContexts() {
+		return contextService.findAll();
 	}
 
 	@GetMapping("/{uuid}")

@@ -5,11 +5,11 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.security.domain.model.Context;
 import skyglass.composer.security.entity.model.ContextEntity;
 import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.entity.model.EntityUtil;
@@ -22,6 +22,11 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 	@Autowired
 	private ContextHierarchyRepository contextHierarchyRepository;
 
+	public List<ContextEntity> createList(List<ContextEntity> entityList) {
+		entityList.forEach(e -> create(e));
+		return entityList;
+	}
+
 	public ContextEntity create(ContextEntity entity) {
 		ContextEntity result = createEntity(entity);
 		contextHierarchyRepository.create(result, result);
@@ -30,11 +35,11 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 			contextHierarchyRepository.create(result, result.getParent());
 			parent = parent.getParent();
 		}
-
 		return result;
 	}
 
-	public void delete(ContextEntity entity) {
+	public void delete(String contextUuid) {
+		ContextEntity entity = findByUuidSecure(contextUuid);
 
 		Integer level = null;
 
@@ -47,44 +52,33 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 			levelQuery.setParameter("parentUuid", entity.getUuid());
 			level = (Integer) EntityUtil.getSingleResultSafely(levelQuery);
 
-			if (level > 0) {
-				queryStr = "SELECT ctx.uuid FROM ContextHierarchy ctxh "
-						+ "JOIN Context ctx ON ctx.uuid = ctxh.child_uuid "
-						+ "AND ctx.level = :level AND ctxh.parent_uuid = :parentUuid";
+			queryStr = "SELECT ctx.uuid FROM ContextHierarchy ctxh "
+					+ "JOIN Context ctx ON ctx.uuid = ctxh.child_uuid "
+					+ "AND ctx.level = :level AND ctxh.parent_uuid = :parentUuid";
 
-				Query uuidQuery = entityBeanUtil.createNativeQuery(queryStr);
-				uuidQuery.setParameter("level", level);
-				uuidQuery.setParameter("parentUuid", entity.getUuid());
+			Query uuidQuery = entityBeanUtil.createNativeQuery(queryStr);
+			uuidQuery.setParameter("level", level);
+			uuidQuery.setParameter("parentUuid", entity.getUuid());
 
-				@SuppressWarnings("unchecked")
-				List<String> uuids = (List<String>) EntityUtil.getListResultSafely(uuidQuery);
+			@SuppressWarnings("unchecked")
+			List<String> uuids = (List<String>) EntityUtil.getListResultSafely(uuidQuery);
 
-				queryStr = "DELETE FROM ContextHierarchyEntity ctx WHERE ctx.child.uuid IN :uuids";
-				Query deleteQuery = entityBeanUtil.createQuery(queryStr);
-				deleteQuery.setParameter("uuids", uuids);
-				deleteQuery.executeUpdate();
+			queryStr = "DELETE FROM ContextHierarchyEntity ctx WHERE ctx.child.uuid IN :uuids";
+			Query deleteQuery = entityBeanUtil.createQuery(queryStr);
+			deleteQuery.setParameter("uuids", uuids);
+			deleteQuery.executeUpdate();
 
-				queryStr = "DELETE FROM ContextEntity ctx WHERE ctx.uuid IN :uuids";
-				deleteQuery = entityBeanUtil.createQuery(queryStr);
-				deleteQuery.setParameter("uuids", uuids);
-				deleteQuery.executeUpdate();
+			queryStr = "DELETE FROM ContextEntity ctx WHERE ctx.uuid IN :uuids";
+			deleteQuery = entityBeanUtil.createQuery(queryStr);
+			deleteQuery.setParameter("uuids", uuids);
+			deleteQuery.executeUpdate();
 
-			}
-		} while (level > 0);
-
-		String queryStr = "DELETE FROM ContextHierarchyEntity ctx WHERE ctx.child.uuid = :parentUuid";
-		Query deleteQuery = entityBeanUtil.createQuery(queryStr);
-		deleteQuery.setParameter("parentUuid", entity.getUuid());
-		deleteQuery.executeUpdate();
-
-		queryStr = "DELETE FROM ContextEntity ctx WHERE ctx.uuid = :parentUuid";
-		deleteQuery = entityBeanUtil.createQuery(queryStr);
-		deleteQuery.setParameter("parentUuid", entity.getUuid());
-		deleteQuery.executeUpdate();
+		} while (level > entity.getLevel());
 
 	}
 
-	public List<ContextEntity> find(Context parent) {
+	public List<ContextEntity> find(String parentUuid) {
+		ContextEntity parent = StringUtils.isBlank(parentUuid) ? null : findByUuidSecure(parentUuid);
 		String queryStr = "SELECT ctx FROM ContextEntity ctx WHERE "
 				+ (parent == null ? "ctx.parent IS NULL " : "ctx.parent.uuid = :parentUuid ")
 				+ "ORDER BY ctx.name";
@@ -95,13 +89,14 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 		return EntityUtil.getListResultSafely(query);
 	}
 
-	public List<ContextEntity> findAll(Context parent) {
+	public List<ContextEntity> findAll(String parentUuid) {
+		ContextEntity parent = StringUtils.isBlank(parentUuid) ? null : findByUuidSecure(parentUuid);
 		String queryStr = "SELECT "
 				+ (parent == null ? "DISTINCT " : "")
-				+ "ctx.child "
-				+ "FROM ContextHierarchyEntity ctx WHERE "
-				+ (parent == null ? "ctx.parent IS NULL " : "ctx.parent.uuid = :parentUuid AND ctx.child.uuid != ctx.parent.uuid ")
-				+ "ORDER BY ctx.child.name";
+				+ "ctx "
+				+ "FROM ContextHierarchyEntity ctxh JOIN ContextEntity ctx ON ctx.uuid = ctxh.child.uuid AND "
+				+ (parent == null ? "ctx.parent IS NULL " : "ctxh.parent.uuid = :parentUuid AND ctxh.child.uuid != ctxh.parent.uuid ")
+				+ "ORDER BY ctx.name";
 		TypedQuery<ContextEntity> query = entityBeanUtil.createQuery(queryStr, ContextEntity.class);
 		if (parent != null) {
 			query.setParameter("parentUuid", parent.getUuid());
@@ -109,7 +104,8 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 		return EntityUtil.getListResultSafely(query);
 	}
 
-	public ContextEntity findByName(Context parent, String name) {
+	public ContextEntity findByName(String parentUuid, String name) {
+		ContextEntity parent = StringUtils.isBlank(parentUuid) ? null : findByUuidSecure(parentUuid);
 		AssertUtil.notEmpty("name", name);
 		String queryStr = "SELECT ctx FROM ContextEntity ctx WHERE "
 				+ (parent == null ? "ctx.parent IS NULL " : "ctx.parent.uuid = :parentUuid ")
