@@ -1,4 +1,4 @@
-package skyglass.composer.stock;
+package skyglass.composer.common.repository;
 
 import skyglass.composer.stock.entity.model.AEntity;
 import skyglass.composer.stock.exceptions.NotAccessibleException;

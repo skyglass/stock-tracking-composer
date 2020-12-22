@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.security.entity.model.ContextEntity;
 import skyglass.composer.security.entity.repository.ContextRepository;
-import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.ItemEntity;
 import skyglass.composer.stock.entity.model.StockEntity;

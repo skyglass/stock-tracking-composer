@@ -100,4 +100,37 @@ public class ContextTest extends AbstractBaseTest {
 		Assert.assertEquals(initSize, list.size());
 	}
 
+	@Test
+	public void testCreatMultipleContextsWithParent() {
+		int initSize = contextService.findAll().size();
+		Context parent = contextTestHelper.create("parent", owner);
+		Assert.assertEquals("parent", parent.getName());
+
+		Context child = contextTestHelper.create("child", owner, parent);
+		Assert.assertEquals("child", child.getName());
+		Assert.assertEquals(parent, child.getParent());
+
+		Context result = contextService.findByName(null, "child");
+		Assert.assertNull(result);
+		result = contextService.findByName(parent.getUuid(), "child");
+		Assert.assertEquals(child.getName(), result.getName());
+
+		List<Context> list = contextService.find(parent.getUuid());
+		AssertUtil.found("Context child not found", list, e -> Objects.equals("child", e.getName()));
+
+		list = contextService.findAll(parent.getUuid());
+		AssertUtil.found("Context child not found", list, e -> Objects.equals("child", e.getName()));
+
+		contextService.delete(parent.getUuid());
+
+		result = contextService.findByName(null, "child");
+		Assert.assertNull(result);
+
+		result = contextService.findByName(null, "parent");
+		Assert.assertNull(result);
+
+		list = contextService.findAll();
+		Assert.assertEquals(initSize, list.size());
+	}
+
 }

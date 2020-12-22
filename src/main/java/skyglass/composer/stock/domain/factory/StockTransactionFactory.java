@@ -3,7 +3,7 @@ package skyglass.composer.stock.domain.factory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import skyglass.composer.stock.AObjectFactory;
+import skyglass.composer.common.factory.AObjectFactory;
 import skyglass.composer.stock.domain.model.StockTransaction;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
 import skyglass.composer.stock.entity.model.StockTransactionEntity;

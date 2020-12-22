@@ -1,4 +1,4 @@
-package skyglass.composer.stock;
+package skyglass.composer.common.repository;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

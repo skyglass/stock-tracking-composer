@@ -39,9 +39,9 @@ class ContextServiceImpl implements ContextService {
 	}
 
 	@Override
-	public Context create(Context context) {
+	public Context create(String parentUuid, Context context) {
 		return contextFactory.object(contextRepository.create(
-				contextFactory.entity(context)));
+				contextFactory.entityFromParams(context, parentUuid)));
 	}
 
 	@Override
@@ -65,9 +65,9 @@ class ContextServiceImpl implements ContextService {
 	}
 
 	@Override
-	public List<Context> createAll(Context... contexts) {
+	public List<Context> createOrUpdate(String parentUuid, Context... contexts) {
 		return contextFactory.objectList(contextRepository.createList(
-				contextFactory.entityList(Arrays.asList(contexts))));
+				contextFactory.entityListFromParams(Arrays.asList(contexts), parentUuid)));
 	}
 
 	@Override

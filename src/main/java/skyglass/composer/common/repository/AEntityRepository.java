@@ -1,4 +1,4 @@
-package skyglass.composer.stock;
+package skyglass.composer.common.repository;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -130,6 +130,21 @@ public abstract class AEntityRepository<E extends AEntity> implements EntityRepo
 		}
 
 		return Collections.emptyList();
+	}
+
+	@NotNull
+	protected E createOrUpdateEntity(E entity)
+			throws AlreadyExistsException, IllegalArgumentException, IllegalStateException, NotAccessibleException {
+		if (entity == null) {
+			throw new IllegalArgumentException("Entity cannot be null");
+		}
+
+		String uuid = entity.getUuid();
+		if (StringUtils.isBlank(uuid)) {
+			return createEntity(entity);
+		}
+
+		return updateEntity(entity);
 	}
 
 	@NotNull

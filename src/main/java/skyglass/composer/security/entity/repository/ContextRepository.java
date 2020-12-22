@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.security.entity.model.ContextEntity;
-import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.utils.AssertUtil;
 
@@ -28,12 +28,15 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 	}
 
 	public ContextEntity create(ContextEntity entity) {
-		ContextEntity result = createEntity(entity);
-		contextHierarchyRepository.create(result, result);
-		ContextEntity parent = result.getParent();
-		while (parent != null) {
-			contextHierarchyRepository.create(result, result.getParent());
-			parent = parent.getParent();
+		boolean isNew = StringUtils.isBlank(entity.getUuid());
+		ContextEntity result = createOrUpdateEntity(entity);
+		if (isNew) {
+			contextHierarchyRepository.create(result, result);
+			ContextEntity parent = result.getParent();
+			while (parent != null) {
+				contextHierarchyRepository.create(result, result.getParent());
+				parent = parent.getParent();
+			}
 		}
 		return result;
 	}

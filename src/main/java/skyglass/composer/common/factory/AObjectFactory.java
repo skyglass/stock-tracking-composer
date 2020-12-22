@@ -1,4 +1,4 @@
-package skyglass.composer.stock;
+package skyglass.composer.common.factory;
 
 import skyglass.composer.stock.domain.model.AObject;
 import skyglass.composer.stock.entity.model.AEntity;

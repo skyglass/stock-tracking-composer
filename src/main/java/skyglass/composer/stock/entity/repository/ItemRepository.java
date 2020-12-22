@@ -3,7 +3,7 @@ package skyglass.composer.stock.entity.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityRepository;
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.stock.entity.model.ItemEntity;
 
 @Repository

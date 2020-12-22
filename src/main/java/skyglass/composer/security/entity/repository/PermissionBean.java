@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.common.repository.EntityBeanUtil;
 import skyglass.composer.security.domain.model.UserHelper;
 import skyglass.composer.security.entity.model.UserEntity;
-import skyglass.composer.stock.EntityBeanUtil;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.exceptions.NotAccessibleException;
 import skyglass.composer.utils.PlatformUtil;

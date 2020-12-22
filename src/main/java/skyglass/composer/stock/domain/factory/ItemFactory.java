@@ -2,7 +2,7 @@ package skyglass.composer.stock.domain.factory;
 
 import org.springframework.stereotype.Component;
 
-import skyglass.composer.stock.AObjectFactory;
+import skyglass.composer.common.factory.AObjectFactory;
 import skyglass.composer.stock.domain.model.Item;
 import skyglass.composer.stock.entity.model.ItemEntity;
 

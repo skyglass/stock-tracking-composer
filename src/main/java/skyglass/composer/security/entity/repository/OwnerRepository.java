@@ -3,8 +3,8 @@ package skyglass.composer.security.entity.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.security.entity.model.OwnerEntity;
-import skyglass.composer.stock.AEntityRepository;
 
 @Repository
 @Transactional

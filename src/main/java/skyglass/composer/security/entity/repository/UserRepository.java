@@ -16,12 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.security.domain.dto.ExtUserDTO;
 import skyglass.composer.security.domain.dto.UserDTO;
 import skyglass.composer.security.domain.dto.UserDTOFactory;
 import skyglass.composer.security.domain.model.UserHelper;
 import skyglass.composer.security.entity.model.UserEntity;
-import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.domain.model.CrudAction;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.exceptions.BusinessRuleValidationException;

@@ -2,9 +2,9 @@ package skyglass.composer.security.domain.factory;
 
 import org.springframework.stereotype.Component;
 
+import skyglass.composer.common.factory.AObjectFactory;
 import skyglass.composer.security.domain.model.Owner;
 import skyglass.composer.security.entity.model.OwnerEntity;
-import skyglass.composer.stock.AObjectFactory;
 
 @Component
 public class OwnerFactory extends AObjectFactory<Owner, OwnerEntity> {

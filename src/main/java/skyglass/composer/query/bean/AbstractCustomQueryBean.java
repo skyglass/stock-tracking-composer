@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import skyglass.composer.common.model.Currency;
 import skyglass.composer.common.model.Language;
 import skyglass.composer.common.model.UserSettings;
+import skyglass.composer.common.repository.EntityBeanUtil;
 import skyglass.composer.query.builder.CustomQueryBuilder;
 import skyglass.composer.query.builder.CustomResponseBuilder;
 import skyglass.composer.query.builder.QueryResultDefinition;
@@ -25,7 +26,6 @@ import skyglass.composer.query.request.QueryContext;
 import skyglass.composer.query.response.CustomGetRowsResponse;
 import skyglass.composer.query.response.CustomPivotValuesResponse;
 import skyglass.composer.security.entity.model.UserEntity;
-import skyglass.composer.stock.EntityBeanUtil;
 import skyglass.composer.stock.entity.model.EntityUtil;
 
 @Repository

@@ -10,9 +10,9 @@ public interface ContextService {
 
 	Context getByUuid(String uuid);
 
-	Context create(Context context);
+	Context create(String parentUuid, Context context);
 
-	List<Context> createAll(Context... contexts);
+	List<Context> createOrUpdate(String parentUuid, Context... contexts);
 
 	void delete(String contextUuid);
 

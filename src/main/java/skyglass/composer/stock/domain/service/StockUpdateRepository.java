@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.security.domain.model.Context;
 import skyglass.composer.security.entity.model.ContextEntity;
-import skyglass.composer.stock.AEntityRepository;
 import skyglass.composer.stock.domain.model.Stock;
 import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.domain.model.TransactionType;

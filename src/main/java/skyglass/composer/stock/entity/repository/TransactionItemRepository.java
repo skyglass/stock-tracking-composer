@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityRepository;
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.stock.domain.factory.TransactionItemFactory;
 import skyglass.composer.stock.domain.model.TransactionType;
 import skyglass.composer.stock.entity.model.EntityUtil;

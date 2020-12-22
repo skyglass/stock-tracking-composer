@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import skyglass.composer.stock.AEntityRepository;
+import skyglass.composer.common.repository.AEntityRepository;
 import skyglass.composer.stock.entity.model.EntityUtil;
 import skyglass.composer.stock.entity.model.StockMessageEntity;
 

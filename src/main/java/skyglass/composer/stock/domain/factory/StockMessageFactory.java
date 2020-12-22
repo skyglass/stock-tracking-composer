@@ -3,10 +3,10 @@ package skyglass.composer.stock.domain.factory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import skyglass.composer.common.factory.AObjectFactory;
 import skyglass.composer.security.domain.factory.ContextFactory;
 import skyglass.composer.security.entity.model.ContextEntity;
 import skyglass.composer.security.entity.repository.ContextRepository;
-import skyglass.composer.stock.AObjectFactory;
 import skyglass.composer.stock.domain.dto.StockMessageDto;
 import skyglass.composer.stock.domain.model.StockMessage;
 import skyglass.composer.stock.entity.model.ItemEntity;
