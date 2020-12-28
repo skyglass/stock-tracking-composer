@@ -32,12 +32,12 @@ public class ContextTestHelper {
 	public List<Context> create(Owner owner, Context parent, String... names) {
 		return contextApi.createOrUpdate(
 				parent == null ? null : parent.getUuid(),
-				createDtos(owner, parent, (Pair[]) Stream.of(names)
-						.map(n -> createPair(n)).collect(Collectors.toList()).toArray()));
+				createDtos(owner, parent, Stream.of(names)
+						.map(n -> createPair(n)).collect(Collectors.toList()).toArray(new Pair[0])));
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Context> createOrUpdate(Owner owner, Context parent, Pair<String, String>... uuidNames) {
+	@SafeVarargs
+	public final List<Context> createOrUpdate(Owner owner, Context parent, Pair<String, String>... uuidNames) {
 		return contextApi.createOrUpdate(
 				parent == null ? null : parent.getUuid(),
 				createDtos(owner, parent, uuidNames));

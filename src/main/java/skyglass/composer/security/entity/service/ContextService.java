@@ -14,6 +14,10 @@ public interface ContextService {
 
 	List<Context> createOrUpdate(String parentUuid, Context... contexts);
 
+	List<Context> move(String parentUuidFrom, String parentUuidTo, Context... contexts);
+
+	List<Context> copy(String parentUuidFrom, String parentUuidTo, Context... contexts);
+
 	void delete(String contextUuid);
 
 	void deleteAll(String... contextUuids);

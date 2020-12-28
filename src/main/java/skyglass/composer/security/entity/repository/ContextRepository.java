@@ -34,7 +34,7 @@ public class ContextRepository extends AEntityRepository<ContextEntity> {
 			contextHierarchyRepository.create(result, result);
 			ContextEntity parent = result.getParent();
 			while (parent != null) {
-				contextHierarchyRepository.create(result, result.getParent());
+				contextHierarchyRepository.create(result, parent);
 				parent = parent.getParent();
 			}
 		}

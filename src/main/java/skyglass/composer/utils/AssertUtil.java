@@ -3,6 +3,7 @@ package skyglass.composer.utils;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -67,14 +68,18 @@ public class AssertUtil {
 		}
 	}
 
-	@SafeVarargs
-	public static <T> void found(String message, List<T> list, Predicate<T>... predicates) {
+	public static <T> void found(String message, List<T> list, Predicate<T> predicate) {
+		findAndTest(message, list, predicate, null);
+	}
+
+	public static <T> void findAndTest(String message, List<T> list, Predicate<T> predicate, Consumer<T> test) {
 		boolean found = false;
 		for (T element : list) {
-			for (Predicate<T> predicate : predicates) {
-				if (!predicate.test(element)) {
-					continue;
-				}
+			if (!predicate.test(element)) {
+				continue;
+			}
+			if (test != null) {
+				test.accept(element);
 			}
 			found = true;
 			break;

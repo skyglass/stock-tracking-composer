@@ -75,4 +75,16 @@ class ContextServiceImpl implements ContextService {
 		Arrays.asList(contextUuids).forEach(uuid -> delete(uuid));
 	}
 
+	@Override
+	public List<Context> move(String parentUuidFrom, String parentUuidTo, Context... contexts) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Context> copy(String parentUuidFrom, String parentUuidTo, Context... contexts) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
