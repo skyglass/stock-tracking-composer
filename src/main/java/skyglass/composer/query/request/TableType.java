@@ -2,9 +2,10 @@ package skyglass.composer.query.request;
 
 public enum TableType {
 
-	StockMessage("StockMessage", "s"), //
-	StockHistory("StockHistory", "s"), //
-	Stock("Stock", "s"), //
+	StockMessage("StockMessage", "sm"), //
+	StockHistory("StockHistory", "sh"), //
+	CustomParameter("CustomParameter", "cp"), //
+	Stock("Stock", "st"), //
 	Context("Context", "ctx"), //
 	User("\"USER\"", "u");
 

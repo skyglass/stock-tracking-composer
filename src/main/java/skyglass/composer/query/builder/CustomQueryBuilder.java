@@ -45,6 +45,7 @@ import skyglass.composer.query.request.QueryContext;
 import skyglass.composer.query.request.SortModel;
 import skyglass.composer.query.request.TableType;
 import skyglass.composer.stock.exceptions.BusinessRuleValidationException;
+import skyglass.composer.utils.query.NativeQueryUtil;
 import skyglass.composer.utils.query.QueryFunctions;
 
 /**
@@ -80,6 +81,8 @@ public class CustomQueryBuilder {
 
 	private boolean isJpa = false;
 
+	private Map<ColumnId, String> customColumns;
+
 	public CustomQueryBuilder(QueryResultDefinition queryResult, QueryContext queryContext, CustomGetRowsRequest request, Map<ColumnId, List<String>> pivotValues, boolean isJpa) {
 		this.queryResultDefinition = queryResult;
 		this.queryContext = queryContext;
@@ -94,12 +97,14 @@ public class CustomQueryBuilder {
 				concat(request.getValueCols().stream(), request.getSortModel().stream().map(s -> s.getColId()))
 						.filter(c -> c.getAggFunc() == AggFunc.none)
 						.map(c -> c.getId())).collect(toList()));
-		this.isGrouping = rowGroupCols.size() > groupKeys.size();
+		this.isGrouping = rowGroupCols.size() > 0;
 		this.filterModel = CollectionUtils.isEmpty(request.getFilterModel()) ? new ArrayList<>() : request.getFilterModel();
-		this.sortModel = CollectionUtils.isEmpty(request.getSortModel()) ? new ArrayList<>() : request.getSortModel();
+		addPeriodFilter(ColumnId.createdAt);
+		this.sortModel = getSortModelToInclude(CollectionUtils.isEmpty(request.getSortModel()) ? new ArrayList<>() : request.getSortModel());
 		this.startRow = request.getStartRow();
 		this.endRow = request.getEndRow();
 		this.queryRegistry = new CustomQueryRegistry(queryResult.getTable(), valueColumns, filterModel, sortModel, groupKeys, rowGroupCols, pivotCols, pivotValues);
+		this.customColumns = request.getCustomColumns();
 	}
 
 	public CustomQueryBuilder(QueryResultDefinition queryResult, QueryContext queryContext, CustomGetRowsRequest request, Map<ColumnId, List<String>> pivotValues) {
@@ -128,7 +133,7 @@ public class CustomQueryBuilder {
 		if (pivotCol == null) {
 			throw new BusinessRuleValidationException("pivot values request doesn't provide any columns");
 		}
-		return ColumnIdHelper.getCustomPivotValuesSql(pivotCol, (isTotalCount ? selectPivotValueTotalCountSql(
+		return ColumnIdHelper.getCustomPivotValuesSql(this, pivotCol, (isTotalCount ? selectPivotValueTotalCountSql(
 				pivotCol.getPath(queryContext)) : selectPivotValuesSql(pivotCol.getPath(queryContext)))
 				+ fromSql() + queryRegistry.createSql() + pivotValuesWhereSql())
 				+ (isTotalCount ? "" : pivotValuesOrderBySql() + limitSql());
@@ -136,6 +141,14 @@ public class CustomQueryBuilder {
 
 	public QueryContext getQueryContext() {
 		return queryContext;
+	}
+
+	public String getCustomColumnLowerCase(ColumnId columnId) {
+		String result = customColumns.get(columnId);
+		if (StringUtils.isBlank(result)) {
+			return "";
+		}
+		return NativeQueryUtil.getEncoded(result.toLowerCase());
 	}
 
 	public void setParamKeyValues(Query query) {
@@ -203,7 +216,11 @@ public class CustomQueryBuilder {
 			selectCols = concat(rowGroupSelectCols, valueCols).collect(toList());
 		}
 
-		return isGrouping ? "SELECT " + join(", ", selectCols) : "SELECT " + queryResultDefinition.getTable().getTableAlias() + ".*";
+		if (CollectionUtils.isEmpty(selectCols)) {
+			throw new BusinessRuleValidationException("Please, provide at least one select column");
+		}
+
+		return "SELECT " + join(", ", selectCols);
 	}
 
 	private String selectPivotValuesSql(String pivotCol) {
@@ -248,13 +265,9 @@ public class CustomQueryBuilder {
 	private String orderBySql() {
 		Function<SortModel, String> orderByMapper = model -> agg(model.getColId()) + " " + model.getSort().getType();
 
-		List<String> orderByCols = isGrouping
-				? sortModel.stream()
-						.map(orderByMapper)
-						.collect(toList())
-				: sortModel.stream()
-						.map(orderByMapper)
-						.collect(toList());
+		List<String> orderByCols = sortModel.stream()
+				.map(orderByMapper)
+				.collect(toList());
 
 		return orderByCols.isEmpty() ? "" : " ORDER BY " + join(",", orderByCols);
 	}
@@ -358,7 +371,24 @@ public class CustomQueryBuilder {
 	}
 
 	private List<ColumnId> getRowGroupsToInclude(List<ColumnId> rowGroupCols) {
-		return new ArrayList<>(new LinkedHashSet<>(rowGroupCols.stream().collect(Collectors.toList())));
+		List<ColumnId> result = new ArrayList<>(new LinkedHashSet<>(rowGroupCols.stream().collect(Collectors.toList())));
+		if (!isPivotMode || result.size() <= groupKeys.size() + 1) {
+			return result;
+		}
+		//Current implementation of ag-Grid on UI provides all group columns for pivot mode
+		//But we should only return one level deeper for pivot mode
+		//Therefore, we should take into account groupKeys size to understand on which level we are now
+		return result.subList(0, groupKeys.size() + 1);
+	}
+
+	private List<SortModel> getSortModelToInclude(List<SortModel> sortModel) {
+		if (!isPivotMode || sortModel.size() <= groupKeys.size() + 1) {
+			return sortModel;
+		}
+		//Current implementation of ag-Grid on UI provides all sort columns for pivot mode
+		//But we should only return one level deeper for pivot mode
+		//Therefore, we should take into account groupKeys size to understand on which level we are now
+		return sortModel.subList(0, groupKeys.size() + 1);
 	}
 
 	private Stream<String> getGroupKeyColumns() {
@@ -386,10 +416,17 @@ public class CustomQueryBuilder {
 
 	private String agg(ColumnVO columnId, String expression) {
 		return columnId.getAggFunc() == AggFunc.none ? expression
-				: String.format("%s(%s)", columnId.getAggFunc().getFunc(), expression);
+				: (columnId.getId().getColumnType() == ColumnType.String
+						? stringToNumeric(columnId.getAggFunc().getFunc(), expression)
+						: String.format("%s(%s)", columnId.getAggFunc().getFunc(), expression));
 	}
 
 	private String getParamChar() {
 		return isJpa ? ":" : "?";
+	}
+
+	private String stringToNumeric(String func, String expression) {
+		return String.format("%s(%s)",
+				func, QueryFunctions.stringToNumeric(expression, queryContext.getDatabaseType()));
 	}
 }

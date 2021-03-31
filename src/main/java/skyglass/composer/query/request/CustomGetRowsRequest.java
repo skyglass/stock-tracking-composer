@@ -1,10 +1,12 @@
 package skyglass.composer.query.request;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -12,7 +14,9 @@ public class CustomGetRowsRequest implements Serializable {
 
 	private static final long serialVersionUID = -2102694861611712393L;
 
-	private int startRow, endRow;
+	private int startRow;
+
+	private int endRow = -1;
 
 	// row group columns
 	private List<ColumnId> rowGroupCols;
@@ -35,6 +39,8 @@ public class CustomGetRowsRequest implements Serializable {
 	// if sorting, what the sort model is
 	private List<SortModel> sortModel;
 
+	private Map<ColumnId, String> customColumns;
+
 	public CustomGetRowsRequest() {
 		this.rowGroupCols = emptyList();
 		this.valueCols = emptyList();
@@ -42,6 +48,7 @@ public class CustomGetRowsRequest implements Serializable {
 		this.groupKeys = emptyList();
 		this.filterModel = emptyList();
 		this.sortModel = emptyList();
+		this.customColumns = emptyMap();
 	}
 
 	public int getStartRow() {
@@ -116,6 +123,14 @@ public class CustomGetRowsRequest implements Serializable {
 		this.sortModel = sortModel;
 	}
 
+	public Map<ColumnId, String> getCustomColumns() {
+		return customColumns;
+	}
+
+	public void setCustomColumns(Map<ColumnId, String> customColumns) {
+		this.customColumns = customColumns;
+	}
+
 	public static CustomGetRowsRequest getPivotValuesRequest(CustomGetRowsRequest original) {
 		return getPivotValuesRequest(original, null, original.getStartRow(), original.getEndRow());
 	}
@@ -135,8 +150,10 @@ public class CustomGetRowsRequest implements Serializable {
 		request.groupKeys = emptyList();
 		request.filterModel = original.getFilterModel();
 		request.sortModel = emptyList();
+		request.customColumns = original.getCustomColumns();
 		request.startRow = startRow;
 		request.endRow = endRow;
 		return request;
 	}
+
 }

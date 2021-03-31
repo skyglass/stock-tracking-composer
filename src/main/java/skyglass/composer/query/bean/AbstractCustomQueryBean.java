@@ -15,17 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import skyglass.composer.common.model.Currency;
 import skyglass.composer.common.model.Language;
-import skyglass.composer.common.model.UserSettings;
 import skyglass.composer.common.repository.EntityBeanUtil;
 import skyglass.composer.query.builder.CustomQueryBuilder;
 import skyglass.composer.query.builder.CustomResponseBuilder;
 import skyglass.composer.query.builder.QueryResultDefinition;
 import skyglass.composer.query.request.ColumnId;
+import skyglass.composer.query.request.ColumnIdHelper;
+import skyglass.composer.query.request.ContextSettings;
 import skyglass.composer.query.request.CustomGetRowsRequest;
 import skyglass.composer.query.request.QueryContext;
 import skyglass.composer.query.response.CustomGetRowsResponse;
 import skyglass.composer.query.response.CustomPivotValuesResponse;
-import skyglass.composer.security.entity.model.UserEntity;
+import skyglass.composer.security.domain.model.UserInfo;
 import skyglass.composer.stock.entity.model.EntityUtil;
 
 @Repository
@@ -36,7 +37,7 @@ public abstract class AbstractCustomQueryBean {
 
 	protected abstract QueryResultDefinition getQueryResultDefinition();
 
-	protected abstract UserEntity getUser();
+	protected abstract UserInfo getUser();
 
 	@Autowired
 	protected EntityBeanUtil entityBeanUtil;
@@ -110,8 +111,7 @@ public abstract class AbstractCustomQueryBean {
 		// query db for rows
 		Query nativeQuery = entityBeanUtil.createNativeQuery(sql);
 		queryBuilder.setFilterParamKeyValues(nativeQuery);
-		@SuppressWarnings("unchecked")
-		List<String> rows = (List<String>) EntityUtil.getListResultSafely(nativeQuery);
+		List<String> rows = ColumnIdHelper.getPivotValuesResult(nativeQuery);
 
 		// generate total count sql
 		String totalCountSql = queryBuilder.createPivotValuesSql(true);
@@ -140,8 +140,7 @@ public abstract class AbstractCustomQueryBean {
 		// query db for rows
 		Query nativeQuery = entityBeanUtil.createNativeQuery(sql);
 		queryBuilder.setFilterParamKeyValues(nativeQuery);
-		@SuppressWarnings("unchecked")
-		List<String> rows = (List<String>) EntityUtil.getListResultSafely(nativeQuery);
+		List<String> rows = ColumnIdHelper.getPivotValuesResult(nativeQuery);
 		return rows;
 	}
 
@@ -159,7 +158,8 @@ public abstract class AbstractCustomQueryBean {
 		return new CustomQueryBuilder(queryResultDefinition, queryContext, request, pivotValues, isJpa);
 	}
 
-	private UserSettings getSettings(UserEntity user) {
+	private ContextSettings getSettings(UserInfo user) {
+		//TODO: not implemented
 		return null;
 	}
 

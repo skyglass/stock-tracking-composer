@@ -115,9 +115,10 @@ public class QueryFunctions {
 			case POSTGRE_SQL:
 				return String.format("EXTRACT(WEEK FROM %s)::INTEGER", utcToLocal(date, offsetSeconds, databaseType));
 			case H2:
+				return String.format("ISO_WEEK(%s)", utcToLocal(date, offsetSeconds, databaseType));
 			case SAP_HANA:
 			default:
-				return String.format("WEEK(%s)", utcToLocal(date, offsetSeconds, databaseType));
+				return String.format("ISOWEEK(%s)", utcToLocal(date, offsetSeconds, databaseType));
 		}
 	}
 
@@ -129,6 +130,61 @@ public class QueryFunctions {
 			case SAP_HANA:
 			default:
 				return String.format("DAYOFMONTH(%s)", utcToLocal(date, offsetSeconds, databaseType));
+		}
+	}
+
+	public static String dayOfYear(String date, String offsetSeconds, DatabaseType databaseType) {
+		switch (databaseType) {
+			case POSTGRE_SQL:
+				return String.format("EXTRACT(DOY FROM %s)::INTEGER", utcToLocal(date, offsetSeconds, databaseType));
+			case H2:
+			case SAP_HANA:
+			default:
+				return String.format("DAYOFYEAR(%s)", utcToLocal(date, offsetSeconds, databaseType));
+		}
+	}
+
+	public static String yearString(String date, String offsetSeconds, DatabaseType databaseType) {
+		switch (databaseType) {
+			case POSTGRE_SQL:
+				return String.format("EXTRACT(YEAR FROM %s)::VARCHAR", utcToLocal(date, offsetSeconds, databaseType));
+			case H2:
+			case SAP_HANA:
+			default:
+				return year(date, offsetSeconds, databaseType);
+		}
+	}
+
+	public static String monthString(String date, String offsetSeconds, DatabaseType databaseType) {
+		switch (databaseType) {
+			case POSTGRE_SQL:
+				return String.format("EXTRACT(MONTH FROM %s)::VARCHAR", utcToLocal(date, offsetSeconds, databaseType));
+			case H2:
+			case SAP_HANA:
+			default:
+				return month(date, offsetSeconds, databaseType);
+		}
+	}
+
+	public static String weekString(String date, String offsetSeconds, DatabaseType databaseType) {
+		switch (databaseType) {
+			case POSTGRE_SQL:
+				return String.format("EXTRACT(WEEK FROM %s)::VARCHAR", utcToLocal(date, offsetSeconds, databaseType));
+			case H2:
+			case SAP_HANA:
+			default:
+				return week(date, offsetSeconds, databaseType);
+		}
+	}
+
+	public static String dayOfMonthString(String date, String offsetSeconds, DatabaseType databaseType) {
+		switch (databaseType) {
+			case POSTGRE_SQL:
+				return String.format("EXTRACT(DAY FROM %s)::VARCHAR", utcToLocal(date, offsetSeconds, databaseType));
+			case H2:
+			case SAP_HANA:
+			default:
+				return dayOfMonth(date, offsetSeconds, databaseType);
 		}
 	}
 
@@ -144,6 +200,42 @@ public class QueryFunctions {
 			case H2:
 			default:
 				return String.format("DISTINCT(%s)", sql);
+		}
+	}
+
+	public static int getWeekResult(Object sqlResult, DatabaseType databaseType) {
+		switch (databaseType) {
+			case POSTGRE_SQL:
+			case H2:
+				return (int) sqlResult;
+			case SAP_HANA:
+			default:
+				String stringResult = sqlResult.toString();
+				int startIndex = stringResult.indexOf("-W") + 2;
+				return (int) Integer.parseInt(stringResult.substring(startIndex));
+
+		}
+	}
+
+	public static String stringToNumeric(String expression, DatabaseType databaseType) {
+		String preparedExpression = String.format("REPLACE(REPLACE(%s, ',', '.'), ' ', '')", expression);
+		return "CASE WHEN "
+				+ expression
+				+ " IS NULL THEN 0"
+				+ " WHEN " + regexpReplace(preparedExpression, ".*?((-?\\d+\\.?\\d*)[^0-9]*)?$", "\\2", databaseType)
+				+ " = '' THEN 0 ELSE "
+				+ String.format("CAST(%s AS DECIMAL(11,4))", regexpReplace(preparedExpression, ".*?((-?\\d+\\.?\\d*)[^0-9]*)?$", "\\2", databaseType))
+				+ " END";
+	}
+
+	public static String regexpReplace(String expression, String pattern, String replacementString, DatabaseType databaseType) {
+		switch (databaseType) {
+			case H2:
+			case POSTGRE_SQL:
+				return String.format("REGEXP_REPLACE(%s, '%s', '%s')", expression, pattern, replacementString);
+			case SAP_HANA:
+			default:
+				return String.format("REPLACE_REGEXPR('%s' IN %s WITH '%s')", pattern, expression, replacementString);
 		}
 	}
 

@@ -21,7 +21,12 @@ public enum ColumnId {
 	year("createdAt", TableType.StockMessage, ColumnType.Integer, (queryContext, path) -> QueryFunctions.year(path, queryContext.getOffsetSeconds(), queryContext.getDatabaseType())), //
 	month("createdAt", TableType.StockMessage, ColumnType.Integer, (queryContext, path) -> QueryFunctions.month(path, queryContext.getOffsetSeconds(), queryContext.getDatabaseType())), //
 	week("createdAt", TableType.StockMessage, ColumnType.Integer, (queryContext, path) -> QueryFunctions.week(path, queryContext.getOffsetSeconds(), queryContext.getDatabaseType())), //
-	dayOfMonth("createdAt", TableType.StockMessage, ColumnType.Integer, (queryContext, path) -> QueryFunctions.dayOfMonth(path, queryContext.getOffsetSeconds(), queryContext.getDatabaseType()));
+	dayOfMonth("createdAt", TableType.StockMessage, ColumnType.Integer, (queryContext, path) -> QueryFunctions.dayOfMonth(path, queryContext.getOffsetSeconds(), queryContext.getDatabaseType())), //
+	customColumn1("value", "customColumn1", TableType.CustomParameter, ColumnType.String), //
+	customColumn2("value", "customColumn2", TableType.CustomParameter, ColumnType.String), //
+	customColumn3("value", "customColumn3", TableType.CustomParameter, ColumnType.String), //
+	customColumn4("value", "customColumn4", TableType.CustomParameter, ColumnType.String), //
+	customColumn5("value", "customColumn5", TableType.CustomParameter, ColumnType.String);
 
 	private static final List<String> lowerCaseValues;
 
