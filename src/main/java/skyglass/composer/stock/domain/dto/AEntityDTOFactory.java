@@ -1,5 +1,6 @@
 package skyglass.composer.stock.domain.dto;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -7,6 +8,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import skyglass.composer.stock.domain.model.IdObject;
@@ -50,6 +54,30 @@ public class AEntityDTOFactory {
 		dto.setUuid(entity.getUuid());
 
 		return dto;
+	}
+
+	public static <E extends AEntity> E createVeryBasicEntity(String uuid, Supplier<E> constructor) {
+		if (constructor == null || StringUtils.isBlank(uuid)) {
+			return null;
+		}
+
+		E entity = constructor.get();
+		try {
+			PropertyUtils.setSimpleProperty(entity, "uuid", uuid);
+		} catch (Exception e) {
+
+		}
+
+		return entity;
+	}
+
+	@NotNull
+	protected static <E extends AEntity> List<E> createVeryBasicEntities(List<String> uuids, Supplier<E> constructor) {
+		if (uuids == null || uuids.isEmpty() || constructor == null) {
+			return new ArrayList<>();
+		}
+
+		return uuids.stream().map(uuid -> createVeryBasicEntity(uuid, constructor)).collect(Collectors.toList());
 	}
 
 }
